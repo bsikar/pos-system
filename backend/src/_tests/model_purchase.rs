@@ -1,5 +1,7 @@
+use crate::model;
 use crate::model::db::init_db;
-use serde_json::json;
+use serde_json::Value as JsonValue;
+use serde_json::{self, json};
 
 use super::PurchaseMac;
 use super::PurchasePatch;
@@ -20,6 +22,44 @@ async fn model_purchase_create() -> Result<(), Box<dyn std::error::Error>> {
     assert_eq!(purchase_created.items, json!([]));
     assert_eq!(purchase_created.total, 0);
     assert!(purchase_created.id >= 1000, "id should be >= 1000");
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn model_purchase_get_ok() -> Result<(), Box<dyn std::error::Error>> {
+    // fixture
+    let db = init_db().await?;
+
+    // action
+    let purchase = PurchaseMac::get(&db, 100).await?;
+
+    // check
+    let raw_json = r#"{ "items": [{"name": "test 1", "price": 100, "quantity" : 1}] }"#;
+    let json: JsonValue = serde_json::from_str(raw_json).unwrap();
+    assert_eq!(purchase.id, 100);
+    assert_eq!(purchase.items, json);
+    assert_eq!(purchase.total, 100);
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn model_purchase_get_wrong_id() -> Result<(), Box<dyn std::error::Error>> {
+    // fixture
+    let db = init_db().await?;
+
+    // action
+    let result = PurchaseMac::get(&db, 10).await;
+
+    match result {
+        Ok(_) => {}
+        Err(model::Error::EntityNotFound(type_, id)) => {
+            assert_eq!(type_, "purchase");
+            assert_eq!(id, "10");
+        }
+        other_err => panic!("unexpected error: {:?}", other_err),
+    }
 
     Ok(())
 }
@@ -48,5 +88,32 @@ async fn model_purchase_list() -> Result<(), Box<dyn std::error::Error>> {
     assert_eq!(purchases[1].items, json[1]);
     assert_eq!(purchases[1].total, 100);
 
+    Ok(())
+}
+
+#[tokio::test]
+async fn model_purchase_delete_simple() -> Result<(), Box<dyn std::error::Error>> {
+    // -- FIXTURE
+    let db = init_db().await?;
+
+    // -- ACTION
+    let purchase = PurchaseMac::delete(&db, 100).await?;
+
+    // -- CHECK - deleted item
+    let raw_json = r#"{ "items": [{"name": "test 1", "price": 100, "quantity" : 1}] }"#;
+    let json: JsonValue = serde_json::from_str(raw_json).unwrap();
+    assert_eq!(purchase.id, 100);
+    assert_eq!(purchase.items, json);
+    assert_eq!(purchase.total, 100);
+
+    // -- CHECK - list
+    let list = PurchaseMac::list(&db).await?;
+    assert_eq!(1, list.len());
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn model_purchase_update() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
