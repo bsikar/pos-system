@@ -1,0 +1,27 @@
+[package]
+name = "pos-system-backend"
+version = "0.1.0"
+authors = ["Brighton Sikarskie <bsikar@tuta.io>"]
+edition = "2021"
+description = "back end and server for a point of sale system"
+readme = "README.md"
+homepage = "https://github.com/bsikar/pos-system"
+repository = "https://github.com/bsikar/pos-system"
+license = "MIT"
+keywords = ["pos"]
+
+[dependencies]
+tokio = { version = "1.17.0", features = ["full"] }
+futures = "0.3.21"
+thiserror = "1.0.30"
+
+# json libs
+serde = "1.0.136"
+serde_derive = "1.0.136"
+serde_json = "1.0.79"
+
+# web libs
+warp = "0.3.2"
+
+# database libs
+sqlx = { version = "0.5.11", features = ["runtime-tokio-rustls", "postgres"] }
