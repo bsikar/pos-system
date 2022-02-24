@@ -54,13 +54,18 @@ impl PurchaseMac {
         // in order to update the purchase's `items` and `total`
 
         // update the field ctime with now()
-        let sql = "UPDATE purchase SET ctime = $1 WHERE id = $2";
-        let query = sqlx::query(sql).bind(json!({"ctime": "now()"})).bind(id);
-        query.execute(db).await?;
+        //let sql = "UPDATE purchase SET ctime = $1 WHERE id = $2";
+        //let query = sqlx::query(sql).bind(json!({"ctime": "now()"})).bind(id);
+        //query.execute(db).await?;
 
         let sql =
             "UPDATE purchase SET items = $1, total = $2 WHERE id = $3 RETURNING id, items, total";
-        let query = sqlx::query_as(sql).bind(json!({})).bind(0).bind(id);
+        let items = match data.items {
+            Some(items) => json!({ "items": items }),
+            None => json!([]),
+        };
+        let total = data.total.unwrap_or(calculate_total(&items));
+        let query = sqlx::query_as(sql).bind(items).bind(total).bind(id);
 
         let result = query.fetch_one(db).await;
 

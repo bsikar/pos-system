@@ -12,28 +12,28 @@ pub fn purchase_rest_filters(
     let purchases_path = warp::path(base_path).and(warp::path("purchases"));
     let common = super::filter_util::with_db(db);
 
-    // LIST purchases `GET purchases/`
+    // list purchases `GET purchases/`
     let list = purchases_path
         .and(warp::get())
         .and(warp::path::end())
         .and(common.clone())
         .and_then(purchase_list);
 
-    // GET purchase `GET /purchases/100`
+    // get purchase `GET /purchases/100`
     let get = purchases_path
         .and(warp::get())
         .and(common.clone())
         .and(warp::path::param())
         .and_then(purchase_get);
 
-    // CREATE purchase `POST /purchases with body purchasePatch`
+    // create purchase `POST /purchases with body purchasePatch`
     let create = purchases_path
         .and(warp::post())
         .and(common.clone())
         .and(warp::body::json())
         .and_then(purchase_create);
 
-    // UPDATE purchase `PATCH /purchases/100 with body purchasePatch`
+    // update purchase `PATCH /purchases/100 with body purchasePatch`
     let update = purchases_path
         .and(warp::patch())
         .and(common.clone())
@@ -41,7 +41,7 @@ pub fn purchase_rest_filters(
         .and(warp::body::json())
         .and_then(purchase_update);
 
-    // DELETE purchase `DELETE /purchases/100`
+    // delete purchase `DELETE /purchases/100`
     let delete = purchases_path
         .and(warp::delete())
         .and(common)

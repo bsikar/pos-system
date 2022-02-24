@@ -2,22 +2,29 @@
 
 #GET http://127.0.0.1:3030/
 
-POST http://127.0.0.1:3030/api/purchases
+#POST http://127.0.0.1:3030/api/purchases
+#Content-Type: application/json
+#
+#{
+#    "id":400,
+#    "items": [
+#        {
+#            "name": "test 49",
+#            "price": 100,
+#            "quantity": 1
+#        }
+#        //{
+#        //    "name": "test 2",
+#        //    "price": 200,
+#        //    "quantity": 2
+#        //}
+#    ],
+#    "total": 100
+#}
+
+PATCH http://127.0.0.1:3030/api/purchases/100
 Content-Type: application/json
 
 {
-    "id":400,
-    "items": [
-        {
-            "name": "test 49",
-            "price": 100,
-            "quantity": 1
-        }
-        //{
-        //    "name": "test 2",
-        //    "price": 200,
-        //    "quantity": 2
-        //}
-    ],
-    "total": 100
+    "items": []
 }

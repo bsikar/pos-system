@@ -114,8 +114,21 @@ async fn model_purchase_delete_simple() -> Result<(), Box<dyn std::error::Error>
 }
 
 #[tokio::test]
-#[ignore]
 async fn model_purchase_update() -> Result<(), Box<dyn std::error::Error>> {
-    // TODO FIX
+    // fixture
+    let db = init_db().await?;
+    let data_fx = PurchasePatch {
+        items: Some(json!([])),
+        ..Default::default()
+    };
+
+    // action
+    let purchase = PurchaseMac::update(&db, 100, data_fx).await?;
+
+    // check
+    assert_eq!(purchase.items, json!({"items": []}));
+    assert_eq!(purchase.total, 0);
+    assert_eq!(purchase.id, 100);
+
     Ok(())
 }
