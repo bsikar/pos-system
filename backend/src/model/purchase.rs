@@ -1,16 +1,17 @@
 use crate::model;
 use crate::model::db::Db;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use serde_json::Value as JsonValue;
 
-#[derive(sqlx::FromRow, Debug, Clone)]
+#[derive(sqlx::FromRow, Debug, Clone, Serialize, Deserialize)]
 pub struct Purchase {
     pub id: i64,
     pub items: JsonValue,
     pub total: i64,
 }
 
-#[derive(Default, Clone)]
+#[derive(Default, Clone, Serialize, Deserialize)]
 pub struct PurchasePatch {
     pub items: Option<JsonValue>,
     pub total: Option<i64>,
@@ -22,7 +23,15 @@ pub struct PurchaseMac;
 impl PurchaseMac {
     pub async fn create(db: &Db, data: PurchasePatch) -> Result<Purchase, model::Error> {
         let sql = "INSERT INTO purchase (items, total) VALUES ($1, $2) RETURNING id, items, total";
-        let query = sqlx::query_as(sql).bind(json!([])).bind(0);
+
+        let items = match data.items {
+            Some(items) => json!({ "items": items }),
+            None => json!([]),
+        };
+
+        let query = sqlx::query_as(sql)
+            .bind(&items)
+            .bind(data.total.unwrap_or(calculate_total(&items)));
 
         let purchase = query.fetch_one(db).await?;
 
@@ -50,7 +59,7 @@ impl PurchaseMac {
 
         let sql =
             "UPDATE purchase SET items = $1, total = $2 WHERE id = $3 RETURNING id, items, total";
-        let query = sqlx::query_as(sql).bind(json!([])).bind(0).bind(id);
+        let query = sqlx::query_as(sql).bind(json!({})).bind(0).bind(id);
 
         let result = query.fetch_one(db).await;
 
@@ -89,6 +98,18 @@ fn handle_fetch_one_result(
     })
 }
 
+fn calculate_total(items: &JsonValue) -> i64 {
+    let mut total = 0;
+
+    if let Some(items) = items["items"].as_array() {
+        for item in items {
+            total += item["price"].as_i64().unwrap() * item["quantity"].as_i64().unwrap();
+        }
+    }
+
+    total
+}
+
 #[cfg(test)]
-#[path = "../_tests/model_purchase.rs"]
+#[path = "../tests/model_purchase.rs"]
 mod tests;

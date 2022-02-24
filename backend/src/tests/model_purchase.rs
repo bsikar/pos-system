@@ -19,7 +19,7 @@ async fn model_purchase_create() -> Result<(), Box<dyn std::error::Error>> {
     let purchase_created = PurchaseMac::create(&db, data_fx.clone()).await?;
 
     // check
-    assert_eq!(purchase_created.items, json!([]));
+    assert_eq!(purchase_created.items, json!({"items": []}));
     assert_eq!(purchase_created.total, 0);
     assert!(purchase_created.id >= 1000, "id should be >= 1000");
 
@@ -74,6 +74,7 @@ async fn model_purchase_list() -> Result<(), Box<dyn std::error::Error>> {
 
     // check
     assert_eq!(purchases.len(), 2, "number of seed purchases");
+
     let json = json!([
         { "items": [{"name": "test 2", "price": 200, "quantity" : 2}] },
         { "items": [{"name": "test 1", "price": 100, "quantity" : 1}] },
@@ -93,20 +94,19 @@ async fn model_purchase_list() -> Result<(), Box<dyn std::error::Error>> {
 
 #[tokio::test]
 async fn model_purchase_delete_simple() -> Result<(), Box<dyn std::error::Error>> {
-    // -- FIXTURE
+    // fixture
     let db = init_db().await?;
 
-    // -- ACTION
+    // action
     let purchase = PurchaseMac::delete(&db, 100).await?;
 
-    // -- CHECK - deleted item
-    let raw_json = r#"{ "items": [{"name": "test 1", "price": 100, "quantity" : 1}] }"#;
-    let json: JsonValue = serde_json::from_str(raw_json).unwrap();
+    // check - deleted item
+    let json = json!({ "items": [{"name": "test 1", "price": 100, "quantity" : 1}] });
     assert_eq!(purchase.id, 100);
     assert_eq!(purchase.items, json);
     assert_eq!(purchase.total, 100);
 
-    // -- CHECK - list
+    // check - list
     let list = PurchaseMac::list(&db).await?;
     assert_eq!(1, list.len());
 
@@ -114,6 +114,8 @@ async fn model_purchase_delete_simple() -> Result<(), Box<dyn std::error::Error>
 }
 
 #[tokio::test]
+#[ignore]
 async fn model_purchase_update() -> Result<(), Box<dyn std::error::Error>> {
+    // TODO FIX
     Ok(())
 }

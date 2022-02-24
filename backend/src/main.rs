@@ -2,6 +2,7 @@
 mod model;
 mod web;
 
+use crate::model::init_db;
 use std::env;
 use std::sync::Arc;
 use web::start_web;
@@ -15,8 +16,6 @@ const DEFAULT_WEB_PORT: u16 = 3030;
 
 #[tokio::main]
 async fn main() {
-    // compute the web_folder
-    // todo use clap
     let matches = clap::command!()
         .arg(
             Arg::new("port")
@@ -42,7 +41,7 @@ async fn main() {
     let web_folder = matches.value_of("folder").unwrap_or(DEFAULT_WEB_FOLDER);
 
     // get the database
-    let db = model::db::init_db().await.expect("Cannot init db");
+    let db = init_db().await.expect("Cannot init db");
     let db = Arc::new(db);
 
     // start the server

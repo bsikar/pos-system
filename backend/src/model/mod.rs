@@ -2,7 +2,9 @@ use thiserror::Error as ThisError;
 
 pub mod db;
 
+pub use db::init_db;
 pub use db::Db;
+pub use purchase::{Purchase, PurchaseMac, PurchasePatch};
 
 mod purchase;
 

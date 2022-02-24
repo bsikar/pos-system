@@ -27,4 +27,5 @@ warp = "0.3.2"
 sqlx = { version = "0.5.11", features = ["runtime-tokio-rustls", "postgres"] }
 clap = { version = "3.1.2", features = ["cargo"] }
 
-[features]
+[dev-dependencies]
+anyhow = "1.0.55"

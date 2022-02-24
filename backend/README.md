@@ -77,14 +77,39 @@ the command: `test model_db_ -- --test-threads=1 --nocapture`
 `test model_` : run the tests that start with the name `model_`
 
 
-`--` : run the following test flags
+`--` : this is needed before the test flags to run the application with those flags
 
-the command: `--test-threads=1` : use one thread when testing
+`--test-threads=1` : use one thread when testing
 
 `--nocapture` : show output of the test
 
+you can run the web tests in the same way
+```sh
+cargo watch -q -c -w src/ -x 'test web_ -- --test-threads=1 --nocapture'
+```
+
+## start the website
+```sh
+cargo watch -q -c -w src/ -x 'run -- -f ../frontend/web-folder -p 3030'
+```
+heres the break down of waht that command does:
+
+`-q` : suppress output from cargo-watch
+
+`-c` : clear the screen before each run
+
+`-w src/` : watch the `src/` directory
+
+`-x <command>` : run the following cargo command to execute changes
+
+the command: `test model_db_ -- --test-threads=1 --nocapture`
+
+`test model_` : run the tests that start with the name `model_`
 
 
+`--` : this is needed before the test flags to run the application with those flags
 
 
+`-f ../frontend/web-folder` : this is the path to the webfolder which will be used
 
+`-p 3030` : bind the http server to port `3030`
