@@ -1,5 +1,5 @@
-use crate::model::{init_db, Db, Purchase, PurchaseMac, PurchasePatch};
-use crate::web::{handle_rejection, purchase_rest_filters};
+use crate::model::{init_db, Purchase};
+use crate::web::purchase_rest_filters;
 use anyhow::{Context, Result};
 use serde::Deserialize;
 use serde_json::{from_str, from_value, json, Value};
@@ -7,14 +7,13 @@ use std::str::from_utf8;
 use std::sync::Arc;
 use warp::hyper::body::Bytes;
 use warp::hyper::Response;
-use warp::Filter;
 
 #[tokio::test]
 async fn web_purchase_list() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
-    let purchase_apis = purchase_rest_filters("api", db.clone()).recover(handle_rejection);
+    let purchase_apis = purchase_rest_filters("api", db.clone());
 
     // action
     let resp = warp::test::request()
@@ -53,7 +52,7 @@ async fn web_purchase_get_ok() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
-    let purchase_apis = purchase_rest_filters("api", db).recover(handle_rejection);
+    let purchase_apis = purchase_rest_filters("api", db);
 
     // action
     let resp = warp::test::request()
@@ -82,7 +81,7 @@ async fn web_purchase_create_ok() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
-    let purchase_apis = purchase_rest_filters("api", db).recover(handle_rejection);
+    let purchase_apis = purchase_rest_filters("api", db);
 
     // new purchase fixture
     let body = json!({

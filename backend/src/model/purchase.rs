@@ -56,6 +56,7 @@ impl PurchaseMac {
         // update the field ctime with now()
         let sql = "UPDATE purchase SET ctime = $1 WHERE id = $2";
         let query = sqlx::query(sql).bind(json!({"ctime": "now()"})).bind(id);
+        query.execute(db).await?;
 
         let sql =
             "UPDATE purchase SET items = $1, total = $2 WHERE id = $3 RETURNING id, items, total";

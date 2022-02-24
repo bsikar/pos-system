@@ -1,10 +1,8 @@
 use crate::model::{self, Db};
 use crate::web::purchase::purchase_rest_filters;
-use serde_json::json;
-use std::convert::Infallible;
 use std::path::Path;
 use std::sync::Arc;
-use warp::{Filter, Rejection, Reply};
+use warp::Filter;
 
 mod filter_util;
 mod purchase;
@@ -26,31 +24,12 @@ pub async fn start_web(web_folder: &str, web_port: u16, db: Arc<Db>) -> Result<(
     let static_site = content.or(root_index);
 
     // combine all routes
-    let routes = apis.or(static_site).recover(handle_rejection);
+    let routes = apis.or(static_site);
 
     println!("Start 127.0.0.1:{} at {}", web_port, web_folder);
     warp::serve(routes).run(([127, 0, 0, 1], web_port)).await;
 
     Ok(())
-}
-
-async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
-    // Print to server side
-    println!("ERROR - {:?}", err);
-
-    // Build user message
-    let user_message = match err.find::<WebErrorMessage>() {
-        Some(err) => err.typ.to_string(),
-        None => "Unknown".to_string(),
-    };
-
-    let result = json!({ "errorMessage": user_message });
-    let result = warp::reply::json(&result);
-
-    Ok(warp::reply::with_status(
-        result,
-        warp::http::StatusCode::BAD_REQUEST,
-    ))
 }
 
 #[derive(thiserror::Error, Debug)]

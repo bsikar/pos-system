@@ -7,8 +7,6 @@ use std::env;
 use std::sync::Arc;
 use web::start_web;
 
-#[macro_use]
-extern crate clap;
 use clap::Arg;
 
 const DEFAULT_WEB_FOLDER: &str = "web-folder/";
