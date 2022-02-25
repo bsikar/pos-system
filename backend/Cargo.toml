@@ -12,6 +12,7 @@ keywords = ["pos"]
 
 [dependencies]
 tokio = { version = "1.17.0", features = ["full"] }
+clap = { version = "3.1.2", features = ["cargo"] }
 futures = "0.3.21"
 thiserror = "1.0.30"
 
@@ -25,7 +26,6 @@ warp = "0.3.2"
 
 # database libs
 sqlx = { version = "0.5.11", features = ["runtime-tokio-rustls", "postgres"] }
-clap = { version = "3.1.2", features = ["cargo"] }
 
 [dev-dependencies]
 anyhow = "1.0.55"

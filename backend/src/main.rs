@@ -45,6 +45,6 @@ async fn main() {
     // start the server
     match start_web(web_folder, web_port, db).await {
         Ok(_) => println!("Server ended"),
-        Err(e) => println!("ERROR - web server failed to start. Cause {:?}", e),
+        Err(e) => eprintln!("ERROR - web server failed to start. Cause {:?}", e),
     }
 }

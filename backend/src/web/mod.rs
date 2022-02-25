@@ -31,10 +31,10 @@ pub async fn start_web(web_folder: &str, web_port: u16, db: Arc<Db>) -> Result<(
     let routes = apis.or(static_site);
 
     println!(
-        "Started 127.0.0.1:{} with web_folder: {}",
+        "Started 0.0.0.0:{} with web_folder: {}",
         web_port, web_folder
     );
-    warp::serve(routes).run(([127, 0, 0, 1], web_port)).await;
+    warp::serve(routes).run(([0, 0, 0, 0], web_port)).await;
 
     Ok(())
 }
@@ -43,14 +43,7 @@ async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
     // print to server side
     eprintln!("ERROR - {:?}", err);
 
-    // build user message
-    let user_message = match err.find::<WebErrorMessage>() {
-        Some(err) => err.typ.to_string(),
-        None => "Unknown".to_string(),
-    };
-
-    let result = json!({ "errorMessage": user_message });
-    let result = warp::reply::json(&result);
+    let result = warp::reply::html(format!("Error {:?}", err));
 
     Ok(warp::reply::with_status(
         result,
@@ -74,7 +67,8 @@ impl warp::reject::Reject for WebErrorMessage {}
 
 impl WebErrorMessage {
     pub fn rejection(typ: &'static str, message: String) -> warp::Rejection {
-        warp::reject::custom(WebErrorMessage { typ, message })
+        //warp::reject::custom(WebErrorMessage { typ, message })
+        warp::reject::not_found()
     }
 }
 

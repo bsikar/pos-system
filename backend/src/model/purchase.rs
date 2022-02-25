@@ -25,13 +25,13 @@ impl PurchaseMac {
         let sql = "INSERT INTO purchase (items, total) VALUES ($1, $2) RETURNING id, items, total";
 
         let items = match data.items {
-            Some(items) => json!({ "items": items }),
+            Some(items) => json!(items),
             None => json!([]),
         };
 
         let query = sqlx::query_as(sql)
             .bind(&items)
-            .bind(data.total.unwrap_or(calculate_total(&items)));
+            .bind(data.total.unwrap_or_else(|| calculate_total(&items)));
 
         let purchase = query.fetch_one(db).await?;
 
@@ -61,10 +61,10 @@ impl PurchaseMac {
         let sql =
             "UPDATE purchase SET items = $1, total = $2 WHERE id = $3 RETURNING id, items, total";
         let items = match data.items {
-            Some(items) => json!({ "items": items }),
+            Some(items) => json!({ "item": items }),
             None => json!([]),
         };
-        let total = data.total.unwrap_or(calculate_total(&items));
+        let total = data.total.unwrap_or_else(|| calculate_total(&items));
         let query = sqlx::query_as(sql).bind(items).bind(total).bind(id);
 
         let result = query.fetch_one(db).await;
@@ -104,10 +104,10 @@ fn handle_fetch_one_result(
     })
 }
 
-fn calculate_total(items: &JsonValue) -> i64 {
+pub fn calculate_total(items: &JsonValue) -> i64 {
     let mut total = 0;
 
-    if let Some(items) = items["items"].as_array() {
+    if let Some(items) = items.as_array() {
         for item in items {
             total += item["price"].as_i64().unwrap() * item["quantity"].as_i64().unwrap();
         }

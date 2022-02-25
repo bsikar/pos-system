@@ -6,7 +6,7 @@ pub use db::init_db;
 pub use db::Db;
 pub use purchase::{Purchase, PurchaseMac, PurchasePatch};
 
-mod purchase;
+pub mod purchase;
 
 #[derive(ThisError, Debug)]
 pub enum Error {
