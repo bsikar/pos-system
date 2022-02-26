@@ -5,16 +5,16 @@ use std::path::PathBuf;
 use std::time::Duration;
 
 // postgress
-const PG_HOST: &str = "localhost";
+const PG_HOST: &str = "0.0.0.0";
 const PG_ROOT_DB: &str = "postgres";
 const PG_ROOT_USER: &str = "postgres";
 const PG_ROOT_PWD: &str = "postgres";
 
 // app database
-const PG_APP_DB: &str = "app_db";
-const PG_APP_USER: &str = "app_user";
-const PG_APP_PWD: &str = "app_pwd_to_change";
-const PG_APP_MAX_CON: u32 = 5;
+const PG_DB: &str = "pos_db";
+const PG_USER: &str = "pos_user";
+const PG_PWD: &str = "pos_user_pwd";
+const PG_MAX_CON: u32 = 5;
 
 // sql files
 const SQL_DIR: &str = "sql/";
@@ -30,7 +30,7 @@ pub async fn init_db() -> Result<Db, sqlx::Error> {
     }
 
     // run the app sql files
-    let app_db = new_db_pool(PG_HOST, PG_APP_DB, PG_APP_USER, PG_APP_PWD, 1).await?;
+    let app_db = new_db_pool(PG_HOST, PG_DB, PG_USER, PG_PWD, 1).await?;
     let mut paths: Vec<PathBuf> = fs::read_dir(SQL_DIR)?
         .into_iter()
         .filter_map(|e| e.ok().map(|e| e.path()))
@@ -48,7 +48,7 @@ pub async fn init_db() -> Result<Db, sqlx::Error> {
     }
 
     // returning the app db
-    new_db_pool(PG_HOST, PG_APP_DB, PG_APP_USER, PG_APP_PWD, PG_APP_MAX_CON).await
+    new_db_pool(PG_HOST, PG_DB, PG_USER, PG_PWD, PG_MAX_CON).await
 }
 
 async fn pexec(db: &Db, file: &str) -> Result<(), sqlx::Error> {

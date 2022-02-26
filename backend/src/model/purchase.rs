@@ -1,5 +1,6 @@
 use crate::model;
 use crate::model::db::Db;
+use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use serde_json::Value as JsonValue;
@@ -20,8 +21,9 @@ pub struct PurchasePatch {
 // Mac: model access controller
 pub struct PurchaseMac;
 
-impl PurchaseMac {
-    pub async fn create(db: &Db, data: PurchasePatch) -> Result<Purchase, model::Error> {
+#[async_trait]
+impl model::Database<Purchase, PurchasePatch, i64> for PurchaseMac {
+    async fn create(db: &Db, data: PurchasePatch) -> Result<Purchase, model::Error> {
         let sql = "INSERT INTO purchase (items, total) VALUES ($1, $2) RETURNING id, items, total";
 
         let items = match data.items {
@@ -38,15 +40,15 @@ impl PurchaseMac {
         Ok(purchase)
     }
 
-    pub async fn get(db: &Db, id: i64) -> Result<Purchase, model::Error> {
+    async fn get(db: &Db, id: i64) -> Result<Purchase, model::Error> {
         let sql = "SELECT id, items, total FROM purchase WHERE id = $1";
         let query = sqlx::query_as(sql).bind(id);
 
         let result = query.fetch_one(db).await;
-        handle_fetch_one_result(result, "purchase", id)
+        Self::handle_fetch_one_result(result, "purchase", id)
     }
 
-    pub async fn update(db: &Db, id: i64, data: PurchasePatch) -> Result<Purchase, model::Error> {
+    async fn update(db: &Db, id: i64, data: PurchasePatch) -> Result<Purchase, model::Error> {
         // TODO this code is just for development, it should be refactored
         // this function should update the purchase with the given id
         // and return the updated purchase
@@ -69,10 +71,10 @@ impl PurchaseMac {
 
         let result = query.fetch_one(db).await;
 
-        handle_fetch_one_result(result, "purchase", id)
+        Self::handle_fetch_one_result(result, "purchase", id)
     }
 
-    pub async fn list(db: &Db) -> Result<Vec<Purchase>, model::Error> {
+    async fn list(db: &Db) -> Result<Vec<Purchase>, model::Error> {
         let sql = "SELECT id, items, total FROM purchase ORDER BY id DESC";
 
         // build sqlx query
@@ -83,25 +85,14 @@ impl PurchaseMac {
         Ok(purchases)
     }
 
-    pub async fn delete(db: &Db, id: i64) -> Result<Purchase, model::Error> {
+    async fn delete(db: &Db, id: i64) -> Result<Purchase, model::Error> {
         let sql = "DELETE FROM purchase WHERE id = $1 RETURNING id, ctime, items, total";
         let query = sqlx::query_as(sql).bind(id);
 
         let result = query.fetch_one(db).await;
 
-        handle_fetch_one_result(result, "purchase", id)
+        Self::handle_fetch_one_result(result, "purchase", id)
     }
-}
-
-fn handle_fetch_one_result(
-    result: Result<Purchase, sqlx::Error>,
-    typ: &'static str,
-    id: i64,
-) -> Result<Purchase, model::Error> {
-    result.map_err(|sqlx_error| match sqlx_error {
-        sqlx::Error::RowNotFound => model::Error::EntityNotFound(typ, id.to_string()),
-        other => model::Error::SqlxError(other),
-    })
 }
 
 pub fn calculate_total(items: &JsonValue) -> i64 {

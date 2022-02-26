@@ -15,6 +15,7 @@ tokio = { version = "1.17.0", features = ["full"] }
 clap = { version = "3.1.2", features = ["cargo"] }
 futures = "0.3.21"
 thiserror = "1.0.30"
+async-trait = "0.1.52"
 
 # json libs
 serde = "1.0.136"

@@ -15,7 +15,7 @@ async fn web_purchase_list() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
-    let purchase_apis = purchase_rest_filters("api", db.clone());
+    let purchase_apis = purchase_rest_filters(db.clone());
 
     // action
     let resp = warp::test::request()
@@ -61,7 +61,7 @@ async fn web_purchase_get_ok_1() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
-    let purchase_apis = purchase_rest_filters("api", db);
+    let purchase_apis = purchase_rest_filters(db);
 
     // action
     let resp = warp::test::request()
@@ -90,7 +90,7 @@ async fn web_purchase_get_ok_2() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
-    let purchase_apis = purchase_rest_filters("api", db);
+    let purchase_apis = purchase_rest_filters(db);
 
     // action
     let resp = warp::test::request()
@@ -119,7 +119,7 @@ async fn web_purchase_get_wrong_id() -> Result<(), Box<dyn std::error::Error>> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
-    let purchase_apis = purchase_rest_filters("api", db);
+    let purchase_apis = purchase_rest_filters(db);
 
     // action
     let resp = warp::test::request()
@@ -128,7 +128,7 @@ async fn web_purchase_get_wrong_id() -> Result<(), Box<dyn std::error::Error>> {
         .reply(&purchase_apis)
         .await;
 
-    assert_eq!(resp.status(), 405, "http status");
+    assert_eq!(resp.status(), 500, "http status");
 
     Ok(())
 }
@@ -138,7 +138,7 @@ async fn web_purchase_create_ok_1() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
-    let purchase_apis = purchase_rest_filters("api", db);
+    let purchase_apis = purchase_rest_filters(db);
 
     // new purchase fixture
     let json = json!([{"name": "test 1", "price": 100, "quantity": 1}]);

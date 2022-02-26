@@ -1,4 +1,3 @@
-#![allow(unused)] // this will silence any warnings
 mod model;
 mod web;
 

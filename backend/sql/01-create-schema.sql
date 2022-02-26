@@ -6,3 +6,9 @@ CREATE TABLE purchase (
     total bigint NOT NULL -- amount of items in entry in cents
 );
 ALTER SEQUENCE purchase_id_seq RESTART WITH 1000; -- start id at 1000 so our test data wont overlap
+
+-- create entry
+CREATE TABLE item (
+    "name" text NOT NULL, -- name of item
+    price bigint NOT NULL -- price of item in cents
+);

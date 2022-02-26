@@ -48,3 +48,24 @@ VALUES
     ]',
     700
 ); -- test entry
+
+INSERT INTO item ("name", price)
+VALUES
+(
+    'single glazed donut',
+    120
+); -- test entry
+
+INSERT INTO item ("name", price)
+VALUES
+(
+    'half dozen glazed donut',
+    625
+); -- test entry
+
+INSERT INTO item ("name", price)
+VALUES
+(
+    'dozen glazed donut',
+    1099
+); -- test entry

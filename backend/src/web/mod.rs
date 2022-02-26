@@ -1,15 +1,33 @@
 use crate::model::{self, Db};
+use crate::web::item::item_rest_filters;
 use crate::web::purchase::purchase_rest_filters;
+use async_trait::async_trait;
+use serde::Serialize;
 use serde_json::json;
 use std::convert::Infallible;
 use std::path::Path;
 use std::sync::Arc;
+use warp::reply::Json;
 use warp::Filter;
 use warp::Rejection;
 use warp::Reply;
 
-mod filter_util;
+mod item;
 mod purchase;
+
+#[async_trait]
+pub trait WebService<I, D> {
+    async fn list(db: Arc<Db>) -> Result<Json, warp::Rejection>;
+    async fn get(db: Arc<Db>, id: I) -> Result<Json, warp::Rejection>;
+    async fn create(db: Arc<Db>, data: D) -> Result<Json, warp::Rejection>;
+    async fn update(db: Arc<Db>, id: I, data: D) -> Result<Json, warp::Rejection>;
+    async fn delete(db: Arc<Db>, id: I) -> Result<Json, warp::Rejection>;
+
+    fn json_response<T: Serialize + std::fmt::Debug>(data: T) -> Result<Json, warp::Rejection> {
+        let response = json!({ "data": data });
+        Ok(warp::reply::json(&response))
+    }
+}
 
 pub async fn start_web(web_folder: &str, web_port: u16, db: Arc<Db>) -> Result<(), Error> {
     // validate web_folder
@@ -18,7 +36,9 @@ pub async fn start_web(web_folder: &str, web_port: u16, db: Arc<Db>) -> Result<(
     }
 
     // apis
-    let apis = purchase_rest_filters("api", db);
+    let api_purchases = purchase_rest_filters(db.clone());
+    let api_items = item_rest_filters(db);
+    let apis = api_purchases.or(api_items);
 
     // static content
     let content = warp::fs::dir(web_folder.to_string());
@@ -51,6 +71,10 @@ async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
     ))
 }
 
+pub fn with_db(db: Arc<Db>) -> impl Filter<Extract = (Arc<Db>,), Error = Infallible> + Clone {
+    warp::any().map(move || db.clone())
+}
+
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     #[error("Web server failed to start because web-folder '{0}' not found.")]
@@ -67,8 +91,7 @@ impl warp::reject::Reject for WebErrorMessage {}
 
 impl WebErrorMessage {
     pub fn rejection(typ: &'static str, message: String) -> warp::Rejection {
-        //warp::reject::custom(WebErrorMessage { typ, message })
-        warp::reject::not_found()
+        warp::reject::custom(WebErrorMessage { typ, message })
     }
 }
 

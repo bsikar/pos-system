@@ -1,6 +1,5 @@
-use crate::model;
 use crate::model::db::init_db;
-use serde_json::Value as JsonValue;
+use crate::model::{self, Database};
 use serde_json::{self, json};
 
 use super::PurchaseMac;
@@ -120,7 +119,7 @@ async fn model_purchase_list() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[tokio::test]
-async fn model_purchase_delete_simple() -> Result<(), Box<dyn std::error::Error>> {
+async fn model_purchase_delete() -> Result<(), Box<dyn std::error::Error>> {
     // fixture
     let db = init_db().await?;
 
