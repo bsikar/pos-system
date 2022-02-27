@@ -16,7 +16,7 @@ async fn model_purchase_create() -> Result<(), Box<dyn std::error::Error>> {
     };
 
     // action
-    let purchase_created = PurchaseMac::create(&db, data_fx.clone()).await?;
+    let purchase_created = PurchaseMac::create(&db, data_fx).await?;
 
     // check
     assert_eq!(purchase_created.items, json!([]));
@@ -35,10 +35,10 @@ async fn model_purchase_get_ok_1() -> Result<(), Box<dyn std::error::Error>> {
     let purchase = PurchaseMac::get(&db, 100).await?;
 
     // check
-    let json = json!([{"name": "test 1", "price": 100, "quantity" : 1 }]);
+    let json = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1}]);
     assert_eq!(purchase.id, 100);
     assert_eq!(purchase.items, json);
-    assert_eq!(purchase.total, 100);
+    assert_eq!(purchase.total, 120);
 
     Ok(())
 }
@@ -53,13 +53,13 @@ async fn model_purchase_get_ok_2() -> Result<(), Box<dyn std::error::Error>> {
 
     // check
     let json = json!([
-        {"name": "test 3-1", "price": 200, "quantity": 2},
-        {"name": "test 3-2", "price": 300, "quantity": 1}
+        {"name": "half dozen glazed donuts", "price": 625, "quantity" : 1},
+        {"name": "dozen glazed donuts", "price": 1099, "quantity" : 2},
     ]);
 
     assert_eq!(purchase.id, 102);
     assert_eq!(purchase.items, json);
-    assert_eq!(purchase.total, 700);
+    assert_eq!(purchase.total, 2823);
 
     Ok(())
 }
@@ -96,24 +96,24 @@ async fn model_purchase_list() -> Result<(), Box<dyn std::error::Error>> {
     assert_eq!(purchases.len(), 3, "number of seed purchases");
 
     let json = json!([
-        [{"name": "test 2", "price": 200, "quantity" : 2}],
-        [{"name": "test 1", "price": 100, "quantity" : 1}],
-        [{"name": "test 3-1", "price": 200, "quantity": 2}, {"name": "test 3-2", "price": 300, "quantity": 1}]
+        [{"name": "half dozen glazed donuts", "price": 625, "quantity": 1}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2}],
+        [{"name": "half dozen glazed donuts", "price": 625, "quantity": 2}],
+        [{"name": "single glazed donut", "price": 120, "quantity": 1}],
     ]);
     // purchase 102
     assert_eq!(purchases[0].id, 102);
-    assert_eq!(purchases[0].items, json[2]);
-    assert_eq!(purchases[0].total, 700);
+    assert_eq!(purchases[0].items, json[0]);
+    assert_eq!(purchases[0].total, 2823);
 
     // purchase 101
     assert_eq!(purchases[1].id, 101);
-    assert_eq!(purchases[1].items, json[0]);
-    assert_eq!(purchases[1].total, 400);
+    assert_eq!(purchases[1].items, json[1]);
+    assert_eq!(purchases[1].total, 1250);
 
     // purchase 100
     assert_eq!(purchases[2].id, 100);
-    assert_eq!(purchases[2].items, json[1]);
-    assert_eq!(purchases[2].total, 100);
+    assert_eq!(purchases[2].items, json[2]);
+    assert_eq!(purchases[2].total, 120);
 
     Ok(())
 }
@@ -127,10 +127,10 @@ async fn model_purchase_delete() -> Result<(), Box<dyn std::error::Error>> {
     let purchase = PurchaseMac::delete(&db, 100).await?;
 
     // check - deleted item
-    let json = json!([{"name": "test 1", "price": 100, "quantity" : 1}]);
+    let json = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1}]);
     assert_eq!(purchase.id, 100);
     assert_eq!(purchase.items, json);
-    assert_eq!(purchase.total, 100);
+    assert_eq!(purchase.total, 120);
 
     // check - list
     let list = PurchaseMac::list(&db).await?;
@@ -161,18 +161,18 @@ async fn model_purchase_update() -> Result<(), Box<dyn std::error::Error>> {
 
 #[tokio::test]
 async fn model_purchase_calculate_total_1() -> Result<(), Box<dyn std::error::Error>> {
-    let json = json!([{"name": "test 1", "price": 100, "quantity": 1}]);
+    let json = json!([{"name": "single donut hole", "price": 30, "quantity": 1}]);
 
-    assert_eq!(calculate_total(&json), 100);
+    assert_eq!(calculate_total(&json), 30);
 
     Ok(())
 }
 
 #[tokio::test]
 async fn model_purchase_calculate_total_2() -> Result<(), Box<dyn std::error::Error>> {
-    let json = json!([{"name": "test 3-1", "price": 200, "quantity": 2}, {"name": "test 3-2", "price": 300, "quantity": 1}]);
+    let json = json!([{"name": "single donut hole", "price": 30, "quantity": 2}, {"name": "dozen donut holes", "price": 200, "quantity": 1}]);
 
-    assert_eq!(calculate_total(&json), 700);
+    assert_eq!(calculate_total(&json), 260);
 
     Ok(())
 }

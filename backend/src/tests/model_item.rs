@@ -24,7 +24,7 @@ async fn model_item_create_ok() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[tokio::test]
-async fn model_item_create_error() -> Result<(), Box<dyn std::error::Error>> {
+async fn model_item_create_duplicate() -> Result<(), Box<dyn std::error::Error>> {
     // fixture
     let db = init_db().await?;
 
@@ -49,7 +49,7 @@ async fn model_item_create_error() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[tokio::test]
-async fn model_item_get_wrong_id() -> Result<(), Box<dyn std::error::Error>> {
+async fn model_item_get_wrong_name() -> Result<(), Box<dyn std::error::Error>> {
     // fixture
     let db = init_db().await?;
 
@@ -84,11 +84,11 @@ async fn model_item_list() -> Result<(), Box<dyn std::error::Error>> {
     assert_eq!(items[0].price, 120);
 
     // half dozen glazed donuts
-    assert_eq!(items[1].name, "half dozen glazed donut");
+    assert_eq!(items[1].name, "half dozen glazed donuts");
     assert_eq!(items[1].price, 625);
 
     // dozen glazed donuts
-    assert_eq!(items[2].name, "dozen glazed donut");
+    assert_eq!(items[2].name, "dozen glazed donuts");
     assert_eq!(items[2].price, 1099);
 
     Ok(())

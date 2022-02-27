@@ -6,12 +6,12 @@ VALUES
     now(),
     '[
         {
-            "name": "test 1",
-            "price": 100,
+            "name": "single glazed donut",
+            "price": 120,
             "quantity": 1
         }
     ]',
-    100
+    120
 ); -- test entry
 
 INSERT INTO purchase (id, ctime, items, total)
@@ -21,12 +21,12 @@ VALUES
     now(),
     '[
         {
-            "name": "test 2",
-            "price": 200,
+            "name": "half dozen glazed donuts",
+            "price": 625,
             "quantity": 2
         }
     ]',
-    400
+    1250
 ); -- test entry
 
 INSERT INTO purchase (id, ctime, items, total)
@@ -36,17 +36,17 @@ VALUES
     now(),
     '[
         {
-            "name": "test 3-1",
-            "price": 200,
-            "quantity": 2
+            "name": "half dozen glazed donuts",
+            "price": 625,
+            "quantity": 1
         },
         {
-            "name": "test 3-2",
-            "price": 300,
-            "quantity": 1
+            "name": "dozen glazed donuts",
+            "price": 1099,
+            "quantity": 2
         }
     ]',
-    700
+    2823
 ); -- test entry
 
 INSERT INTO item ("name", price)
@@ -59,13 +59,13 @@ VALUES
 INSERT INTO item ("name", price)
 VALUES
 (
-    'half dozen glazed donut',
+    'half dozen glazed donuts',
     625
 ); -- test entry
 
 INSERT INTO item ("name", price)
 VALUES
 (
-    'dozen glazed donut',
+    'dozen glazed donuts',
     1099
 ); -- test entry
