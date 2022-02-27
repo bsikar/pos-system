@@ -51,10 +51,10 @@ pub enum Error {
     InvalidItemName(String),
 
     #[error("Invalid Item Price - {0}")]
-    InvalidItemPrice(u32),
+    InvalidItemPrice(i64),
 
     #[error("Invalid Item Quantity - {0}")]
-    InvalidItemQuantity(u32),
+    InvalidItemQuantity(i64),
 
     #[error("Empty Items")]
     EmptyItems,
