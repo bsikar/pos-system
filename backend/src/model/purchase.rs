@@ -1,5 +1,6 @@
 use crate::model;
 use crate::model::db::Db;
+use crate::model::item::Item;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -12,10 +13,38 @@ pub struct Purchase {
     pub total: i64,
 }
 
-#[derive(Default, Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct PurchasePatch {
-    pub items: Option<JsonValue>,
-    pub total: Option<i64>,
+    pub items: JsonValue,
+}
+
+impl PurchasePatch {
+    pub async fn to_items(&self) -> Result<Vec<Item>, model::Error> {
+        let mut items = vec![];
+
+        if self.items == json!(null) || self.items == json!({}) || self.items == json!([]) {
+            return Err(model::Error::EmptyItems);
+        }
+
+        for item in self.items.as_array().unwrap() {
+            let name = item["name"].as_str().unwrap().to_string();
+            let price = item["price"].as_i64().unwrap();
+
+            items.push(Item::new(name, price));
+        }
+
+        Ok(items)
+    }
+
+    pub async fn validate(&self, db: &Db) -> Result<(), model::Error> {
+        let items = self.to_items().await?;
+
+        for item in items {
+            item.validate(db).await?;
+        }
+
+        Ok(())
+    }
 }
 
 // Mac: model access controller
@@ -25,15 +54,14 @@ pub struct PurchaseMac;
 impl model::Database<Purchase, PurchasePatch, i64> for PurchaseMac {
     async fn create(db: &Db, data: PurchasePatch) -> Result<Purchase, model::Error> {
         let sql = "INSERT INTO purchase (items, total) VALUES ($1, $2) RETURNING id, items, total";
+        // validate data
+        data.validate(db).await?;
 
-        let items = match data.items {
-            Some(items) => json!(items),
-            None => json!([]),
-        };
+        let items = data.items;
 
         let query = sqlx::query_as(sql)
             .bind(&items)
-            .bind(data.total.unwrap_or_else(|| calculate_total(&items)));
+            .bind(calculate_total(&items));
 
         let purchase = query.fetch_one(db).await?;
 
@@ -62,11 +90,8 @@ impl model::Database<Purchase, PurchasePatch, i64> for PurchaseMac {
 
         let sql =
             "UPDATE purchase SET items = $1, total = $2 WHERE id = $3 RETURNING id, items, total";
-        let items = match data.items {
-            Some(items) => json!({ "item": items }),
-            None => json!([]),
-        };
-        let total = data.total.unwrap_or_else(|| calculate_total(&items));
+        let items = data.items;
+        let total = calculate_total(&items);
         let query = sqlx::query_as(sql).bind(items).bind(total).bind(id);
 
         let result = query.fetch_one(db).await;

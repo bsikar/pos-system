@@ -9,6 +9,25 @@ pub struct Item {
     pub price: i64,
 }
 
+impl Item {
+    pub fn new(name: String, price: i64) -> Self {
+        Self { name, price }
+    }
+
+    pub async fn validate(&self, db: &Db) -> Result<(), model::Error> {
+        // check if item is in database
+        let result = ItemMac::get_by_name(db, self.name.clone()).await;
+
+        if result.is_err() {
+            Err(model::Error::InvalidItemName(self.name.clone()))
+        } else if result.unwrap().price != self.price {
+            Err(model::Error::InvalidItemPrice(self.price))
+        } else {
+            Ok(())
+        }
+    }
+}
+
 // Mac: model access controller
 pub struct ItemMac;
 
@@ -30,6 +49,14 @@ impl model::Database<Item, Item, String> for ItemMac {
         let item = ItemMac::get_by_name(db, data.name.clone()).await;
         if item.is_ok() {
             return Err(model::Error::ItemAlreadyExists(data.name));
+        }
+
+        if data.price < 0 {
+            return Err(model::Error::InvalidItemPrice(data.price));
+        }
+
+        if data.name.is_empty() {
+            return Err(model::Error::InvalidItemName(data.name));
         }
 
         let sql = r#"INSERT INTO item ("name", price) VALUES ($1, $2) RETURNING "name", price"#;

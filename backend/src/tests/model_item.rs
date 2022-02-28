@@ -38,9 +38,59 @@ async fn model_item_create_duplicate() -> Result<(), Box<dyn std::error::Error>>
 
     // check
     match result {
-        Ok(_) => {}
+        Ok(_) => panic!("Expected error"),
         Err(model::Error::ItemAlreadyExists(name)) => {
             assert_eq!(name, "single glazed donut");
+        }
+        other_err => panic!("unexpected error: {:?}", other_err),
+    }
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn model_item_create_invalid_price() -> Result<(), Box<dyn std::error::Error>> {
+    // fixture
+    let db = init_db().await?;
+
+    let item = Item {
+        name: "single donut hole".to_string(),
+        price: -30,
+    };
+
+    // action
+    let result = ItemMac::create(&db, item).await;
+
+    // check
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(model::Error::InvalidItemPrice(price)) => {
+            assert_eq!(price, -30);
+        }
+        other_err => panic!("unexpected error: {:?}", other_err),
+    }
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn model_item_create_invalid_name() -> Result<(), Box<dyn std::error::Error>> {
+    // fixture
+    let db = init_db().await?;
+
+    let item = Item {
+        name: "".to_string(),
+        price: 0,
+    };
+
+    // action
+    let result = ItemMac::create(&db, item).await;
+
+    // check
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(model::Error::InvalidItemName(name)) => {
+            assert_eq!(name, "");
         }
         other_err => panic!("unexpected error: {:?}", other_err),
     }

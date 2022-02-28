@@ -7,20 +7,119 @@ use super::PurchasePatch;
 use crate::model::purchase::calculate_total;
 
 #[tokio::test]
-async fn model_purchase_create() -> Result<(), Box<dyn std::error::Error>> {
+async fn model_purchase_create_err_1() -> Result<(), Box<dyn std::error::Error>> {
     // fixture
     let db = init_db().await?;
+    let data_fx = PurchasePatch { items: json!({}) };
+
+    // action
+    let result = PurchaseMac::create(&db, data_fx).await;
+
+    // check result
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(model::Error::EmptyItems) => {}
+        other_err => panic!("unexpected error: {:?}", other_err),
+    }
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn model_purchase_create_err_2() -> Result<(), Box<dyn std::error::Error>> {
+    // fixture
+    let db = init_db().await?;
+    let data_fx = PurchasePatch { items: json!([]) };
+
+    // action
+    let result = PurchaseMac::create(&db, data_fx).await;
+
+    // check result
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(model::Error::EmptyItems) => {}
+        other_err => panic!("unexpected error: {:?}", other_err),
+    }
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn model_purchase_create_err_3() -> Result<(), Box<dyn std::error::Error>> {
+    // fixture
+    let db = init_db().await?;
+    let data_fx = PurchasePatch { items: json!(null) };
+
+    // action
+    let result = PurchaseMac::create(&db, data_fx).await;
+
+    // check result
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(model::Error::EmptyItems) => {}
+        other_err => panic!("unexpected error: {:?}", other_err),
+    }
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn model_purchase_create_not_in_database() -> Result<(), Box<dyn std::error::Error>> {
+    // fixture
+    let db = init_db().await?;
+    let json = json!([{"name": "some random item", "price": 120, "quantity" : 1}]);
+    let data_fx = PurchasePatch { items: json };
+
+    // action
+    let result = PurchaseMac::create(&db, data_fx).await;
+
+    // check result
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(model::Error::InvalidItemName(name)) => {
+            assert_eq!(name, "some random item");
+        }
+        other_err => panic!("unexpected error: {:?}", other_err),
+    }
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn model_purchase_create_ok_1() -> Result<(), Box<dyn std::error::Error>> {
+    // fixture
+    let db = init_db().await?;
+    let json = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1}]);
     let data_fx = PurchasePatch {
-        items: Some(json!([])),
-        ..Default::default()
+        items: json.clone(),
     };
 
     // action
     let purchase_created = PurchaseMac::create(&db, data_fx).await?;
 
     // check
-    assert_eq!(purchase_created.items, json!([]));
-    assert_eq!(purchase_created.total, 0);
+    assert_eq!(purchase_created.items, json);
+    assert_eq!(purchase_created.total, 120);
+    assert!(purchase_created.id >= 1000, "id should be >= 1000");
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn model_purchase_create_ok_2() -> Result<(), Box<dyn std::error::Error>> {
+    // fixture
+    let db = init_db().await?;
+    let json = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1}, {"name": "half dozen glazed donuts", "price": 625, "quantity" : 1}]);
+    let data_fx = PurchasePatch {
+        items: json.clone(),
+    };
+
+    // action
+    let purchase_created = PurchaseMac::create(&db, data_fx).await?;
+
+    // check
+    assert_eq!(purchase_created.items, json);
+    assert_eq!(purchase_created.total, 745);
     assert!(purchase_created.id >= 1000, "id should be >= 1000");
 
     Ok(())
@@ -143,16 +242,13 @@ async fn model_purchase_delete() -> Result<(), Box<dyn std::error::Error>> {
 async fn model_purchase_update() -> Result<(), Box<dyn std::error::Error>> {
     // fixture
     let db = init_db().await?;
-    let data_fx = PurchasePatch {
-        items: Some(json!([])),
-        ..Default::default()
-    };
+    let data_fx = PurchasePatch { items: json!([]) };
 
     // action
     let purchase = PurchaseMac::update(&db, 100, data_fx).await?;
 
     // check
-    assert_eq!(purchase.items, json!({"item": []}));
+    assert_eq!(purchase.items, json!([]));
     assert_eq!(purchase.total, 0);
     assert_eq!(purchase.id, 100);
 

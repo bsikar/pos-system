@@ -133,6 +133,56 @@ async fn web_purchase_get_wrong_id() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[tokio::test]
+async fn web_purchase_create_wrong_name() -> Result<()> {
+    // fixture
+    let db = init_db().await?;
+    let db = Arc::new(db);
+    let purchase_apis = purchase_rest_filters(db);
+
+    // new purchase fixture
+    let json = json!([{"name": "wrong name", "price": 1099, "quantity": 1}]);
+    let body = json!({"items": json, "total": calculate_total(&json)});
+
+    // action
+    let resp = warp::test::request()
+        .method("POST")
+        .path("/api/purchases")
+        .json(&body)
+        .reply(&purchase_apis)
+        .await;
+
+    // check status
+    assert_eq!(resp.status(), 500, "http status");
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn web_purchase_create_wrong_price() -> Result<()> {
+    // fixture
+    let db = init_db().await?;
+    let db = Arc::new(db);
+    let purchase_apis = purchase_rest_filters(db);
+
+    // new purchase fixture
+    let json = json!([{"name": "single glazed donut", "price": 9999, "quantity": 1}]);
+    let body = json!({"items": json, "total": calculate_total(&json)});
+
+    // action
+    let resp = warp::test::request()
+        .method("POST")
+        .path("/api/purchases")
+        .json(&body)
+        .reply(&purchase_apis)
+        .await;
+
+    // check status
+    assert_eq!(resp.status(), 500, "http status");
+
+    Ok(())
+}
+
+#[tokio::test]
 async fn web_purchase_create_ok_1() -> Result<()> {
     // fixture
     let db = init_db().await?;
@@ -140,7 +190,7 @@ async fn web_purchase_create_ok_1() -> Result<()> {
     let purchase_apis = purchase_rest_filters(db);
 
     // new purchase fixture
-    let json = json!([{"name": "test 4", "price": 100, "quantity": 1}]);
+    let json = json!([{"name": "dozen glazed donuts", "price": 1099, "quantity": 1}]);
     let body = json!({"items": json, "total": calculate_total(&json)});
 
     // action
@@ -160,7 +210,7 @@ async fn web_purchase_create_ok_1() -> Result<()> {
     // check data
     assert!(purchase.id >= 1000, "purchase.id should be >= to 1000");
     assert_eq!(purchase.items, body["items"]);
-    assert_eq!(purchase.total, 100);
+    assert_eq!(purchase.total, 1099);
 
     Ok(())
 }
@@ -173,7 +223,7 @@ async fn web_purchase_create_ok_2() -> Result<()> {
     let purchase_apis = purchase_rest_filters(db);
 
     // new purchase
-    let json = json!([{"name": "test 5", "price": 100, "quantity": 1}, {"name": "test 6", "price": 200, "quantity": 2}]);
+    let json = json!([{"name": "single glazed donut", "price": 120, "quantity": 1}, {"name": "half dozen glazed donuts", "price": 625, "quantity": 2}]);
     let body = json!({"items": json, "total": calculate_total(&json)});
 
     // action
@@ -193,7 +243,7 @@ async fn web_purchase_create_ok_2() -> Result<()> {
     // check data
     assert!(purchase.id >= 1000, "purchase.id should be >= to 1000");
     assert_eq!(purchase.items, body["items"]);
-    assert_eq!(purchase.total, 500);
+    assert_eq!(purchase.total, 1370);
 
     Ok(())
 }
