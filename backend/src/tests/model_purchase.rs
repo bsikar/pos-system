@@ -77,7 +77,7 @@ async fn model_purchase_create_not_in_database() -> Result<(), Box<dyn std::erro
     match result {
         Ok(_) => panic!("Expected error"),
         Err(model::Error::InvalidItemName(name)) => {
-            assert_eq!(name, "some random item");
+            assert_eq!(name, "some random item")
         }
         other_err => panic!("unexpected error: {:?}", other_err),
     }

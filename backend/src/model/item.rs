@@ -2,6 +2,7 @@ use crate::model;
 use crate::model::Db;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
+use sqlx::Error::RowNotFound;
 
 #[derive(sqlx::FromRow, Debug, Clone, Serialize, Deserialize)]
 pub struct Item {
@@ -18,8 +19,12 @@ impl Item {
         // check if item is in database
         let result = ItemMac::get_by_name(db, self.name.clone()).await;
 
-        if result.is_err() {
-            Err(model::Error::InvalidItemName(self.name.clone()))
+        if let Err(e) = result {
+            if matches!(e, model::Error::SqlxError(RowNotFound)) {
+                Err(model::Error::InvalidItemName(self.name.clone()))
+            } else {
+                Err(e)
+            }
         } else if result.unwrap().price != self.price {
             Err(model::Error::InvalidItemPrice(self.price))
         } else {
@@ -56,7 +61,7 @@ impl model::Database<Item, Item, String> for ItemMac {
         }
 
         if data.name.is_empty() {
-            return Err(model::Error::InvalidItemName(data.name));
+            return Err(model::Error::EmptyItemName);
         }
 
         let sql = r#"INSERT INTO item ("name", price) VALUES ($1, $2) RETURNING "name", price"#;

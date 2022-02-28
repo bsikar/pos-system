@@ -47,15 +47,18 @@ pub enum Error {
     #[error("Item Already Exists - {0}")]
     ItemAlreadyExists(String),
 
-    #[error("Invalid Item Name - {0}")]
-    InvalidItemName(String),
-
     #[error("Invalid Item Price - {0}")]
     InvalidItemPrice(i64),
 
     #[error("Invalid Item Quantity - {0}")]
     InvalidItemQuantity(i64),
 
+    #[error("Invalid Item Name- {0}")]
+    InvalidItemName(String),
+
     #[error("Empty Items")]
     EmptyItems,
+
+    #[error("Empty Item Name")]
+    EmptyItemName,
 }

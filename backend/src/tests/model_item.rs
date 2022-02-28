@@ -89,9 +89,7 @@ async fn model_item_create_invalid_name() -> Result<(), Box<dyn std::error::Erro
     // check
     match result {
         Ok(_) => panic!("Expected error"),
-        Err(model::Error::InvalidItemName(name)) => {
-            assert_eq!(name, "");
-        }
+        Err(model::Error::EmptyItemName) => {}
         other_err => panic!("unexpected error: {:?}", other_err),
     }
 
