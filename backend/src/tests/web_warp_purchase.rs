@@ -1,6 +1,6 @@
 use crate::model::purchase::calculate_total;
 use crate::model::{init_db, Purchase};
-use crate::web::purchase_rest_filters;
+use crate::web::warp::purchase_rest_filters;
 use anyhow::Context;
 use anyhow::Result;
 use serde::Deserialize;

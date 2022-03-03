@@ -1,6 +1,6 @@
 use super::WebService;
 use crate::model::{Database, Db, PurchaseMac, PurchasePatch};
-use crate::web::with_db;
+use crate::web::warp::with_db;
 use async_trait::async_trait;
 use std::sync::Arc;
 use warp::reply::Json;
@@ -82,5 +82,5 @@ pub fn purchase_rest_filters(
 }
 
 #[cfg(test)]
-#[path = "../tests/web_purchase.rs"]
+#[path = "../../tests/web_warp_purchase.rs"]
 mod tests;
