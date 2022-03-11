@@ -1,5 +1,8 @@
 #![allow(clippy::enum_variant_names)]
 
+#[macro_use]
+extern crate actix_web;
+
 mod model;
 mod web;
 

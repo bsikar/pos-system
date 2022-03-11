@@ -13,7 +13,7 @@ pub async fn start_web(
 ) -> Result<(), Error> {
     match web_framework {
         "warp" => warp::start_web(web_folder, web_port, db).await,
-        "actix" => actix::start_web(web_folder, web_port, db).await,
+        "actix" => actix::start_web(web_folder.to_string(), web_port, db).await,
         _ => panic!("Unknown web framework"),
     }
 }
@@ -25,4 +25,7 @@ pub enum Error {
 
     #[error(transparent)]
     ActixError(#[from] actix_web::Error),
+
+    #[error(transparent)]
+    IOError(#[from] std::io::Error),
 }

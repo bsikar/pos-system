@@ -55,9 +55,10 @@ pub async fn start_web(web_folder: &str, web_port: u16, db: Arc<Db>) -> Result<(
     let routes = apis.or(static_site);
 
     println!(
-        "Started 0.0.0.0:{} with web_folder: {}",
+        "Started on 0.0.0.0:{} with web_folder: {} and using warp",
         web_port, web_folder
     );
+
     warp::serve(routes).run(([0, 0, 0, 0], web_port)).await;
 
     Ok(())

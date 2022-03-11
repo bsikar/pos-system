@@ -90,5 +90,5 @@ async fn new_db_pool(
 }
 
 #[cfg(test)]
-#[path = "../tests/model_db.rs"]
-mod tests;
+#[path = "../../tests/model/db.rs"]
+mod model;

@@ -34,6 +34,7 @@ impl Item {
 }
 
 // Mac: model access controller
+#[derive(Deserialize)]
 pub struct ItemMac;
 
 impl ItemMac {
@@ -114,5 +115,5 @@ impl model::Database<Item, Item, String> for ItemMac {
 }
 
 #[cfg(test)]
-#[path = "../tests/model_item.rs"]
-mod tests;
+#[path = "../../tests/model/item.rs"]
+mod model;
