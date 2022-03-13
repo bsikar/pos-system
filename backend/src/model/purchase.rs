@@ -133,5 +133,5 @@ pub fn calculate_total(items: &JsonValue) -> i64 {
 }
 
 #[cfg(test)]
-#[path = "../../tests/model/purchase.rs"]
-mod model;
+#[path = "../../tests/model_tests/purchase.rs"]
+mod model_tests;

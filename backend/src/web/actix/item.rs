@@ -48,5 +48,5 @@ pub async fn delete(db: Data<Arc<Db>>, name: String) -> HttpResponse {
 }
 
 #[cfg(test)]
-#[path = "../../../tests/web/actix/item.rs"]
-mod actix;
+#[path = "../../../tests/web_tests/actix_tests/item.rs"]
+mod actix_tests;

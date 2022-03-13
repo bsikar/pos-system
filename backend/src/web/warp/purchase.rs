@@ -82,5 +82,5 @@ pub fn purchase_rest_filters(
 }
 
 #[cfg(test)]
-#[path = "../../../tests/web/warp/purchase.rs"]
-mod warp;
+#[path = "../../../tests/web_tests/warp_tests/purchase.rs"]
+mod warp_tests;

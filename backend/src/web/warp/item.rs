@@ -86,5 +86,5 @@ pub fn item_rest_filters(
 }
 
 #[cfg(test)]
-#[path = "../../../tests/web/warp/item.rs"]
-mod warp;
+#[path = "../../../tests/web_tests/warp_tests/item.rs"]
+mod warp_tests;

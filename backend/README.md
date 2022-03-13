@@ -60,7 +60,7 @@ heres the break down of what that command does:
 ## run tests
 to test the code (run tests) run the following command
 ```sh
-cargo watch -q -c -w src/ -x 'test model_ -- --test-threads=1 --nocapture'
+cargo watch -q -c -w src/ -x 'test model_ -- --test-threads=1 --nocapture --color=always'
 ```
 heres the break down of waht that command does:
 
@@ -75,7 +75,6 @@ heres the break down of waht that command does:
 the command: `test model_db_ -- --test-threads=1 --nocapture`
 
 `test model_` : run the tests that start with the name `model_`
-
 
 `--` : this is needed before the test flags to run the application with those flags
 
@@ -83,14 +82,21 @@ the command: `test model_db_ -- --test-threads=1 --nocapture`
 
 `--nocapture` : show output of the test
 
+`--color=always` : enable color in the output
+
 you can run the web tests in the same way
 ```sh
-cargo watch -q -c -w src/ -x 'test web_ -- --test-threads=1 --nocapture'
+cargo watch -q -c -w src/ -x 'test web_ -- --test-threads=1 --nocapture --color=always'
+```
+
+to run all tests
+```sh
+cargo watch -q -c -w src/ -x 'test -- --test-threads=1 --nocapture --color=always'
 ```
 
 ## start the website
 ```sh
-cargo watch -q -c -w src/ -x 'run -- -f ../frontend/web-folder -p 3030'
+cargo watch -q -c -w src/ -x 'run -- -i ../frontend/web-folder -f actix -p 3030'
 ```
 heres the break down of waht that command does:
 
@@ -106,10 +112,10 @@ the command: `test model_db_ -- --test-threads=1 --nocapture`
 
 `test model_` : run the tests that start with the name `model_`
 
-
 `--` : this is needed before the test flags to run the application with those flags
 
+`-i ../frontend/web-folder` : this is the path to the webfolder which will be used
 
-`-f ../frontend/web-folder` : this is the path to the webfolder which will be used
+`-f actix` : this is the web framework that the server will use
 
 `-p 3030` : bind the http server to port `3030`
