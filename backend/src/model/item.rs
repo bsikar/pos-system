@@ -1,5 +1,4 @@
-use crate::model;
-use crate::model::Db;
+use crate::model::{self, Db};
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use sqlx::Error::RowNotFound;

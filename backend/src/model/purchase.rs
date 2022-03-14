@@ -1,10 +1,7 @@
-use crate::model;
-use crate::model::db::Db;
-use crate::model::item::Item;
+use crate::model::{self, db::Db, item::Item};
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
-use serde_json::json;
-use serde_json::Value as JsonValue;
+use serde_json::{json, Value as JsonValue};
 
 #[derive(sqlx::FromRow, Debug, Clone, Serialize, Deserialize)]
 pub struct Purchase {

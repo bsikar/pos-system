@@ -1,6 +1,5 @@
 use crate::model::{Database, Db, PurchaseMac, PurchasePatch};
-use actix_web::web::Data;
-use actix_web::web::Json;
+use actix_web::web::{Data, Json};
 use actix_web::HttpResponse;
 use std::sync::Arc;
 

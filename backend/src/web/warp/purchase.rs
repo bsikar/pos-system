@@ -3,8 +3,7 @@ use crate::model::{Database, Db, PurchaseMac, PurchasePatch};
 use crate::web::warp::with_db;
 use async_trait::async_trait;
 use std::sync::Arc;
-use warp::reply::Json;
-use warp::Filter;
+use warp::{reply::Json, Filter};
 
 pub struct PurchaseService;
 

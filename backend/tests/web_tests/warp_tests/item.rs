@@ -1,17 +1,13 @@
 use crate::model::{init_db, item::Item};
 use crate::web::warp::item_rest_filters;
-use anyhow::Context;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use serde::Deserialize;
-use serde_json::json;
-use serde_json::{from_str, from_value, Value};
-use std::str::from_utf8;
-use std::sync::Arc;
-use warp::hyper::body::Bytes;
-use warp::hyper::Response;
+use serde_json::{from_str, from_value, json, Value};
+use std::{str::from_utf8, sync::Arc};
+use warp::hyper::{body::Bytes, Response};
 
 #[tokio::test]
-async fn web_item_list() -> Result<()> {
+async fn web_warp_item_list() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
@@ -54,7 +50,7 @@ async fn web_item_list() -> Result<()> {
 }
 
 #[tokio::test]
-async fn web_item_get_ok() -> Result<()> {
+async fn web_warp_item_get_ok() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
@@ -82,7 +78,7 @@ async fn web_item_get_ok() -> Result<()> {
 }
 
 #[tokio::test]
-async fn web_item_wrong_name() -> Result<(), Box<dyn std::error::Error>> {
+async fn web_warp_item_wrong_name() -> Result<(), Box<dyn std::error::Error>> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
@@ -102,7 +98,7 @@ async fn web_item_wrong_name() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[tokio::test]
-async fn web_item_create_ok() -> Result<()> {
+async fn web_warp_item_create_ok() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
@@ -133,7 +129,7 @@ async fn web_item_create_ok() -> Result<()> {
 }
 
 #[tokio::test]
-async fn web_item_create_duplicate() -> Result<(), Box<dyn std::error::Error>> {
+async fn web_warp_item_create_duplicate() -> Result<(), Box<dyn std::error::Error>> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);

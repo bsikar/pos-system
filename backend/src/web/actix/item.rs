@@ -1,9 +1,6 @@
-use crate::model::item::Item;
-use crate::model::item::ItemMac;
-use crate::model::Database;
-use crate::web::Db;
-use actix_web::web::Data;
-use actix_web::web::Json;
+use crate::model::item::{Item, ItemMac};
+use crate::{model::Database, web::Db};
+use actix_web::web::{Data, Json};
 use actix_web::HttpResponse;
 use std::sync::Arc;
 

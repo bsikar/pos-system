@@ -1,5 +1,4 @@
-use crate::web::Db;
-use crate::web::Error;
+use crate::web::{Db, Error};
 use actix_files::Files;
 use actix_web::{web::Data, App, HttpServer};
 

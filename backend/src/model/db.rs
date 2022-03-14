@@ -1,8 +1,5 @@
-use sqlx::postgres::PgPoolOptions;
-use sqlx::{Pool, Postgres};
-use std::fs;
-use std::path::PathBuf;
-use std::time::Duration;
+use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
+use std::{fs, path::PathBuf, time::Duration};
 
 // postgress
 const PG_HOST: &str = "0.0.0.0";

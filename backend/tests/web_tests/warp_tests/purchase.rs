@@ -1,18 +1,13 @@
-use crate::model::purchase::calculate_total;
-use crate::model::{init_db, Purchase};
+use crate::model::{init_db, purchase::calculate_total, Purchase};
 use crate::web::warp::purchase_rest_filters;
-use anyhow::Context;
-use anyhow::Result;
+use anyhow::{Context, Result};
 use serde::Deserialize;
-use serde_json::json;
-use serde_json::{from_str, from_value, Value};
-use std::str::from_utf8;
-use std::sync::Arc;
-use warp::hyper::body::Bytes;
-use warp::hyper::Response;
+use serde_json::{from_str, from_value, json, Value};
+use std::{str::from_utf8, sync::Arc};
+use warp::hyper::{body::Bytes, Response};
 
 #[tokio::test]
-async fn web_purchase_list() -> Result<()> {
+async fn web_warp_purchase_list() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
@@ -56,7 +51,7 @@ async fn web_purchase_list() -> Result<()> {
 }
 
 #[tokio::test]
-async fn web_purchase_get_ok_1() -> Result<()> {
+async fn web_warp_purchase_get_ok_1() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
@@ -85,7 +80,7 @@ async fn web_purchase_get_ok_1() -> Result<()> {
 }
 
 #[tokio::test]
-async fn web_purchase_get_ok_2() -> Result<()> {
+async fn web_warp_purchase_get_ok_2() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
@@ -114,7 +109,7 @@ async fn web_purchase_get_ok_2() -> Result<()> {
 }
 
 #[tokio::test]
-async fn web_purchase_get_wrong_id() -> Result<(), Box<dyn std::error::Error>> {
+async fn web_warp_purchase_get_wrong_id() -> Result<(), Box<dyn std::error::Error>> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
@@ -133,7 +128,7 @@ async fn web_purchase_get_wrong_id() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 #[tokio::test]
-async fn web_purchase_create_wrong_name() -> Result<()> {
+async fn web_warp_purchase_create_wrong_name() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
@@ -158,7 +153,7 @@ async fn web_purchase_create_wrong_name() -> Result<()> {
 }
 
 #[tokio::test]
-async fn web_purchase_create_wrong_price() -> Result<()> {
+async fn web_warp_purchase_create_wrong_price() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
@@ -183,7 +178,7 @@ async fn web_purchase_create_wrong_price() -> Result<()> {
 }
 
 #[tokio::test]
-async fn web_purchase_create_ok_1() -> Result<()> {
+async fn web_warp_purchase_create_ok_1() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
@@ -216,7 +211,7 @@ async fn web_purchase_create_ok_1() -> Result<()> {
 }
 
 #[tokio::test]
-async fn web_purchase_create_ok_2() -> Result<()> {
+async fn web_warp_purchase_create_ok_2() -> Result<()> {
     // fixture
     let db = init_db().await?;
     let db = Arc::new(db);
