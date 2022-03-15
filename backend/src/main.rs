@@ -7,7 +7,6 @@ mod model;
 mod web;
 
 use crate::model::init_db;
-use std::env;
 use web::start_web;
 
 use clap::Arg;
