@@ -1,5 +1,4 @@
 use crate::model::Db;
-use std::sync::Arc;
 use thiserror::Error as ThisError;
 
 mod actix;
@@ -9,7 +8,7 @@ pub async fn start_web(
     web_folder: &str,
     web_port: u16,
     web_framework: &str,
-    db: Arc<Db>,
+    db: Db,
 ) -> Result<(), Error> {
     match web_framework {
         "warp" => warp::start_web(web_folder, web_port, db).await,

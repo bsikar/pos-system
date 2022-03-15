@@ -26,13 +26,14 @@ pub trait WebService<I, D> {
     }
 }
 
-pub async fn start_web(web_folder: &str, web_port: u16, db: Arc<Db>) -> Result<(), web::Error> {
+pub async fn start_web(web_folder: &str, web_port: u16, db: Db) -> Result<(), web::Error> {
     // validate web_folder
     if !Path::new(web_folder).exists() {
         return Err(web::Error::WarpError(FailStartWebFolderNotFound(
             web_folder.to_string(),
         )));
     }
+    let db = Arc::new(db);
 
     // apis
     let api_purchases = purchase_rest_filters(db.clone());

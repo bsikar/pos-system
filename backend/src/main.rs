@@ -8,7 +8,6 @@ mod web;
 
 use crate::model::init_db;
 use std::env;
-use std::sync::Arc;
 use web::start_web;
 
 use clap::Arg;
@@ -57,7 +56,6 @@ async fn main() {
 
     // get the database
     let db = init_db().await.expect("Cannot init db");
-    let db = Arc::new(db);
 
     // start the server
     match start_web(web_folder, web_port, web_framework, db).await {

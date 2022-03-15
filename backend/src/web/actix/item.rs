@@ -2,17 +2,16 @@ use crate::model::item::{Item, ItemMac};
 use crate::{model::Database, web::Db};
 use actix_web::web::{Data, Json};
 use actix_web::HttpResponse;
-use std::sync::Arc;
 
 #[get("/api/items")]
-pub async fn list(db: Data<Arc<Db>>) -> HttpResponse {
+pub async fn list(db: Data<Db>) -> HttpResponse {
     let items = ItemMac::list(&db).await.unwrap();
 
     HttpResponse::Ok().json(items)
 }
 
 #[get("/api/items/{name}")]
-pub async fn get(db: Data<Arc<Db>>, name: String) -> HttpResponse {
+pub async fn get(db: Data<Db>, name: String) -> HttpResponse {
     let name = name.replace("%20", " ");
     let item = ItemMac::get(&db, name).await.unwrap();
 
@@ -20,7 +19,7 @@ pub async fn get(db: Data<Arc<Db>>, name: String) -> HttpResponse {
 }
 
 #[post("/api/items")]
-pub async fn create(db: Data<Arc<Db>>, item: Json<Item>) -> HttpResponse {
+pub async fn create(db: Data<Db>, item: Json<Item>) -> HttpResponse {
     let item = item.into_inner();
     let item = ItemMac::create(&db, item).await.unwrap();
 
@@ -28,7 +27,7 @@ pub async fn create(db: Data<Arc<Db>>, item: Json<Item>) -> HttpResponse {
 }
 
 #[put("/api/items/{name}")]
-pub async fn update(db: Data<Arc<Db>>, name: String, item: Json<Item>) -> HttpResponse {
+pub async fn update(db: Data<Db>, name: String, item: Json<Item>) -> HttpResponse {
     let name = name.replace("%20", " ");
     let item = item.into_inner();
     let item = ItemMac::update(&db, name, item).await.unwrap();
@@ -37,7 +36,7 @@ pub async fn update(db: Data<Arc<Db>>, name: String, item: Json<Item>) -> HttpRe
 }
 
 #[delete("/api/items/{name}")]
-pub async fn delete(db: Data<Arc<Db>>, name: String) -> HttpResponse {
+pub async fn delete(db: Data<Db>, name: String) -> HttpResponse {
     let name = name.replace("%20", " ");
     let item = ItemMac::delete(&db, name).await.unwrap();
 

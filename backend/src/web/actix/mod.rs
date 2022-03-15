@@ -2,12 +2,10 @@ use crate::web::{Db, Error};
 use actix_files::Files;
 use actix_web::{web::Data, App, HttpServer};
 
-use std::sync::Arc;
-
 mod item;
 mod purchase;
 
-pub async fn start_web(web_folder: String, web_port: u16, db: Arc<Db>) -> Result<(), Error> {
+pub async fn start_web(web_folder: String, web_port: u16, db: Db) -> Result<(), Error> {
     let folder = web_folder.clone();
 
     let server = HttpServer::new(move || {

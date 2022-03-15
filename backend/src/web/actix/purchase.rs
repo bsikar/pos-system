@@ -1,17 +1,16 @@
 use crate::model::{Database, Db, PurchaseMac, PurchasePatch};
 use actix_web::web::{Data, Json};
 use actix_web::HttpResponse;
-use std::sync::Arc;
 
 #[get("/api/purchases")]
-pub async fn list(db: Data<Arc<Db>>) -> HttpResponse {
+pub async fn list(db: Data<Db>) -> HttpResponse {
     let purchases = PurchaseMac::list(&db).await.unwrap();
 
     HttpResponse::Ok().json(purchases)
 }
 
 #[get("/api/purchases/{id}")]
-pub async fn get(db: Data<Arc<Db>>, id: String) -> HttpResponse {
+pub async fn get(db: Data<Db>, id: String) -> HttpResponse {
     let id = id.parse::<i64>().unwrap();
     let purchase = PurchaseMac::get(&db, id).await.unwrap();
 
@@ -19,7 +18,7 @@ pub async fn get(db: Data<Arc<Db>>, id: String) -> HttpResponse {
 }
 
 #[post("/api/purchases")]
-pub async fn create(db: Data<Arc<Db>>, purchase: Json<PurchasePatch>) -> HttpResponse {
+pub async fn create(db: Data<Db>, purchase: Json<PurchasePatch>) -> HttpResponse {
     let purchase = purchase.into_inner();
     let purchase = PurchaseMac::create(&db, purchase).await.unwrap();
 
@@ -27,7 +26,7 @@ pub async fn create(db: Data<Arc<Db>>, purchase: Json<PurchasePatch>) -> HttpRes
 }
 
 #[put("/api/purchases/{id}")]
-pub async fn update(db: Data<Arc<Db>>, id: String, purchase: Json<PurchasePatch>) -> HttpResponse {
+pub async fn update(db: Data<Db>, id: String, purchase: Json<PurchasePatch>) -> HttpResponse {
     let id = id.parse::<i64>().unwrap();
     let purchase = purchase.into_inner();
     let purchase = PurchaseMac::update(&db, id, purchase).await.unwrap();
@@ -36,7 +35,7 @@ pub async fn update(db: Data<Arc<Db>>, id: String, purchase: Json<PurchasePatch>
 }
 
 #[delete("/api/purchases/{id}")]
-pub async fn delete(db: Data<Arc<Db>>, id: String) -> HttpResponse {
+pub async fn delete(db: Data<Db>, id: String) -> HttpResponse {
     let id = id.parse::<i64>().unwrap();
     let purchase = PurchaseMac::delete(&db, id).await.unwrap();
 
