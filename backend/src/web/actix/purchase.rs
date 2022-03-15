@@ -43,6 +43,14 @@ pub async fn delete(db: Data<Arc<Db>>, id: String) -> HttpResponse {
     HttpResponse::Ok().json(purchase)
 }
 
+pub fn purchase_rest_filters(cfg: &mut actix_web::web::ServiceConfig) {
+    cfg.service(list);
+    cfg.service(get);
+    cfg.service(create);
+    cfg.service(update);
+    cfg.service(delete);
+}
+
 #[cfg(test)]
 #[path = "../../../tests/web_tests/actix_tests/purchase.rs"]
 mod actix_tests;

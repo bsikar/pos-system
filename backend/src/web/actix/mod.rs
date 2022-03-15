@@ -13,16 +13,8 @@ pub async fn start_web(web_folder: String, web_port: u16, db: Arc<Db>) -> Result
     let server = HttpServer::new(move || {
         App::new()
             .app_data(Data::new(db.clone()))
-            .service(item::list)
-            .service(item::get)
-            .service(item::create)
-            .service(item::update)
-            .service(item::delete)
-            .service(purchase::list)
-            .service(purchase::get)
-            .service(purchase::create)
-            .service(purchase::update)
-            .service(purchase::delete)
+            .configure(item::item_rest_filters)
+            .configure(purchase::purchase_rest_filters)
             .service(Files::new("/", &web_folder).index_file("index.html"))
     })
     .bind(("0.0.0.0", web_port))?;

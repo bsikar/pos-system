@@ -1,6 +1,6 @@
 ## pos-system
 
-#GET http://127.0.0.1:3030/
+GET http://127.0.0.1:3030/api/items
 
 #POST http://127.0.0.1:3030/api/purchases
 #Content-Type: application/json
@@ -20,10 +20,10 @@
 #    ]
 #}
 
-POST http://127.0.0.1:3030/api/items
-Content-Type: application/json
-
-{
-  "name": "single donut hole",
-  "price": 30
-}
+#POST http://127.0.0.1:3030/api/items
+#Content-Type: application/json
+#
+#{
+#  "name": "single donut hole",
+#  "price": 30
+#}

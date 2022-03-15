@@ -44,6 +44,14 @@ pub async fn delete(db: Data<Arc<Db>>, name: String) -> HttpResponse {
     HttpResponse::Ok().json(item)
 }
 
+pub fn item_rest_filters(cfg: &mut actix_web::web::ServiceConfig) {
+    cfg.service(list);
+    cfg.service(get);
+    cfg.service(create);
+    cfg.service(update);
+    cfg.service(delete);
+}
+
 #[cfg(test)]
 #[path = "../../../tests/web_tests/actix_tests/item.rs"]
 mod actix_tests;
