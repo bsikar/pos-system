@@ -4,7 +4,7 @@ a server and website for a point of sale system
 TODO:
 
 **backend**:
-* add tests for actix
+* add ctime
 * add user login info (one for user one for admin)
 
 **frontend**:
