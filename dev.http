@@ -24,6 +24,6 @@ POST http://127.0.0.1:3030/api/items
 Content-Type: application/json
 
 {
-  "name": "half dozen donut hole",
-  "price": 150
+  "name": "single donut hole",
+  "price": 30
 }

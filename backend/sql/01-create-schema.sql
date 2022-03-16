@@ -1,5 +1,5 @@
 -- create entry
-CREATE TABLE purchase (
+CREATE TABLE IF NOT EXISTS purchase (
     id bigserial NOT NULL, -- id of entry
     ctime timestamp with time zone DEFAULT now() NOT NULL, -- creation time
     items json NOT NULL, -- items in entry
@@ -8,7 +8,7 @@ CREATE TABLE purchase (
 ALTER SEQUENCE purchase_id_seq RESTART WITH 1000; -- start id at 1000 so our test data wont overlap
 
 -- create entry
-CREATE TABLE item (
+CREATE TABLE IF NOT EXISTS item (
     "name" text NOT NULL, -- name of item
     price bigint NOT NULL -- price of item in cents
 );
