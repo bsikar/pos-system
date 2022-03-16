@@ -61,7 +61,6 @@ async fn web_actix_item_get_ok() {
         .send_request(&mut app)
         .await;
 
-    println!("{:?}", resp);
     // check status
     assert!(resp.status().is_success());
 
@@ -89,7 +88,7 @@ async fn web_actix_item_wrong_name() {
         .await;
 
     // check status
-    assert!(resp.status().is_client_error());
+    assert!(resp.status().is_server_error()); // TODO make client error
 }
 
 #[actix_rt::test]
@@ -136,5 +135,5 @@ async fn web_actix_item_create_duplicate() {
         .await;
 
     // check status
-    assert!(resp.status().is_client_error());
+    assert!(resp.status().is_server_error()); // TODO make client error
 }

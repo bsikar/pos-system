@@ -1,6 +1,6 @@
 use super::handle_result;
 use crate::model::{Database, Db, PurchaseMac, PurchasePatch};
-use actix_web::web::{Data, Json};
+use actix_web::web::{Data, Json, Path};
 use actix_web::HttpResponse;
 
 #[get("/api/purchases")]
@@ -11,9 +11,8 @@ pub async fn list(db: Data<Db>) -> HttpResponse {
 }
 
 #[get("/api/purchases/{id}")]
-pub async fn get(db: Data<Db>, id: String) -> HttpResponse {
-    let id = id.parse::<i64>().unwrap();
-    let purchase = PurchaseMac::get(&db, id).await;
+pub async fn get(db: Data<Db>, id: Path<i64>) -> HttpResponse {
+    let purchase = PurchaseMac::get(&db, *id).await;
 
     handle_result(purchase)
 }
@@ -27,18 +26,16 @@ pub async fn create(db: Data<Db>, purchase: Json<PurchasePatch>) -> HttpResponse
 }
 
 #[put("/api/purchases/{id}")]
-pub async fn update(db: Data<Db>, id: String, purchase: Json<PurchasePatch>) -> HttpResponse {
-    let id = id.parse::<i64>().unwrap();
+pub async fn update(db: Data<Db>, id: Path<i64>, purchase: Json<PurchasePatch>) -> HttpResponse {
     let purchase = purchase.into_inner();
-    let purchase = PurchaseMac::update(&db, id, purchase).await;
+    let purchase = PurchaseMac::update(&db, *id, purchase).await;
 
     handle_result(purchase)
 }
 
 #[delete("/api/purchases/{id}")]
-pub async fn delete(db: Data<Db>, id: String) -> HttpResponse {
-    let id = id.parse::<i64>().unwrap();
-    let purchase = PurchaseMac::delete(&db, id).await;
+pub async fn delete(db: Data<Db>, id: Path<i64>) -> HttpResponse {
+    let purchase = PurchaseMac::delete(&db, *id).await;
 
     handle_result(purchase)
 }
