@@ -12,16 +12,35 @@ once the has entered all of the required items, they will be able to press compl
 there will be an admin pannel where the database entries can be deleted or altered and there will be an option to allow cash tranations to be added in the sale database.
 
 # start
-## start the database
+## start the database using docker-compose (easiest)
+```sh
+sudo docker-compose up
+```
+this works because it uses the `docker-compose.yml` file
+
+## start the database using docker cli
 to start the database run the following command:
 ```sh
-docker run --rm -p 5432:5432 -e "POSTGRES_PASSWORD=postgres" --name pos-pg postgres:14
+sudo docker run --rm \
+	--name pos-pg \
+	-v $PWD/postgres-data/:/var/lib/postgresql/data \
+	-p 5432:5432 \
+	-e POSTGRES_PASSWORD=postgres_password \
+	-e POSTGRES_USER=postgres_user \
+	-e POSTGRES_DB=postgres_db \
+	postgres:14
 ```
 heres the break down of what that command does:
 
 `run` : start an instance of a docker container
 
 `--rm` :  removes a container after it exits
+
+`--name pos-pg` : assign the name `pos-pg` to the container (`pos-pg` meaning "point of sale postgres")
+
+`-v <host directory>:<container directory>`
+
+`-v $PWD/postgres-data/:/var/lib/postgresql/data` :  put the data from the container to the local host
 
 `-p <container's TCP port>:<host's TCP port>`
 
@@ -31,7 +50,6 @@ the port of `5432` is usually the default port for postgres
 
 `-e "POSTGRES_PASSWORD=postgres"` : set the enviromental variable `POSTGRES_PASSWORD` to `postgres`
 
-`--name pos-pg` : assign the name `pos-pg` to the container (`pos-pg` meaning "point of sale postgres")
 
 `postgres:14` : use the [docker image](https://hub.docker.com/_/postgres) `posgres` version `14`
 

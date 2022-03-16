@@ -3,14 +3,14 @@ use std::{fs, path::PathBuf, time::Duration};
 
 // postgress
 const PG_HOST: &str = "0.0.0.0";
-const PG_ROOT_DB: &str = "postgres";
-const PG_ROOT_USER: &str = "postgres";
-const PG_ROOT_PWD: &str = "postgres";
+const _PG_ROOT_DB: &str = "postgres";
+const _PG_ROOT_USER: &str = "postgres";
+const _PG_ROOT_PWD: &str = "postgres";
 
 // app database
+const PG_USER: &str = "user";
+const PG_PWD: &str = "password";
 const PG_DB: &str = "pos_db";
-const PG_USER: &str = "pos_user";
-const PG_PWD: &str = "pos_user_pwd";
 const PG_MAX_CON: u32 = 5;
 
 // sql files
@@ -21,10 +21,10 @@ pub type Db = Pool<Postgres>;
 
 pub async fn init_db() -> Result<Db, sqlx::Error> {
     // create the database with the root user (for development only)
-    {
-        let root_db = new_db_pool(PG_HOST, PG_ROOT_DB, PG_ROOT_USER, PG_ROOT_PWD, 1).await?;
-        pexec(&root_db, SQL_RECREATE).await?;
-    }
+    //{
+    //    let root_db = new_db_pool(PG_HOST, _PG_ROOT_DB, _PG_ROOT_USER, _PG_ROOT_PWD, 1).await?;
+    //    pexec(&root_db, SQL_RECREATE).await?;
+    //}
 
     // run the app sql files
     let app_db = new_db_pool(PG_HOST, PG_DB, PG_USER, PG_PWD, 1).await?;
