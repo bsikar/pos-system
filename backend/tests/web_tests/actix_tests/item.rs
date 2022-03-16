@@ -45,3 +45,96 @@ async fn web_actix_item_list() {
     assert_eq!(body[2].name, json[2]["name"]);
     assert_eq!(body[2].price, json[2]["price"]);
 }
+
+#[actix_rt::test]
+async fn web_actix_item_get_ok() {
+    // fixture
+    let db = init_db().await.unwrap();
+    let app = App::new()
+        .app_data(Data::new(db))
+        .configure(item_rest_filters);
+    let mut app = test::init_service(app).await;
+
+    // action
+    let resp = TestRequest::get()
+        .uri("/api/items/single%20glazed%20donut")
+        .send_request(&mut app)
+        .await;
+
+    println!("{:?}", resp);
+    // check status
+    assert!(resp.status().is_success());
+
+    // extract body
+    let body: Item = test::read_body_json(resp).await;
+
+    // check body
+    assert_eq!(body.name, "single glazed donut");
+    assert_eq!(body.price, 120);
+}
+
+#[actix_rt::test]
+async fn web_actix_item_wrong_name() {
+    // fixture
+    let db = init_db().await.unwrap();
+    let app = App::new()
+        .app_data(Data::new(db))
+        .configure(item_rest_filters);
+    let mut app = test::init_service(app).await;
+
+    // action
+    let resp = TestRequest::get()
+        .uri("/api/items/wrong%20name")
+        .send_request(&mut app)
+        .await;
+
+    // check status
+    assert!(resp.status().is_client_error());
+}
+
+#[actix_rt::test]
+async fn web_actix_item_create_ok() {
+    // fixture
+    let db = init_db().await.unwrap();
+    let app = App::new()
+        .app_data(Data::new(db))
+        .configure(item_rest_filters);
+    let mut app = test::init_service(app).await;
+
+    // action
+    let resp = TestRequest::post()
+        .uri("/api/items")
+        .set_json(&json!({"name": "single donut hole", "price": 30}))
+        .send_request(&mut app)
+        .await;
+
+    // check status
+    assert!(resp.status().is_success());
+
+    // extract body
+    let body: Item = test::read_body_json(resp).await;
+
+    // check body
+    assert_eq!(body.name, "single donut hole");
+    assert_eq!(body.price, 30);
+}
+
+#[actix_rt::test]
+async fn web_actix_item_create_duplicate() {
+    // fixture
+    let db = init_db().await.unwrap();
+    let app = App::new()
+        .app_data(Data::new(db))
+        .configure(item_rest_filters);
+    let mut app = test::init_service(app).await;
+
+    // action
+    let resp = TestRequest::post()
+        .uri("/api/items")
+        .set_json(&json!({"name": "single glazed donut", "price": 120}))
+        .send_request(&mut app)
+        .await;
+
+    // check status
+    assert!(resp.status().is_client_error());
+}

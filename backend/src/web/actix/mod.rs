@@ -1,6 +1,7 @@
 use crate::web::{Db, Error};
 use actix_files::Files;
-use actix_web::{web::Data, App, HttpServer};
+use actix_web::{web::Data, App, HttpResponse, HttpServer};
+use serde::Serialize;
 
 mod item;
 mod purchase;
@@ -27,5 +28,12 @@ pub async fn start_web(web_folder: String, web_port: u16, db: Db) -> Result<(), 
     match result {
         Ok(_) => Ok(()),
         Err(e) => Err(Error::IOError(e)),
+    }
+}
+
+pub fn handle_result<T: Serialize>(result: Result<T, crate::model::Error>) -> HttpResponse {
+    match result {
+        Ok(item) => HttpResponse::Ok().json(item),
+        Err(err) => HttpResponse::InternalServerError().body(format!("{:?}", err)),
     }
 }
