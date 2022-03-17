@@ -78,6 +78,14 @@ heres the break down of what that command does:
 
 `psql` is a command which allows us to access and mess with the database
 
+# production tests
+```sh
+python list-db.py
+```
+```sh
+sh test-db.sh
+```
+
 # development
 ## setup
 uncomment `model::db`'s `init_db` function
@@ -88,6 +96,10 @@ pub async fn init_db() -> Result<Db, sqlx::Error> {
         let root_db = new_db_pool(PG_HOST, _PG_ROOT_DB, _PG_ROOT_USER, _PG_ROOT_PWD, 1).await?;
         pexec(&root_db, SQL_RECREATE).await?;
     }
+```
+uncomment `sql/01-create-scheme.sql`
+```sql
+ALTER SEQUENCE purchase_id_seq RESTART WITH 1000; -- start id at 1000 so our test data wont overlap
 ```
 rename `sql/00-recreate-db.sql-dev` to `sql/00-recreate-db.sql`
 
