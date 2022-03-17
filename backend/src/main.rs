@@ -40,7 +40,7 @@ async fn main() {
                 .short('f')
                 .long("framework")
                 .possible_values(&["warp", "actix"])
-                .default_value("warp"),
+                .default_value("actix"),
         )
         .get_matches();
 

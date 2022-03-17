@@ -8,8 +8,8 @@ const _PG_ROOT_USER: &str = "postgres";
 const _PG_ROOT_PWD: &str = "postgres";
 
 // app database
-const PG_USER: &str = "user";
-const PG_PWD: &str = "password";
+const PG_USER: &str = "pos_user";
+const PG_PWD: &str = "pos_password";
 const PG_DB: &str = "pos_db";
 const PG_MAX_CON: u32 = 5;
 

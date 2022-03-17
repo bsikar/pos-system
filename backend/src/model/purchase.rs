@@ -1,3 +1,5 @@
+use chrono::Local;
+use chrono::NaiveDateTime;
 use crate::model::{self, db::Db, item::Item};
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
@@ -7,6 +9,7 @@ use serde_json::{json, Value as JsonValue};
 pub struct Purchase {
     pub id: i64,
     pub items: JsonValue,
+    pub ctime: NaiveDateTime,
     pub total: i64,
 }
 
@@ -50,15 +53,18 @@ pub struct PurchaseMac;
 #[async_trait]
 impl model::Database<Purchase, PurchasePatch, i64> for PurchaseMac {
     async fn create(db: &Db, data: PurchasePatch) -> Result<Purchase, model::Error> {
-        let sql = "INSERT INTO purchase (items, total) VALUES ($1, $2) RETURNING id, items, total";
+        let sql = "INSERT INTO purchase (ctime, items, total) VALUES ($1, $2, $3) RETURNING id, ctime, items, total";
         // validate data
         data.validate(db).await?;
 
+        let time = Local::now().naive_local();
         let items = data.items;
+        let total = calculate_total(&items);
 
         let query = sqlx::query_as(sql)
-            .bind(&items)
-            .bind(calculate_total(&items));
+            .bind(time)
+            .bind(items)
+            .bind(total);
 
         let purchase = query.fetch_one(db).await?;
 
@@ -66,7 +72,7 @@ impl model::Database<Purchase, PurchasePatch, i64> for PurchaseMac {
     }
 
     async fn get(db: &Db, id: i64) -> Result<Purchase, model::Error> {
-        let sql = "SELECT id, items, total FROM purchase WHERE id = $1";
+        let sql = "SELECT id, ctime, items, total FROM purchase WHERE id = $1";
         let query = sqlx::query_as(sql).bind(id);
 
         let result = query.fetch_one(db).await;
@@ -74,22 +80,12 @@ impl model::Database<Purchase, PurchasePatch, i64> for PurchaseMac {
     }
 
     async fn update(db: &Db, id: i64, data: PurchasePatch) -> Result<Purchase, model::Error> {
-        // TODO this code is just for development, it should be refactored
-        // this function should update the purchase with the given id
-        // and return the updated purchase
-        // but it should have a parameter that contains the new data
-        // in order to update the purchase's `items` and `total`
-
-        // update the field ctime with now()
-        //let sql = "UPDATE purchase SET ctime = $1 WHERE id = $2";
-        //let query = sqlx::query(sql).bind(json!({"ctime": "now()"})).bind(id);
-        //query.execute(db).await?;
-
         let sql =
-            "UPDATE purchase SET items = $1, total = $2 WHERE id = $3 RETURNING id, items, total";
+            "UPDATE purchase SET ctime = $1, items = $2, total = $3 WHERE id = $4 RETURNING id, ctime, items, total";
+        let time = Local::now().naive_local();
         let items = data.items;
         let total = calculate_total(&items);
-        let query = sqlx::query_as(sql).bind(items).bind(total).bind(id);
+        let query = sqlx::query_as(sql).bind(time).bind(items).bind(total).bind(id);
 
         let result = query.fetch_one(db).await;
 
@@ -97,7 +93,7 @@ impl model::Database<Purchase, PurchasePatch, i64> for PurchaseMac {
     }
 
     async fn list(db: &Db) -> Result<Vec<Purchase>, model::Error> {
-        let sql = "SELECT id, items, total FROM purchase ORDER BY id DESC";
+        let sql = "SELECT id, ctime, items, total FROM purchase ORDER BY id DESC";
 
         // build sqlx query
         let query = sqlx::query_as(sql);

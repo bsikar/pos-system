@@ -25,9 +25,9 @@ sudo docker run --rm \
 	--name pos-pg \
 	-v $PWD/postgres-data/:/var/lib/postgresql/data \
 	-p 5432:5432 \
-	-e POSTGRES_PASSWORD=postgres_password \
-	-e POSTGRES_USER=postgres_user \
-	-e POSTGRES_DB=postgres_db \
+	-e POSTGRES_USER=pos_user \
+	-e POSTGRES_PASSWORD=pos_password \
+	-e POSTGRES_DB=pos_db \
 	postgres:14
 ```
 heres the break down of what that command does:
@@ -48,7 +48,11 @@ heres the break down of what that command does:
 
 the port of `5432` is usually the default port for postgres
 
-`-e "POSTGRES_PASSWORD=postgres"` : set the enviromental variable `POSTGRES_PASSWORD` to `postgres`
+`-e "POSTGRES_USER=pos_user"` : set the enviromental variable `POSTGRES_USER` to `pos_user`
+
+`-e "POSTGRES_PASSWORD=postgres"` : set the enviromental variable `POSTGRES_PASSWORD` to `pos_password`
+
+`-e "POSTGRES_DB=pos_db"` : set the enviromental variable `POSTGRES_DB` to `pos_db`
 
 
 `postgres:14` : use the [docker image](https://hub.docker.com/_/postgres) `posgres` version `14`
@@ -75,6 +79,43 @@ heres the break down of what that command does:
 `psql` is a command which allows us to access and mess with the database
 
 # development
+## setup
+uncomment `model::db`'s `init_db` function
+```rs
+pub async fn init_db() -> Result<Db, sqlx::Error> {
+    // create the database with the root user (for development only)
+    {
+        let root_db = new_db_pool(PG_HOST, _PG_ROOT_DB, _PG_ROOT_USER, _PG_ROOT_PWD, 1).await?;
+        pexec(&root_db, SQL_RECREATE).await?;
+    }
+```
+rename `sql/00-recreate-db.sql-dev` to `sql/00-recreate-db.sql`
+
+rename  `sql/02-dev-seed.sql-dev` to `sql/02-dev-seed.sql`
+
+## run docker
+to start the database run the following command:
+```sh
+docker run --rm -p 5432:5432 -e "POSTGRES_PASSWORD=postgres" --name pos-pg postgres:14
+```
+heres the break down of what that command does:
+
+`run` : start an instance of a docker container
+
+`--rm` :  removes a container after it exits
+
+`-p <container's TCP port>:<host's TCP port>`
+
+`-p 5432:5432 ` : bind the container's TCP port `5432` to the host's port `5432`
+
+the port of `5432` is usually the default port for postgres
+
+`-e "POSTGRES_PASSWORD=postgres"` : set the enviromental variable `POSTGRES_PASSWORD` to `postgres`
+
+`--name pos-pg` : assign the name `pos-pg` to the container (`pos-pg` meaning "point of sale postgres")
+
+`postgres:14` : use the [docker image](https://hub.docker.com/_/postgres) `posgres` version `14`
+
 ## run tests
 to test the code (run tests) run the following command
 ```sh

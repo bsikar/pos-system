@@ -1,7 +1,7 @@
 -- create entry
 CREATE TABLE IF NOT EXISTS purchase (
     id bigserial NOT NULL, -- id of entry
-    ctime timestamp with time zone DEFAULT now() NOT NULL, -- creation time
+    ctime timestamp NOT NULL, -- creation time
     items json NOT NULL, -- items in entry
     total bigint NOT NULL -- amount of items in entry in cents
 );
