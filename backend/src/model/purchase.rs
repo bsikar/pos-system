@@ -1,7 +1,7 @@
-use chrono::Local;
-use chrono::NaiveDateTime;
 use crate::model::{self, db::Db, item::Item};
 use async_trait::async_trait;
+use chrono::Local;
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value as JsonValue};
 
@@ -61,10 +61,7 @@ impl model::Database<Purchase, PurchasePatch, i64> for PurchaseMac {
         let items = data.items;
         let total = calculate_total(&items);
 
-        let query = sqlx::query_as(sql)
-            .bind(time)
-            .bind(items)
-            .bind(total);
+        let query = sqlx::query_as(sql).bind(time).bind(items).bind(total);
 
         let purchase = query.fetch_one(db).await?;
 
@@ -85,7 +82,11 @@ impl model::Database<Purchase, PurchasePatch, i64> for PurchaseMac {
         let time = Local::now().naive_local();
         let items = data.items;
         let total = calculate_total(&items);
-        let query = sqlx::query_as(sql).bind(time).bind(items).bind(total).bind(id);
+        let query = sqlx::query_as(sql)
+            .bind(time)
+            .bind(items)
+            .bind(total)
+            .bind(id);
 
         let result = query.fetch_one(db).await;
 
