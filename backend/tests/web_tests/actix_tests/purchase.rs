@@ -38,16 +38,22 @@ async fn web_actix_purchase_list() {
     assert_eq!(body[0].id, 102);
     assert_eq!(body[0].items, json[0]);
     assert_eq!(body[0].total, 2823);
+    assert!(body[0].ctime.timestamp() > 0);
+    assert!(body[0].ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 
     // purchase 101
     assert_eq!(body[1].id, 101);
     assert_eq!(body[1].items, json[1]);
     assert_eq!(body[1].total, 1250);
+    assert!(body[1].ctime.timestamp() > 0);
+    assert!(body[1].ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 
     // purchase 100
     assert_eq!(body[2].id, 100);
     assert_eq!(body[2].items, json[2]);
     assert_eq!(body[2].total, 120);
+    assert!(body[2].ctime.timestamp() > 0);
+    assert!(body[2].ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 }
 
 #[actix_rt::test]
@@ -78,6 +84,8 @@ async fn web_actix_purchase_get_ok_1() {
         json!([{"name": "half dozen glazed donuts", "price": 625, "quantity": 2}])
     );
     assert_eq!(body.total, 1250);
+    assert!(body.ctime.timestamp() > 0);
+    assert!(body.ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 }
 
 #[actix_rt::test]
@@ -108,6 +116,8 @@ async fn web_actix_purchase_get_ok_2() {
         json!([{"name": "half dozen glazed donuts", "price": 625, "quantity": 1}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2}])
     );
     assert_eq!(body.total, 2823);
+    assert!(body.ctime.timestamp() > 0);
+    assert!(body.ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 }
 
 #[actix_rt::test]
@@ -204,6 +214,8 @@ async fn web_actix_purchase_create_ok_1() {
     assert!(purchase.id >= 1000, "purchase.id should be >= to 1000");
     assert_eq!(purchase.items, body["items"]);
     assert_eq!(purchase.total, 1099);
+    assert!(purchase.ctime.timestamp() > 0);
+    assert!(purchase.ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 }
 
 #[actix_rt::test]
@@ -236,4 +248,6 @@ async fn web_actix_purchase_create_ok_2() {
     assert!(purchase.id >= 1000, "purchase.id should be >= to 1000");
     assert_eq!(purchase.items, body["items"]);
     assert_eq!(purchase.total, 1370);
+    assert!(purchase.ctime.timestamp() > 0);
+    assert!(purchase.ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 }
