@@ -1,4 +1,4 @@
-use crate::model::{self, Db};
+use crate::app::model::{self, Db};
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use sqlx::Error::RowNotFound;
@@ -114,5 +114,5 @@ impl model::Database<Item, Item, String> for ItemMac {
 }
 
 #[cfg(test)]
-#[path = "../../tests/model_tests/item.rs"]
+#[path = "../../../tests/model_tests/item.rs"]
 mod model_tests;

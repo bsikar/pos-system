@@ -1,7 +1,7 @@
 use super::WebService;
-use crate::model::item::{Item, ItemMac};
-use crate::model::{Database, Db};
-use crate::web::warp::with_db;
+use crate::app::model::item::{Item, ItemMac};
+use crate::app::model::{Database, Db};
+use crate::app::web::warp::with_db;
 use async_trait::async_trait;
 use std::sync::Arc;
 use warp::{reply::Json, Filter};
@@ -85,5 +85,5 @@ pub fn item_rest_filters(
 }
 
 #[cfg(test)]
-#[path = "../../../tests/web_tests/warp_tests/item.rs"]
+#[path = "../../../../tests/web_tests/warp_tests/item.rs"]
 mod warp_tests;

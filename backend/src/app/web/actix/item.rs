@@ -1,6 +1,6 @@
 use super::handle_result;
-use crate::model::item::{Item, ItemMac};
-use crate::{model::Database, web::Db};
+use crate::app::model::item::{Item, ItemMac};
+use crate::app::model::{Database, Db};
 use actix_web::web::{Data, Json, Path};
 use actix_web::HttpResponse;
 
@@ -53,5 +53,5 @@ pub fn item_rest_filters(cfg: &mut actix_web::web::ServiceConfig) {
 }
 
 #[cfg(test)]
-#[path = "../../../tests/web_tests/actix_tests/item.rs"]
+#[path = "../../../../tests/web_tests/actix_tests/item.rs"]
 mod actix_tests;
