@@ -1,5 +1,5 @@
-use crate::model::{init_db, item::Item};
-use crate::web::actix::item::item_rest_filters;
+use crate::app::model::{init_db, item::Item};
+use crate::app::web::actix::item::item_rest_filters;
 use actix_web::test::{self, TestRequest};
 use actix_web::{web::Data, App};
 use serde_json::json;

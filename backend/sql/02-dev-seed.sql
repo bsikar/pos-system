@@ -53,19 +53,22 @@ INSERT INTO item ("name", price)
 VALUES
 (
     'single glazed donut',
-    120
+    120,
+    false
 ); -- test entry
 
 INSERT INTO item ("name", price)
 VALUES
 (
     'half dozen glazed donuts',
-    625
+    625,
+    false
 ); -- test entry
 
 INSERT INTO item ("name", price)
 VALUES
 (
     'dozen glazed donuts',
-    1099
+    1099,
+    false
 ); -- test entry

@@ -1,7 +1,7 @@
 use super::ItemMac;
-use crate::model::db::init_db;
-use crate::model::item::Item;
-use crate::model::{self, Database};
+use crate::app::model::db::init_db;
+use crate::app::model::item::Item;
+use crate::app::model::{self, Database};
 
 #[tokio::test]
 async fn model_item_create_ok() -> Result<(), Box<dyn std::error::Error>> {

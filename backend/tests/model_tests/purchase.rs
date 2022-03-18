@@ -1,10 +1,10 @@
-use crate::model::db::init_db;
-use crate::model::{self, Database};
+use crate::app::model::db::init_db;
+use crate::app::model::{self, Database};
 use serde_json::{self, json};
 
 use super::PurchaseMac;
 use super::PurchasePatch;
-use crate::model::purchase::calculate_total;
+use crate::app::model::purchase::calculate_total;
 
 #[tokio::test]
 async fn model_purchase_create_err_1() -> Result<(), Box<dyn std::error::Error>> {

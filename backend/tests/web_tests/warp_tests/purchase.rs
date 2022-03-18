@@ -1,5 +1,5 @@
-use crate::model::{init_db, purchase::calculate_total, Purchase};
-use crate::web::warp::purchase_rest_filters;
+use crate::app::model::{init_db, purchase::calculate_total, Purchase};
+use crate::app::web::warp::purchase_rest_filters;
 use anyhow::{Context, Result};
 use serde::Deserialize;
 use serde_json::{from_str, from_value, json, Value};

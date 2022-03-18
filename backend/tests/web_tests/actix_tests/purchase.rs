@@ -1,6 +1,6 @@
-use crate::model::purchase::calculate_total;
-use crate::model::{init_db, purchase::Purchase};
-use crate::web::actix::purchase::purchase_rest_filters;
+use crate::app::model::purchase::calculate_total;
+use crate::app::model::{init_db, purchase::Purchase};
+use crate::app::web::actix::purchase::purchase_rest_filters;
 use actix_web::test::{self, TestRequest};
 use actix_web::{web::Data, App};
 use serde_json::json;
