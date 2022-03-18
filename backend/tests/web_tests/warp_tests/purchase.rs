@@ -36,16 +36,22 @@ async fn web_warp_purchase_list() -> Result<()> {
     assert_eq!(purchases[0].id, 102);
     assert_eq!(purchases[0].items, json[0]);
     assert_eq!(purchases[0].total, 2823);
+    assert!(purchases[0].ctime.timestamp() > 0);
+    assert!(purchases[0].ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 
     // purchase 101
     assert_eq!(purchases[1].id, 101);
     assert_eq!(purchases[1].items, json[1]);
     assert_eq!(purchases[1].total, 1250);
+    assert!(purchases[1].ctime.timestamp() > 0);
+    assert!(purchases[1].ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 
     // purchase 100
     assert_eq!(purchases[2].id, 100);
     assert_eq!(purchases[2].items, json[2]);
     assert_eq!(purchases[2].total, 120);
+    assert!(purchases[2].ctime.timestamp() > 0);
+    assert!(purchases[2].ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 
     Ok(())
 }
@@ -75,6 +81,8 @@ async fn web_warp_purchase_get_ok_1() -> Result<()> {
     assert_eq!(purchase.id, 100);
     assert_eq!(purchase.items, json);
     assert_eq!(purchase.total, 120);
+    assert!(purchase.ctime.timestamp() > 0);
+    assert!(purchase.ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 
     Ok(())
 }
@@ -104,6 +112,8 @@ async fn web_warp_purchase_get_ok_2() -> Result<()> {
     assert_eq!(purchase.id, 102);
     assert_eq!(purchase.items, json);
     assert_eq!(purchase.total, 2823);
+    assert!(purchase.ctime.timestamp() > 0);
+    assert!(purchase.ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 
     Ok(())
 }
@@ -206,6 +216,8 @@ async fn web_warp_purchase_create_ok_1() -> Result<()> {
     assert!(purchase.id >= 1000, "purchase.id should be >= to 1000");
     assert_eq!(purchase.items, body["items"]);
     assert_eq!(purchase.total, 1099);
+    assert!(purchase.ctime.timestamp() > 0);
+    assert!(purchase.ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 
     Ok(())
 }
@@ -239,6 +251,8 @@ async fn web_warp_purchase_create_ok_2() -> Result<()> {
     assert!(purchase.id >= 1000, "purchase.id should be >= to 1000");
     assert_eq!(purchase.items, body["items"]);
     assert_eq!(purchase.total, 1370);
+    assert!(purchase.ctime.timestamp() > 0);
+    assert!(purchase.ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
 
     Ok(())
 }
