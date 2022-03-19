@@ -29,9 +29,9 @@ async fn web_warp_item_list() -> Result<()> {
     // check data
     assert_eq!(items.len(), 3, "items count");
     let json = json!([
-        {"name": "single glazed donut", "price": 120},
-        {"name": "half dozen glazed donuts", "price": 625},
-        {"name": "dozen glazed donuts", "price": 1099}
+        {"name": "single glazed donut", "price": 120, "tax": 1.0},
+        {"name": "half dozen glazed donuts", "price": 625, "tax": 1.0},
+        {"name": "dozen glazed donuts", "price": 1099, "tax": 1.0}
     ]);
 
     // single glazed donut
@@ -68,7 +68,7 @@ async fn web_warp_item_get_ok() -> Result<()> {
 
     // extract response .data
     let item: Item = extract_body_data(resp)?;
-    let json = json!({"name": "single glazed donut", "price": 120});
+    let json = json!({"name": "single glazed donut", "price": 120, "tax": 1.0});
 
     // check data
     assert_eq!(item.name, json["name"]);
@@ -105,7 +105,7 @@ async fn web_warp_item_create_ok() -> Result<()> {
     let item_apis = item_rest_filters(db);
 
     // new item
-    let json = json!({"name": "single donut hole", "price": 30});
+    let json = json!({"name": "single donut hole", "price": 30, "tax": 1.0});
 
     // action
     let resp = warp::test::request()
@@ -136,7 +136,7 @@ async fn web_warp_item_create_duplicate() -> Result<(), Box<dyn std::error::Erro
     let item_apis = item_rest_filters(db);
 
     // new item
-    let json = json!({"name": "single glazed donut", "price": 120});
+    let json = json!({"name": "single glazed donut", "price": 120, "tax": 1.0});
 
     // action
     let resp = warp::test::request()

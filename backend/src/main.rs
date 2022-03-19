@@ -7,12 +7,12 @@ mod model;
 mod web;
 
 use crate::model::init_db;
-use web::start_web;
-
+use crate::web::start_web;
 use clap::Arg;
 
 const DEFAULT_WEB_FOLDER: &str = "web-folder/";
 const DEFAULT_WEB_PORT: u16 = 3030;
+const DEFAULT_FRAMEWORK: &str = "actix";
 
 #[tokio::main]
 async fn main() {
@@ -40,7 +40,7 @@ async fn main() {
                 .short('f')
                 .long("framework")
                 .possible_values(&["warp", "actix"])
-                .default_value("actix"),
+                .default_value(DEFAULT_FRAMEWORK),
         )
         .get_matches();
 

@@ -1,4 +1,5 @@
-use crate::web::{Db, Error};
+use crate::model::Db;
+use crate::web::Error;
 use actix_files::Files;
 use actix_web::{web::Data, App, HttpResponse, HttpServer};
 use serde::Serialize;

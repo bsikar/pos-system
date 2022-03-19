@@ -152,7 +152,7 @@ async fn web_actix_purchase_create_wrong_name() {
     let resp = TestRequest::post()
         .uri("/api/purchases")
         .set_json(&json!({
-            "items": [{"name": "half dozen glazed donuts", "price": 625, "quantity": 1}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2}],
+            "items": [{"name": "half dozen glazed donuts", "price": 625, "quantity": 1, "tax": 1.0}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2, "tax": 1.0}],
             "total": 2823,
         }))
         .send_request(&mut app)
@@ -175,7 +175,7 @@ async fn web_actix_purchase_create_wrong_price() {
     let resp = TestRequest::post()
         .uri("/api/purchases")
         .set_json(&json!({
-            "items": [{"name": "half dozen glazed donuts", "price": 625, "quantity": 1}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2}],
+            "items": [{"name": "half dozen glazed donuts", "price": 625, "quantity": 1, "tax": 1.0}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2, "tax": 1.0}],
             "total": 2823,
         }))
         .send_request(&mut app)
@@ -194,7 +194,8 @@ async fn web_actix_purchase_create_ok_1() {
         .configure(purchase_rest_filters);
     let mut app = test::init_service(app).await;
 
-    let json = json!([{"name": "dozen glazed donuts", "price": 1099i64, "quantity": 1i64}]);
+    let json =
+        json!([{"name": "dozen glazed donuts", "price": 1099i64, "quantity": 1i64, "tax": 1.0}]);
     let body = json!({"items": json, "total": calculate_total(&json)});
 
     // action
@@ -228,7 +229,7 @@ async fn web_actix_purchase_create_ok_2() {
     let mut app = test::init_service(app).await;
 
     // new purchase
-    let json = json!([{"name": "single glazed donut", "price": 120, "quantity": 1}, {"name": "half dozen glazed donuts", "price": 625, "quantity": 2}]);
+    let json = json!([{"name": "single glazed donut", "price": 120, "quantity": 1, "tax": 1.0}, {"name": "half dozen glazed donuts", "price": 625, "quantity": 2, "tax": 1.0}]);
     let body = json!({"items": json, "total": calculate_total(&json)});
 
     // action
