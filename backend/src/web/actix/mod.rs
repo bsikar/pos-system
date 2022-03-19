@@ -1,5 +1,5 @@
-use crate::app::model::Db;
-use crate::app::web::Error;
+use crate::model::Db;
+use crate::web::Error;
 use actix_files::Files;
 use actix_web::{web::Data, App, HttpResponse, HttpServer};
 use serde::Serialize;
@@ -7,7 +7,7 @@ use serde::Serialize;
 mod item;
 mod purchase;
 
-pub async fn start_web(web_folder: String, web_port: u16, db: Db, tax: f32) -> Result<(), Error> {
+pub async fn start_web(web_folder: String, web_port: u16, db: Db) -> Result<(), Error> {
     let folder = web_folder.clone();
 
     let server = HttpServer::new(move || {
@@ -32,7 +32,7 @@ pub async fn start_web(web_folder: String, web_port: u16, db: Db, tax: f32) -> R
     }
 }
 
-pub fn handle_result<T: Serialize>(result: Result<T, crate::app::model::Error>) -> HttpResponse {
+pub fn handle_result<T: Serialize>(result: Result<T, crate::model::Error>) -> HttpResponse {
     match result {
         Ok(item) => HttpResponse::Ok().json(item),
         Err(err) => HttpResponse::InternalServerError().body(format!("{:?}", err)),

@@ -1,5 +1,5 @@
 use super::handle_result;
-use crate::app::model::{Database, Db, PurchaseMac, PurchasePatch};
+use crate::model::{Database, Db, PurchaseMac, PurchasePatch};
 use actix_web::web::{Data, Json, Path};
 use actix_web::HttpResponse;
 
@@ -49,5 +49,5 @@ pub fn purchase_rest_filters(cfg: &mut actix_web::web::ServiceConfig) {
 }
 
 #[cfg(test)]
-#[path = "../../../../tests/web_tests/actix_tests/purchase.rs"]
+#[path = "../../../tests/web_tests/actix_tests/purchase.rs"]
 mod actix_tests;

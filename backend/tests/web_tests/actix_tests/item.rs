@@ -1,5 +1,5 @@
-use crate::app::model::{init_db, item::Item};
-use crate::app::web::actix::item::item_rest_filters;
+use crate::model::{init_db, item::Item};
+use crate::web::actix::item::item_rest_filters;
 use actix_web::test::{self, TestRequest};
 use actix_web::{web::Data, App};
 use serde_json::json;
@@ -28,9 +28,9 @@ async fn web_actix_item_list() {
     // check body
     assert_eq!(body.len(), 3, "items count");
     let json = json!([
-        {"name": "single glazed donut", "price": 120},
-        {"name": "half dozen glazed donuts", "price": 625},
-        {"name": "dozen glazed donuts", "price": 1099}
+        {"name": "single glazed donut", "price": 120, "tax": 1.0},
+        {"name": "half dozen glazed donuts", "price": 625, "tax": 1.0},
+        {"name": "dozen glazed donuts", "price": 1099, "tax": 1.0}
     ]);
 
     // single glazed donut
@@ -103,7 +103,7 @@ async fn web_actix_item_create_ok() {
     // action
     let resp = TestRequest::post()
         .uri("/api/items")
-        .set_json(&json!({"name": "single donut hole", "price": 30}))
+        .set_json(&json!({"name": "single donut hole", "price": 30, "tax": 1.0}))
         .send_request(&mut app)
         .await;
 
@@ -130,7 +130,7 @@ async fn web_actix_item_create_duplicate() {
     // action
     let resp = TestRequest::post()
         .uri("/api/items")
-        .set_json(&json!({"name": "single glazed donut", "price": 120}))
+        .set_json(&json!({"name": "single glazed donut", "price": 120, "tax": 1.0}))
         .send_request(&mut app)
         .await;
 

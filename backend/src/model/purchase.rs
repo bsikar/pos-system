@@ -1,4 +1,4 @@
-use crate::app::model::{self, db::Db, item::Item};
+use crate::model::{self, db::Db, item::Item};
 use async_trait::async_trait;
 use chrono::{Local, NaiveDateTime};
 use serde::{Deserialize, Serialize};
@@ -28,8 +28,9 @@ impl PurchasePatch {
         for item in self.items.as_array().unwrap() {
             let name = item["name"].as_str().unwrap().to_string();
             let price = item["price"].as_i64().unwrap();
+            let tax = item["tax"].as_f64().unwrap() as f32;
 
-            items.push(Item::new(name, price));
+            items.push(Item::new(name, price, tax));
         }
 
         Ok(items)
@@ -118,7 +119,11 @@ pub fn calculate_total(items: &JsonValue) -> i64 {
 
     if let Some(items) = items.as_array() {
         for item in items {
-            total += item["price"].as_i64().unwrap() * item["quantity"].as_i64().unwrap();
+            let price = item["price"].as_i64().unwrap();
+            let quantity = item["quantity"].as_i64().unwrap();
+            let tax = item["tax"].as_f64().unwrap() as f32;
+
+            total += ((price * quantity) as f32 * tax) as i64;
         }
     }
 
@@ -126,5 +131,5 @@ pub fn calculate_total(items: &JsonValue) -> i64 {
 }
 
 #[cfg(test)]
-#[path = "../../../tests/model_tests/purchase.rs"]
+#[path = "../../tests/model_tests/purchase.rs"]
 mod model_tests;

@@ -1,10 +1,10 @@
-use crate::app::model::db::init_db;
-use crate::app::model::{self, Database};
+use crate::model::db::init_db;
+use crate::model::{self, Database};
 use serde_json::{self, json};
 
 use super::PurchaseMac;
 use super::PurchasePatch;
-use crate::app::model::purchase::calculate_total;
+use crate::model::purchase::calculate_total;
 
 #[tokio::test]
 async fn model_purchase_create_err_1() -> Result<(), Box<dyn std::error::Error>> {
@@ -67,7 +67,7 @@ async fn model_purchase_create_err_3() -> Result<(), Box<dyn std::error::Error>>
 async fn model_purchase_create_not_in_database() -> Result<(), Box<dyn std::error::Error>> {
     // fixture
     let db = init_db().await?;
-    let json = json!([{"name": "some random item", "price": 120, "quantity" : 1}]);
+    let json = json!([{"name": "some random item", "price": 120, "quantity" : 1, "tax": 1.0}]);
     let data_fx = PurchasePatch { items: json };
 
     // action
@@ -89,7 +89,7 @@ async fn model_purchase_create_not_in_database() -> Result<(), Box<dyn std::erro
 async fn model_purchase_create_ok_1() -> Result<(), Box<dyn std::error::Error>> {
     // fixture
     let db = init_db().await?;
-    let json = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1}]);
+    let json = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1, "tax": 1.0}]);
     let data_fx = PurchasePatch {
         items: json.clone(),
     };
@@ -109,7 +109,7 @@ async fn model_purchase_create_ok_1() -> Result<(), Box<dyn std::error::Error>> 
 async fn model_purchase_create_ok_2() -> Result<(), Box<dyn std::error::Error>> {
     // fixture
     let db = init_db().await?;
-    let json = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1}, {"name": "half dozen glazed donuts", "price": 625, "quantity" : 1}]);
+    let json = json!([{"name": "single glazed donut", "price": 120, "quantity": 1, "tax": 1.0}, {"name": "half dozen glazed donuts", "price": 625, "quantity" : 1, "tax": 1.0}]);
     let data_fx = PurchasePatch {
         items: json.clone(),
     };
@@ -257,7 +257,7 @@ async fn model_purchase_update() -> Result<(), Box<dyn std::error::Error>> {
 
 #[tokio::test]
 async fn model_purchase_calculate_total_1() -> Result<(), Box<dyn std::error::Error>> {
-    let json = json!([{"name": "single donut hole", "price": 30, "quantity": 1}]);
+    let json = json!([{"name": "single donut hole", "price": 30, "quantity": 1, "tax": 1.0}]);
 
     assert_eq!(calculate_total(&json), 30);
 
@@ -266,7 +266,7 @@ async fn model_purchase_calculate_total_1() -> Result<(), Box<dyn std::error::Er
 
 #[tokio::test]
 async fn model_purchase_calculate_total_2() -> Result<(), Box<dyn std::error::Error>> {
-    let json = json!([{"name": "single donut hole", "price": 30, "quantity": 2}, {"name": "dozen donut holes", "price": 200, "quantity": 1}]);
+    let json = json!([{"name": "single donut hole", "price": 30, "quantity": 2, "tax": 1.0}, {"name": "dozen donut holes", "price": 200, "quantity": 1, "tax": 1.0}]);
 
     assert_eq!(calculate_total(&json), 260);
 

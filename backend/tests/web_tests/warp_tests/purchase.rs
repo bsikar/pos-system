@@ -1,5 +1,5 @@
-use crate::app::model::{init_db, purchase::calculate_total, Purchase};
-use crate::app::web::warp::purchase_rest_filters;
+use crate::model::{init_db, purchase::calculate_total, Purchase};
+use crate::web::warp::purchase_rest_filters;
 use anyhow::{Context, Result};
 use serde::Deserialize;
 use serde_json::{from_str, from_value, json, Value};
@@ -30,7 +30,7 @@ async fn web_warp_purchase_list() -> Result<()> {
     let json = json!([
         [{"name": "half dozen glazed donuts", "price": 625, "quantity": 1}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2}],
         [{"name": "half dozen glazed donuts", "price": 625, "quantity": 2}],
-        [{"name": "single glazed donut", "price": 120, "quantity": 1}],
+        [{"name": "single glazed donut", "price": 120, "quantity": 1}]
     ]);
     // purchase 102
     assert_eq!(purchases[0].id, 102);
@@ -145,7 +145,7 @@ async fn web_warp_purchase_create_wrong_name() -> Result<()> {
     let purchase_apis = purchase_rest_filters(db);
 
     // new purchase fixture
-    let json = json!([{"name": "wrong name", "price": 1099, "quantity": 1}]);
+    let json = json!([{"name": "wrong name", "price": 1099, "quantity": 1, "tax": 1.0}]);
     let body = json!({"items": json, "total": calculate_total(&json)});
 
     // action
@@ -170,7 +170,7 @@ async fn web_warp_purchase_create_wrong_price() -> Result<()> {
     let purchase_apis = purchase_rest_filters(db);
 
     // new purchase fixture
-    let json = json!([{"name": "single glazed donut", "price": 9999, "quantity": 1}]);
+    let json = json!([{"name": "single glazed donut", "price": 9999, "quantity": 1, "tax": 1.0}]);
     let body = json!({"items": json, "total": calculate_total(&json)});
 
     // action
@@ -195,7 +195,7 @@ async fn web_warp_purchase_create_ok_1() -> Result<()> {
     let purchase_apis = purchase_rest_filters(db);
 
     // new purchase fixture
-    let json = json!([{"name": "dozen glazed donuts", "price": 1099, "quantity": 1}]);
+    let json = json!([{"name": "dozen glazed donuts", "price": 1099, "quantity": 1, "tax": 1.0}]);
     let body = json!({"items": json, "total": calculate_total(&json)});
 
     // action
@@ -230,7 +230,7 @@ async fn web_warp_purchase_create_ok_2() -> Result<()> {
     let purchase_apis = purchase_rest_filters(db);
 
     // new purchase
-    let json = json!([{"name": "single glazed donut", "price": 120, "quantity": 1}, {"name": "half dozen glazed donuts", "price": 625, "quantity": 2}]);
+    let json = json!([{"name": "single glazed donut", "price": 120, "quantity": 1, "tax": 1.0}, {"name": "half dozen glazed donuts", "price": 625, "quantity": 2, "tax": 1.0}]);
     let body = json!({"items": json, "total": calculate_total(&json)});
 
     // action

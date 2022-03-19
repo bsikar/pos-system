@@ -1,4 +1,4 @@
-use crate::app::model::{self, Db};
+use crate::model::{self, Db};
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
 use sqlx::Error::RowNotFound;
@@ -7,11 +7,12 @@ use sqlx::Error::RowNotFound;
 pub struct Item {
     pub name: String,
     pub price: i64,
+    pub tax: f32,
 }
 
 impl Item {
-    pub fn new(name: String, price: i64) -> Self {
-        Self { name, price }
+    pub fn new(name: String, price: i64, tax: f32) -> Self {
+        Self { name, price, tax }
     }
 
     pub async fn validate(&self, db: &Db) -> Result<(), model::Error> {
@@ -64,8 +65,11 @@ impl model::Database<Item, Item, String> for ItemMac {
             return Err(model::Error::EmptyItemName);
         }
 
-        let sql = r#"INSERT INTO item ("name", price) VALUES ($1, $2) RETURNING "name", price"#;
-        let query = sqlx::query_as(sql).bind(data.name).bind(data.price);
+        let sql = r#"INSERT INTO item ("name", price, tax) VALUES ($1, $2, $3) RETURNING "name", price, tax"#;
+        let query = sqlx::query_as(sql)
+            .bind(data.name)
+            .bind(data.price)
+            .bind(data.tax);
 
         let item = query.fetch_one(db).await?;
 
@@ -73,7 +77,7 @@ impl model::Database<Item, Item, String> for ItemMac {
     }
 
     async fn get(db: &Db, name: String) -> Result<Item, model::Error> {
-        let sql = r#"SELECT "name", price FROM item WHERE "name" = $1"#;
+        let sql = r#"SELECT "name", price, tax FROM item WHERE "name" = $1"#;
         let query = sqlx::query_as(sql).bind(&name);
 
         let result = query.fetch_one(db).await;
@@ -82,11 +86,11 @@ impl model::Database<Item, Item, String> for ItemMac {
     }
 
     async fn update(db: &Db, name: String, data: Item) -> Result<Item, model::Error> {
-        let sql =
-            r#"UPDATE item SET "name" = $1, price = $2 WHERE "name" = $3 RETURNING "name", price"#;
+        let sql = r#"UPDATE item SET "name" = $1, price = $2, tax = $3 WHERE "name" = $4 RETURNING "name", price, tax"#;
         let query = sqlx::query_as(sql)
             .bind(data.name)
             .bind(data.price)
+            .bind(data.tax)
             .bind(&name);
 
         let result = query.fetch_one(db).await;
@@ -95,7 +99,7 @@ impl model::Database<Item, Item, String> for ItemMac {
     }
 
     async fn list(db: &Db) -> Result<Vec<Item>, model::Error> {
-        let sql = r#"SELECT "name", price FROM item"#;
+        let sql = r#"SELECT "name", price, tax FROM item"#;
         let query = sqlx::query_as(sql);
 
         let items = query.fetch_all(db).await?;
@@ -104,7 +108,7 @@ impl model::Database<Item, Item, String> for ItemMac {
     }
 
     async fn delete(db: &Db, name: String) -> Result<Item, model::Error> {
-        let sql = r#"DELETE FROM item WHERE "name" = $1 RETURNING "name", price"#;
+        let sql = r#"DELETE FROM item WHERE "name" = $1 RETURNING "name", price, tax"#;
         let query = sqlx::query_as(sql).bind(&name);
 
         let result = query.fetch_one(db).await;
@@ -114,5 +118,5 @@ impl model::Database<Item, Item, String> for ItemMac {
 }
 
 #[cfg(test)]
-#[path = "../../../tests/model_tests/item.rs"]
+#[path = "../../tests/model_tests/item.rs"]
 mod model_tests;

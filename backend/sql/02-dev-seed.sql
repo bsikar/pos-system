@@ -49,26 +49,26 @@ VALUES
     2823
 ); -- test entry
 
-INSERT INTO item ("name", price)
+INSERT INTO item ("name", price, tax)
 VALUES
 (
     'single glazed donut',
     120,
-    false
+    1.0
 ); -- test entry
 
-INSERT INTO item ("name", price)
+INSERT INTO item ("name", price, tax)
 VALUES
 (
     'half dozen glazed donuts',
     625,
-    false
+    1.0
 ); -- test entry
 
-INSERT INTO item ("name", price)
+INSERT INTO item ("name", price, tax)
 VALUES
 (
     'dozen glazed donuts',
     1099,
-    false
+    1.0
 ); -- test entry

@@ -1,7 +1,7 @@
 use super::ItemMac;
-use crate::app::model::db::init_db;
-use crate::app::model::item::Item;
-use crate::app::model::{self, Database};
+use crate::model::db::init_db;
+use crate::model::item::Item;
+use crate::model::{self, Database};
 
 #[tokio::test]
 async fn model_item_create_ok() -> Result<(), Box<dyn std::error::Error>> {
@@ -11,6 +11,7 @@ async fn model_item_create_ok() -> Result<(), Box<dyn std::error::Error>> {
     let item = Item {
         name: "single donut hole".to_string(),
         price: 30,
+        tax: 1.0,
     };
 
     // action
@@ -31,6 +32,7 @@ async fn model_item_create_duplicate() -> Result<(), Box<dyn std::error::Error>>
     let item = Item {
         name: "single glazed donut".to_string(),
         price: 220,
+        tax: 1.0,
     };
 
     // action
@@ -56,6 +58,7 @@ async fn model_item_create_invalid_price() -> Result<(), Box<dyn std::error::Err
     let item = Item {
         name: "single donut hole".to_string(),
         price: -30,
+        tax: 1.0,
     };
 
     // action
@@ -81,6 +84,7 @@ async fn model_item_create_invalid_name() -> Result<(), Box<dyn std::error::Erro
     let item = Item {
         name: "".to_string(),
         price: 0,
+        tax: 1.0,
     };
 
     // action
@@ -169,6 +173,7 @@ async fn model_item_update() -> Result<(), Box<dyn std::error::Error>> {
     let item = Item {
         name: name.clone(),
         price: 999,
+        tax: 1.0,
     };
 
     // action

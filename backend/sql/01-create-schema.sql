@@ -11,5 +11,5 @@ ALTER SEQUENCE purchase_id_seq RESTART WITH 1000; -- start id at 1000 so our tes
 CREATE TABLE IF NOT EXISTS item (
     "name" text NOT NULL, -- name of item
     price bigint NOT NULL, -- price of item in cents
-    tax boolean NOT NULL -- tax
+    tax real NOT NULL -- tax
 );

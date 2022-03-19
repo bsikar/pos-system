@@ -3,15 +3,16 @@
 #[macro_use]
 extern crate actix_web;
 
-mod app;
+mod model;
+mod web;
 
-use crate::app::App;
+use crate::model::init_db;
+use crate::web::start_web;
 use clap::Arg;
 
 const DEFAULT_WEB_FOLDER: &str = "web-folder/";
 const DEFAULT_WEB_PORT: u16 = 3030;
 const DEFAULT_FRAMEWORK: &str = "actix";
-const DEFAULT_TAX: &str = "6.25%";
 
 #[tokio::main]
 async fn main() {
@@ -41,14 +42,6 @@ async fn main() {
                 .possible_values(&["warp", "actix"])
                 .default_value(DEFAULT_FRAMEWORK),
         )
-        .arg(
-            Arg::new("tax")
-                .help("This is the tax percent to use")
-                .value_name("TAX_RATE")
-                .short('t')
-                .long("tax")
-                .default_value(DEFAULT_TAX),
-        )
         .get_matches();
 
     let web_framework = matches
@@ -59,28 +52,13 @@ async fn main() {
         .map(|s| s.parse::<u16>().expect("Could not parse port"))
         .unwrap();
     let web_folder = matches.value_of("folder").expect("Could not parse folder");
-    let tax = matches
-        .value_of("tax")
-        .map(|s| {
-            if s.contains('%') {
-                s.trim_end_matches('%')
-                    .parse::<f32>()
-                    .expect("Could not parse tax rate")
-            } else {
-                s.parse::<f32>().expect("Could not parse tax rate")
-            }
-        })
-        .unwrap();
 
-    let app = App::new(
-        web_folder.to_string(),
-        web_port,
-        web_framework.to_string(),
-        tax,
-    )
-    .await;
-    match app.run().await {
+    // get the database
+    let db = init_db().await.expect("Cannot init db");
+
+    // start the server
+    match start_web(web_folder, web_port, web_framework, db).await {
         Ok(_) => println!("Server ended"),
         Err(e) => eprintln!("ERROR - web server failed to start. Cause {:?}", e),
-    };
+    }
 }
