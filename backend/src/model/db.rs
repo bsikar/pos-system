@@ -21,10 +21,10 @@ pub type Db = Pool<Postgres>;
 
 pub async fn init_db() -> Result<Db, sqlx::Error> {
     // create the database with the root user (for development only)
-    //{
-    //    let root_db = new_db_pool(PG_HOST, _PG_ROOT_DB, _PG_ROOT_USER, _PG_ROOT_PWD, 1).await?;
-    //    pexec(&root_db, SQL_RECREATE).await?;
-    //}
+    {
+        let root_db = new_db_pool(PG_HOST, _PG_ROOT_DB, _PG_ROOT_USER, _PG_ROOT_PWD, 1).await?;
+        pexec(&root_db, SQL_RECREATE).await?;
+    }
 
     // run the app sql files
     let app_db = new_db_pool(PG_HOST, PG_DB, PG_USER, PG_PWD, 1).await?;

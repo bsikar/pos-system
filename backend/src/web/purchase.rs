@@ -49,5 +49,5 @@ pub fn purchase_rest_filters(cfg: &mut actix_web::web::ServiceConfig) {
 }
 
 #[cfg(test)]
-#[path = "../../../tests/web_tests/actix_tests/purchase.rs"]
-mod actix_tests;
+#[path = "../../tests/web_tests/purchase.rs"]
+mod web_tests;

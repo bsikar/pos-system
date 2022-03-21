@@ -12,7 +12,6 @@ use clap::Arg;
 
 const DEFAULT_WEB_FOLDER: &str = "web-folder/";
 const DEFAULT_WEB_PORT: u16 = 3030;
-const DEFAULT_FRAMEWORK: &str = "actix";
 
 #[tokio::main]
 async fn main() {
@@ -33,20 +32,8 @@ async fn main() {
                 .long("folder")
                 .default_value(DEFAULT_WEB_FOLDER),
         )
-        .arg(
-            Arg::new("framework")
-                .help("This is the web framework to use")
-                .value_name("WEB_FRAMEWORK")
-                .short('f')
-                .long("framework")
-                .possible_values(&["warp", "actix"])
-                .default_value(DEFAULT_FRAMEWORK),
-        )
         .get_matches();
 
-    let web_framework = matches
-        .value_of("framework")
-        .expect("Could not parse web framework");
     let web_port = matches
         .value_of("port")
         .map(|s| s.parse::<u16>().expect("Could not parse port"))
@@ -57,7 +44,7 @@ async fn main() {
     let db = init_db().await.expect("Cannot init db");
 
     // start the server
-    match start_web(web_folder, web_port, web_framework, db).await {
+    match start_web(web_folder.to_string(), web_port, db).await {
         Ok(_) => println!("Server ended"),
         Err(e) => eprintln!("ERROR - web server failed to start. Cause {:?}", e),
     }
