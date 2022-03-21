@@ -53,5 +53,5 @@ pub fn item_rest_filters(cfg: &mut actix_web::web::ServiceConfig) {
 }
 
 #[cfg(test)]
-#[path = "../../tests/web_tests/item.rs"]
+#[path = "../../../tests/web_tests/item.rs"]
 mod web_tests;

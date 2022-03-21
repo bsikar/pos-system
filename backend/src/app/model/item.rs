@@ -118,5 +118,5 @@ impl model::Database<Item, Item, String> for ItemMac {
 }
 
 #[cfg(test)]
-#[path = "../../tests/model_tests/item.rs"]
+#[path = "../../../tests/model_tests/item.rs"]
 mod model_tests;
