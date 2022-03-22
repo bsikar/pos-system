@@ -45,7 +45,7 @@ max_connections = 5
 root_db_name = "postgres"
 root_user = "postgres"
 root_pwd = "postgres"
-db_name = "postgres"
+db_name = "pos_db"
 user = "pos_user"
 pwd = "pos_user"
 ```

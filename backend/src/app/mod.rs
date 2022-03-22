@@ -1,9 +1,10 @@
-use crate::app::web::start_web;
+//use crate::app::web::start_web;
 use config::{Config, ConfigError, File};
+use diesel::pg::PgConnection;
+use diesel::prelude::*;
 use serde::Deserialize;
 
 mod model;
-mod web;
 
 #[derive(Debug, Deserialize)]
 #[allow(unused)]
@@ -41,17 +42,22 @@ impl App {
             .add_source(File::with_name("config/.defaults/POS_DEFAULTS.toml"))
             .build()?;
 
-        s.try_deserialize()
+        let app: App = s.try_deserialize()?;
+
+        Ok(app)
     }
 
-    pub async fn run(&self) -> Result<(), Box<dyn std::error::Error>> {
-        let db = model::db::init_db().await?;
+    pub async fn run(&self) {
+        let connection = self.establish_db_conn();
+    }
 
-        match start_web(self.webserver.folder.clone(), self.webserver.port, db).await {
-            Ok(_) => println!("Server ended"),
-            Err(e) => eprintln!("ERROR - web server failed to start. Cause {:?}", e),
-        }
+    pub fn establish_db_conn(&self) -> PgConnection {
+        let database_url = format!(
+            "postgres://{}:{}@{}/{}",
+            self.database.user, self.database.pwd, self.database.net_id, self.database.db_name
+        );
 
-        Ok(())
+        PgConnection::establish(&database_url)
+            .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
     }
 }

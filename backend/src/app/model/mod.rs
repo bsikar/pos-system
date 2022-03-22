@@ -1,36 +1,16 @@
+use diesel::result::Error as DieselError;
+use diesel::PgConnection;
 use thiserror::Error as ThisError;
 
-pub mod db;
+mod item;
+mod purchase;
 
-use async_trait::async_trait;
-pub use db::init_db;
-pub use db::Db;
-pub use purchase::{Purchase, PurchaseMac, PurchasePatch};
-
-pub mod item;
-pub mod purchase;
-
-#[async_trait]
-pub trait Database<R, D, I> {
-    async fn create(db: &Db, data: D) -> Result<R, Error>;
-    async fn get(db: &Db, _: I) -> Result<R, Error>;
-    async fn update(db: &Db, _: I, data: D) -> Result<R, Error>;
-    async fn list(db: &Db) -> Result<Vec<R>, Error>;
-    async fn delete(db: &Db, _: I) -> Result<R, Error>;
-
-    fn handle_fetch_one_result(
-        result: Result<R, sqlx::Error>,
-        typ: &'static str,
-        id: I,
-    ) -> Result<R, Error>
-    where
-        I: std::fmt::Display,
-    {
-        result.map_err(|sqlx_error| match sqlx_error {
-            sqlx::Error::RowNotFound => Error::EntityNotFound(typ, format!("{}", id)),
-            other => Error::SqlxError(other),
-        })
-    }
+pub trait Database<D> {
+    fn create(db: &PgConnection, data: D) -> Result<D, Error>;
+    fn list(db: &PgConnection) -> Result<Vec<D>, Error>;
+    fn update(db: &PgConnection, data: D) -> Result<D, Error>;
+    fn delete(db: &PgConnection, data: D) -> Result<D, Error>;
+    fn get(db: &PgConnection, data: D) -> Result<D, Error>;
 }
 
 #[derive(ThisError, Debug)]
@@ -39,13 +19,16 @@ pub enum Error {
     EntityNotFound(&'static str, String),
 
     #[error(transparent)]
-    SqlxError(#[from] sqlx::Error),
+    DieselError(#[from] DieselError),
 
     #[error(transparent)]
     IOError(#[from] std::io::Error),
 
     #[error("Item Already Exists - {0}")]
     ItemAlreadyExists(String),
+
+    #[error("Item Not Found - {0}")]
+    ItemNotFound(String),
 
     #[error("Invalid Item Price - {0}")]
     InvalidItemPrice(i64),
@@ -58,4 +41,7 @@ pub enum Error {
 
     #[error("Empty Item Name")]
     EmptyItemName,
+
+    #[error("Purchase Not Found - {0}")]
+    PurchaseNotFound(String),
 }
