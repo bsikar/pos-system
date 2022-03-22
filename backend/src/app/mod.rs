@@ -1,47 +1,36 @@
+use crate::app::web::start_web;
+use config::{Config, ConfigError, File};
+use serde::Deserialize;
+
 mod model;
 mod web;
-
-// database
-const db_net_id: &str = "0.0.0.0";
-const db_port: u16 = 5432;
-const db_max_connections: u8 = 5;
-const db_root_name: &str = "postgres";
-const db_root_user: &str = "postgres";
-const db_root_pwd: &str = "postgres";
-const db_name: &str = "postgres";
-const db_user: &str = "pos_user";
-const db_pwd: &str = "pos_user";
-
-// web
-const web_net_id: &str = "0.0.0.0";
-const web_port: u16 = 8080;
-const web_folder: &str = "../frontend/web-folder/";
 
 #[derive(Debug, Deserialize)]
 #[allow(unused)]
 struct Database {
-    net_id: &str,
+    net_id: String,
     port: u16,
-    root_db: &str,
-    root_user: &str,
-    root_pwd: &str,
-    db_name: &str,
-    user: &str,
-    pwd: &str,
-    max_con: u32,
+    max_connections: u32,
+    root_db_name: String,
+    root_user: String,
+    root_pwd: String,
+    db_name: String,
+    user: String,
+    pwd: String,
 }
 
 #[derive(Debug, Deserialize)]
 #[allow(unused)]
 struct WebServer {
-    net_id: &str,
+    net_id: String,
     port: u16,
-    folder: &str,
+    folder: String,
 }
 
+#[derive(Debug, Deserialize)]
 pub struct App {
-    db: Database,
-    web: WebServer,
+    database: Database,
+    webserver: WebServer,
 }
 
 impl App {
@@ -49,9 +38,20 @@ impl App {
         let s = Config::builder()
             .add_source(File::with_name("config/database.toml"))
             .add_source(File::with_name("config/webserver.toml"))
-            .add_source(Environment::with_prefix("POS"))
-            .build?;
+            .add_source(File::with_name("config/.defaults/POS_DEFAULTS.toml"))
+            .build()?;
 
         s.try_deserialize()
+    }
+
+    pub async fn run(&self) -> Result<(), Box<dyn std::error::Error>> {
+        let db = model::db::init_db().await?;
+
+        match start_web(self.webserver.folder.clone(), self.webserver.port, db).await {
+            Ok(_) => println!("Server ended"),
+            Err(e) => eprintln!("ERROR - web server failed to start. Cause {:?}", e),
+        }
+
+        Ok(())
     }
 }

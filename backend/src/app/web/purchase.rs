@@ -1,5 +1,5 @@
 use super::handle_result;
-use crate::model::{Database, Db, PurchaseMac, PurchasePatch};
+use crate::app::model::{Database, Db, PurchaseMac, PurchasePatch};
 use actix_web::web::{Data, Json, Path};
 use actix_web::HttpResponse;
 

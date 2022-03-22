@@ -8,7 +8,7 @@ use app::App;
 
 #[tokio::main]
 async fn main() {
-    let mut app = App::new();
+    let app = App::new().unwrap();
 
     match app.run().await {
         Ok(_) => println!("Server ended"),

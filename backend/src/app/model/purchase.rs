@@ -1,4 +1,4 @@
-use crate::model::{self, db::Db, item::Item};
+use crate::app::model::{self, db::Db, item::Item};
 use async_trait::async_trait;
 use chrono::{Local, NaiveDateTime};
 use serde::{Deserialize, Serialize};

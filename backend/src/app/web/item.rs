@@ -1,6 +1,6 @@
 use super::handle_result;
-use crate::model::item::{Item, ItemMac};
-use crate::model::{Database, Db};
+use crate::app::model::item::{Item, ItemMac};
+use crate::app::model::{Database, Db};
 use actix_web::web::{Data, Json, Path};
 use actix_web::HttpResponse;
 
