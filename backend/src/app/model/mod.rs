@@ -1,17 +1,8 @@
 use diesel::result::Error as DieselError;
-use diesel::PgConnection;
 use thiserror::Error as ThisError;
 
 mod item;
 mod purchase;
-
-pub trait Database<D> {
-    fn create(db: &PgConnection, data: D) -> Result<D, Error>;
-    fn list(db: &PgConnection) -> Result<Vec<D>, Error>;
-    fn update(db: &PgConnection, data: D) -> Result<D, Error>;
-    fn delete(db: &PgConnection, data: D) -> Result<D, Error>;
-    fn get(db: &PgConnection, data: D) -> Result<D, Error>;
-}
 
 #[derive(ThisError, Debug)]
 pub enum Error {

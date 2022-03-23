@@ -1,4 +1,3 @@
-use crate::app::model::Database;
 use crate::app::model::Error as ModelError;
 use crate::schema::items::{self, dsl};
 use diesel::associations::HasTable;
@@ -13,16 +12,30 @@ pub struct Item {
 }
 
 impl Item {
-    fn get_by_name(db: &PgConnection, data: &Item) -> Option<Item> {
+    pub fn new(name: String, price: i64, tax: f32) -> Self {
+        Item { name, price, tax }
+    }
+
+    pub fn get_by_name(db: &PgConnection, data: &Item) -> Option<Item> {
         dsl::items
             .filter(dsl::name.eq(&data.name))
             .first::<Item>(db)
             .ok()
     }
-}
 
-impl Database<Item> for Item {
-    fn create(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
+    pub fn validate(&self, db: &PgConnection) -> Result<(), ModelError> {
+        let result = Item::get_by_name(&db, &self);
+
+        if result.is_none() {
+            Err(ModelError::ItemNotFound(self.name.clone()))
+        } else if result.unwrap().price != self.price {
+            Err(ModelError::InvalidItemPrice(self.price))
+        } else {
+            Ok(())
+        }
+    }
+
+    pub fn create(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
         let item = Item::get_by_name(db, &data);
 
         if item.is_some() {
@@ -43,11 +56,11 @@ impl Database<Item> for Item {
             .map_or_else(|e| Err(ModelError::DieselError(e)), |_| Ok(data))
     }
 
-    fn list(db: &PgConnection) -> Result<Vec<Item>, ModelError> {
+    pub fn list(db: &PgConnection) -> Result<Vec<Item>, ModelError> {
         Ok(dsl::items.load::<Item>(db).unwrap())
     }
 
-    fn update(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
+    pub fn update(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
         let item = Item::get_by_name(db, &data);
 
         if item.is_none() {
@@ -68,7 +81,7 @@ impl Database<Item> for Item {
             .map_or_else(|e| Err(ModelError::DieselError(e)), |_| Ok(data))
     }
 
-    fn delete(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
+    pub fn delete(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
         let item = Item::get_by_name(db, &data);
 
         if item.is_none() {
@@ -80,7 +93,7 @@ impl Database<Item> for Item {
             .map_or_else(|e| Err(ModelError::DieselError(e)), |_| Ok(data))
     }
 
-    fn get(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
+    pub fn get(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
         let item = Item::get_by_name(db, &data);
 
         if item.is_none() {

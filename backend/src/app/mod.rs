@@ -1,4 +1,3 @@
-//use crate::app::web::start_web;
 use config::{Config, ConfigError, File};
 use diesel::pg::PgConnection;
 use diesel::prelude::*;

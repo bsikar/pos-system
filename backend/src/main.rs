@@ -7,7 +7,7 @@ mod app;
 mod schema;
 use app::App;
 
-#[tokio::main]
+#[actix_web::main]
 async fn main() {
     let app = App::new().unwrap();
 
