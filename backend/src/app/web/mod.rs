@@ -1,7 +1,7 @@
-use diesel::r2d2::ConnectionManager;
-use diesel::PgConnection;
 use actix_files::Files;
 use actix_web::{web::Data, App, HttpServer};
+use diesel::r2d2::ConnectionManager;
+use diesel::PgConnection;
 use serde::Deserialize;
 use thiserror::Error as ThisError;
 
@@ -14,7 +14,10 @@ pub struct WebServer {
 }
 
 impl WebServer {
-    pub async fn establish_webserver(self, connection: r2d2::Pool<ConnectionManager<PgConnection>> ) -> Result<(), Error> {
+    pub async fn establish_webserver(
+        self,
+        connection: r2d2::Pool<ConnectionManager<PgConnection>>,
+    ) -> Result<(), Error> {
         let folder = self.folder.clone();
 
         let server = HttpServer::new(move || {
@@ -26,7 +29,10 @@ impl WebServer {
         })
         .bind((self.net_id.clone(), self.port))?;
 
-        println!("Starting server on {}:{} with folder: {}", self.net_id, self.port, self.folder);
+        println!(
+            "Starting server on {}:{} with folder: {}",
+            self.net_id, self.port, self.folder
+        );
         server.run().await.map_err(Error::from)
     }
 }

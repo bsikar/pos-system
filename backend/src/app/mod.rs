@@ -16,10 +16,15 @@ pub struct App {
 
 impl App {
     pub fn new() -> Result<Self, ConfigError> {
+        let path = format!("{}{}", env!("CARGO_MANIFEST_DIR"), "/config");
+        let db_toml = &format!("{}/{}", path, "database.toml");
+        let web_toml = &format!("{}/{}", path, "webserver.toml");
+        let default_toml = &format!("{}/{}", path, ".defaults/POS_DEFAULTS.toml");
+
         let s = Config::builder()
-            .add_source(File::with_name("config/database.toml"))
-            .add_source(File::with_name("config/webserver.toml"))
-            .add_source(File::with_name("config/.defaults/POS_DEFAULTS.toml"))
+            .add_source(File::with_name(db_toml))
+            .add_source(File::with_name(web_toml))
+            .add_source(File::with_name(default_toml))
             .build()?;
 
         let app: App = s.try_deserialize()?;
