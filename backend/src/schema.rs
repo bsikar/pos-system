@@ -10,7 +10,7 @@ table! {
     purchases (id) {
         id -> Int8,
         ctime -> Timestamp,
-        items -> Json,
+        items -> Jsonb,
         total -> Int8,
     }
 }

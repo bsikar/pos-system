@@ -11,5 +11,8 @@ use app::App;
 async fn main() {
     let app = App::new().unwrap();
 
-    app.run().await;
+    match app.run().await {
+        Ok(_) => println!("Server stopped"),
+        Err(e) => eprintln!("Server failed to start: {}", e),
+    }
 }

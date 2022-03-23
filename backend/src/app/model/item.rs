@@ -16,15 +16,12 @@ impl Item {
         Item { name, price, tax }
     }
 
-    pub fn get_by_name(db: &PgConnection, data: &Item) -> Option<Item> {
-        dsl::items
-            .filter(dsl::name.eq(&data.name))
-            .first::<Item>(db)
-            .ok()
+    pub fn get_by_name(db: &PgConnection, name: String) -> Option<Item> {
+        dsl::items.filter(dsl::name.eq(name)).first::<Item>(db).ok()
     }
 
     pub fn validate(&self, db: &PgConnection) -> Result<(), ModelError> {
-        let result = Item::get_by_name(&db, &self);
+        let result = Item::get_by_name(db, self.name.clone());
 
         if result.is_none() {
             Err(ModelError::ItemNotFound(self.name.clone()))
@@ -36,7 +33,7 @@ impl Item {
     }
 
     pub fn create(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
-        let item = Item::get_by_name(db, &data);
+        let item = Item::get_by_name(db, data.name.clone());
 
         if item.is_some() {
             return Err(ModelError::ItemAlreadyExists(data.name));
@@ -61,7 +58,7 @@ impl Item {
     }
 
     pub fn update(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
-        let item = Item::get_by_name(db, &data);
+        let item = Item::get_by_name(db, data.name.clone());
 
         if item.is_none() {
             return Err(ModelError::ItemNotFound(data.name));
@@ -82,7 +79,7 @@ impl Item {
     }
 
     pub fn delete(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
-        let item = Item::get_by_name(db, &data);
+        let item = Item::get_by_name(db, data.name.clone());
 
         if item.is_none() {
             return Err(ModelError::ItemNotFound(data.name));
@@ -94,7 +91,7 @@ impl Item {
     }
 
     pub fn get(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
-        let item = Item::get_by_name(db, &data);
+        let item = Item::get_by_name(db, data.name.clone());
 
         if item.is_none() {
             return Err(ModelError::ItemNotFound(data.name));

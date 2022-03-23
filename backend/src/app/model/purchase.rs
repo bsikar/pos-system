@@ -2,7 +2,7 @@ use crate::app::model::item::Item;
 use crate::app::model::Error as ModelError;
 use crate::schema::purchases::{self, dsl};
 use chrono::{Local, NaiveDateTime};
-use diesel::{ExpressionMethods, PgConnection, RunQueryDsl};
+use diesel::{ExpressionMethods, PgConnection, QueryDsl, RunQueryDsl};
 use serde_json::{json, Value as JsonValue};
 
 #[derive(Queryable, Insertable, AsChangeset, Debug)]
@@ -56,17 +56,64 @@ impl Purchase {
                 dsl::total.eq(total),
             ))
             .execute(db);
-        
+
         if let Err(e) = result {
             Err(ModelError::DieselError(e))
         } else {
-            //Ok(Purchase::get_last_purchase(db).unwrap())
-            Ok(Purchase::list(&db).unwrap().pop().unwrap())
+            Ok(Purchase::get_last_purchase(db).unwrap())
+        }
+    }
+
+    pub fn get_by_id(db: &PgConnection, id: i64) -> Result<Purchase, ModelError> {
+        dsl::purchases
+            .find(id)
+            .first::<Purchase>(db)
+            .map_or_else(|e| Err(ModelError::DieselError(e)), Ok)
+    }
+
+    pub fn get_last_purchase(db: &PgConnection) -> Result<Purchase, ModelError> {
+        let result = dsl::purchases.order(dsl::id.desc()).first::<Purchase>(db);
+
+        if let Err(e) = result {
+            Err(ModelError::DieselError(e))
+        } else {
+            Ok(result.unwrap())
         }
     }
 
     pub fn list(db: &PgConnection) -> Result<Vec<Purchase>, ModelError> {
         Ok(dsl::purchases.load::<Purchase>(db).unwrap())
+    }
+
+    pub fn update(db: &PgConnection, data: JsonValue) -> Result<Purchase, ModelError> {
+        Purchase::validate(&data, db)?;
+
+        let time = Local::now().naive_local();
+        let total = Purchase::calculate_total(&data);
+
+        let result = diesel::update(dsl::purchases.filter(dsl::id.eq(1)))
+            .set((
+                dsl::items.eq(data),
+                dsl::ctime.eq(time),
+                dsl::total.eq(total),
+            ))
+            .execute(db);
+
+        if let Err(e) = result {
+            Err(ModelError::DieselError(e))
+        } else {
+            Ok(Purchase::get_last_purchase(db).unwrap())
+        }
+    }
+
+    pub fn delete(db: &PgConnection, id: i64) -> Result<(), ModelError> {
+        let result = diesel::delete(dsl::purchases.filter(dsl::id.eq(id))).execute(db);
+
+        if let Err(e) = result {
+            Err(ModelError::DieselError(e))
+        } else {
+            Ok(())
+        }
     }
 
     pub fn calculate_total(data: &JsonValue) -> i64 {

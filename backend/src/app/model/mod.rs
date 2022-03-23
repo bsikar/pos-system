@@ -1,38 +1,62 @@
-use diesel::result::Error as DieselError;
+use crate::app::DieselError;
+use diesel::r2d2::ConnectionManager;
+use diesel::PgConnection;
+use serde::Deserialize;
 use thiserror::Error as ThisError;
 
 mod item;
 mod purchase;
 
+#[derive(Debug, Deserialize)]
+#[allow(unused)]
+pub struct Database {
+    pub net_id: String,
+    pub port: u16,
+    pub max_connections: u32,
+    pub root_db_name: String,
+    pub root_user: String,
+    pub root_pwd: String,
+    pub db_name: String,
+    pub user: String,
+    pub pwd: String,
+}
+
+impl Database {
+    pub fn establish_db_conn(&self) -> r2d2::Pool<ConnectionManager<PgConnection>> {
+        let url = format!(
+            "postgres://{}:{}@{}:{}/{}",
+            self.user, self.pwd, self.net_id, self.port, self.db_name
+        );
+
+        let migr = ConnectionManager::<PgConnection>::new(url);
+        r2d2::Pool::builder()
+            .build(migr)
+            .expect("could not build connection pool")
+    }
+}
+
 #[derive(ThisError, Debug)]
 pub enum Error {
-    #[error("Entity Not Found - {0}[{1}]")]
-    EntityNotFound(&'static str, String),
-
+    // Diesel
     #[error(transparent)]
     DieselError(#[from] DieselError),
 
     #[error(transparent)]
-    IOError(#[from] std::io::Error),
+    DieselConnectionError(#[from] diesel::ConnectionError),
 
-    #[error("Item Already Exists - {0}")]
-    ItemAlreadyExists(String),
-
+    // Item
     #[error("Item Not Found - {0}")]
     ItemNotFound(String),
 
     #[error("Invalid Item Price - {0}")]
     InvalidItemPrice(i64),
 
-    #[error("Invalid Item Name- {0}")]
-    InvalidItemName(String),
-
-    #[error("Empty Items")]
-    EmptyItems,
+    #[error("Item Already Exists - {0}")]
+    ItemAlreadyExists(String),
 
     #[error("Empty Item Name")]
     EmptyItemName,
 
-    #[error("Purchase Not Found - {0}")]
-    PurchaseNotFound(String),
+    #[error("Empty Items")]
+    EmptyItems,
 }

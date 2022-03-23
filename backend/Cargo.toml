@@ -25,7 +25,8 @@ actix-files = "0.6.0"
 actix-rt = "2.7.0"
 
 # database
-diesel = { version = "1.4.8", features = ["postgres", "chrono", "serde_json"] }
+diesel = { version = "1.4.8", features = ["postgres", "chrono", "serde_json", "r2d2"] }
+r2d2 = "0.8.9"
 
 # date
 chrono = { version = "0.4.19", features = ["serde"] }

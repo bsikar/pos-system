@@ -1,31 +1,12 @@
+use crate::app::{model::Database, web::WebServer};
 use config::{Config, ConfigError, File};
-use diesel::pg::PgConnection;
-use diesel::prelude::*;
+use diesel::result::Error as DieselError;
 use serde::Deserialize;
 
 mod model;
+mod web;
 
-#[derive(Debug, Deserialize)]
-#[allow(unused)]
-struct Database {
-    net_id: String,
-    port: u16,
-    max_connections: u32,
-    root_db_name: String,
-    root_user: String,
-    root_pwd: String,
-    db_name: String,
-    user: String,
-    pwd: String,
-}
-
-#[derive(Debug, Deserialize)]
-#[allow(unused)]
-struct WebServer {
-    net_id: String,
-    port: u16,
-    folder: String,
-}
+use web::Error as WebError;
 
 #[derive(Debug, Deserialize)]
 pub struct App {
@@ -46,17 +27,10 @@ impl App {
         Ok(app)
     }
 
-    pub async fn run(&self) {
-        let connection = self.establish_db_conn();
-    }
+    pub async fn run(self) -> Result<(), WebError> {
+        println!("Starting server...");
+        let connection = self.database.establish_db_conn();
 
-    pub fn establish_db_conn(&self) -> PgConnection {
-        let database_url = format!(
-            "postgres://{}:{}@{}/{}",
-            self.database.user, self.database.pwd, self.database.net_id, self.database.db_name
-        );
-
-        PgConnection::establish(&database_url)
-            .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
+        self.webserver.establish_webserver(connection).await
     }
 }
