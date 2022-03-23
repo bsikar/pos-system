@@ -9,8 +9,8 @@ use serde_json::{json, Value as JsonValue};
 #[table_name = "purchases"]
 pub struct Purchase {
     pub id: i64,
-    pub items: JsonValue,
     pub ctime: NaiveDateTime,
+    pub items: JsonValue,
     pub total: i64,
 }
 
@@ -33,8 +33,8 @@ impl Purchase {
         Ok(items)
     }
 
-    fn validate(data: JsonValue, db: &PgConnection) -> Result<(), ModelError> {
-        let items = Purchase::to_items(data)?;
+    fn validate(data: &JsonValue, db: &PgConnection) -> Result<(), ModelError> {
+        let items = Purchase::to_items(data.clone())?;
 
         for item in items {
             item.validate(db)?;
@@ -44,19 +44,29 @@ impl Purchase {
     }
 
     pub fn create(db: &PgConnection, data: JsonValue) -> Result<Purchase, ModelError> {
-        Purchase::validate(data, db)?;
+        Purchase::validate(&data, db)?;
 
         let time = Local::now().naive_local();
         let total = Purchase::calculate_total(&data);
 
-        diesel::insert_into(dsl::purchases)
+        let result = diesel::insert_into(dsl::purchases)
             .values((
                 dsl::items.eq(data),
                 dsl::ctime.eq(time),
                 dsl::total.eq(total),
             ))
-            .get_result(db)
-            .map_or_else(|e| Err(ModelError::DieselError(e)), |purchase| Ok(purchase))
+            .execute(db);
+        
+        if let Err(e) = result {
+            Err(ModelError::DieselError(e))
+        } else {
+            //Ok(Purchase::get_last_purchase(db).unwrap())
+            Ok(Purchase::list(&db).unwrap().pop().unwrap())
+        }
+    }
+
+    pub fn list(db: &PgConnection) -> Result<Vec<Purchase>, ModelError> {
+        Ok(dsl::purchases.load::<Purchase>(db).unwrap())
     }
 
     pub fn calculate_total(data: &JsonValue) -> i64 {
