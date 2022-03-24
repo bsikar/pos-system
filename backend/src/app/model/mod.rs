@@ -4,8 +4,10 @@ use diesel::PgConnection;
 use serde::Deserialize;
 use thiserror::Error as ThisError;
 
-mod item;
-mod purchase;
+pub mod item;
+pub mod purchase;
+
+pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
 
 #[derive(Debug, Deserialize)]
 #[allow(unused)]
@@ -22,7 +24,7 @@ pub struct Database {
 }
 
 impl Database {
-    pub fn establish_db_conn(&self) -> r2d2::Pool<ConnectionManager<PgConnection>> {
+    pub fn establish_db_conn(&self) -> DbPool {
         let url = format!(
             "postgres://{}:{}@{}:{}/{}",
             self.user, self.pwd, self.net_id, self.port, self.db_name

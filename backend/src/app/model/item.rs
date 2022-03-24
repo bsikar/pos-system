@@ -2,8 +2,9 @@ use crate::app::model::Error as ModelError;
 use crate::schema::items::{self, dsl};
 use diesel::associations::HasTable;
 use diesel::{ExpressionMethods, PgConnection, QueryDsl, Queryable, RunQueryDsl};
+use serde::{Deserialize, Serialize};
 
-#[derive(Queryable, Insertable, AsChangeset, Debug)]
+#[derive(Queryable, Insertable, AsChangeset, Debug, Deserialize, Serialize)]
 #[table_name = "items"]
 pub struct Item {
     pub name: String,
@@ -16,15 +17,18 @@ impl Item {
         Item { name, price, tax }
     }
 
-    pub fn get_by_name(db: &PgConnection, name: String) -> Option<Item> {
-        dsl::items.filter(dsl::name.eq(name)).first::<Item>(db).ok()
+    pub fn get_by_name(db: &PgConnection, name: String) -> Result<Item, ModelError> {
+        dsl::items
+            .filter(dsl::name.eq(name))
+            .first::<Item>(db)
+            .map_err(|err| ModelError::ItemNotFound(format!("Item not found: {}", err)))
     }
 
     pub fn validate(&self, db: &PgConnection) -> Result<(), ModelError> {
         let result = Item::get_by_name(db, self.name.clone());
 
-        if result.is_none() {
-            Err(ModelError::ItemNotFound(self.name.clone()))
+        if let Err(err) = result {
+            Err(err)
         } else if result.unwrap().price != self.price {
             Err(ModelError::InvalidItemPrice(self.price))
         } else {
@@ -35,7 +39,7 @@ impl Item {
     pub fn create(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
         let item = Item::get_by_name(db, data.name.clone());
 
-        if item.is_some() {
+        if item.is_ok() {
             return Err(ModelError::ItemAlreadyExists(data.name));
         }
 
@@ -57,11 +61,22 @@ impl Item {
         Ok(dsl::items.load::<Item>(db).unwrap())
     }
 
-    pub fn update(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
-        let item = Item::get_by_name(db, data.name.clone());
+    pub fn get(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
+        let item = Item::get_by_name(db, data.name);
 
-        if item.is_none() {
-            return Err(ModelError::ItemNotFound(data.name));
+        if let Err(err) = item {
+            return Err(err);
+        }
+
+        Ok(item.unwrap())
+    }
+
+    pub fn update(db: &PgConnection, name: String, data: Item) -> Result<Item, ModelError> {
+        // set the current item with the name `name` to the data
+        let item = Item::get_by_name(db, name.clone());
+
+        if let Err(err) = item {
+            return Err(err);
         }
 
         if data.price < 0 {
@@ -72,31 +87,21 @@ impl Item {
             return Err(ModelError::EmptyItemName);
         }
 
-        diesel::update(dsl::items::table().find(&data.name))
+        diesel::update(dsl::items::table().find(&name))
             .set(&data)
             .execute(db)
             .map_or_else(|e| Err(ModelError::DieselError(e)), |_| Ok(data))
     }
 
-    pub fn delete(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
-        let item = Item::get_by_name(db, data.name.clone());
+    pub fn delete(db: &PgConnection, name: String) -> Result<Item, ModelError> {
+        let item = Item::get_by_name(db, name.clone());
 
-        if item.is_none() {
-            return Err(ModelError::ItemNotFound(data.name));
+        if let Err(err) = item {
+            return Err(err);
         }
 
-        diesel::delete(dsl::items::table().find(&data.name))
+        diesel::delete(dsl::items::table().find(&name))
             .execute(db)
-            .map_or_else(|e| Err(ModelError::DieselError(e)), |_| Ok(data))
-    }
-
-    pub fn get(db: &PgConnection, data: Item) -> Result<Item, ModelError> {
-        let item = Item::get_by_name(db, data.name.clone());
-
-        if item.is_none() {
-            return Err(ModelError::ItemNotFound(data.name));
-        }
-
-        Ok(item.unwrap())
+            .map_or_else(|e| Err(ModelError::DieselError(e)), |_| item)
     }
 }

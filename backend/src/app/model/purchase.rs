@@ -3,9 +3,10 @@ use crate::app::model::Error as ModelError;
 use crate::schema::purchases::{self, dsl};
 use chrono::{Local, NaiveDateTime};
 use diesel::{ExpressionMethods, PgConnection, QueryDsl, RunQueryDsl};
+use serde::{Deserialize, Serialize};
 use serde_json::{json, Value as JsonValue};
 
-#[derive(Queryable, Insertable, AsChangeset, Debug)]
+#[derive(Queryable, Insertable, AsChangeset, Debug, Deserialize, Serialize)]
 #[table_name = "purchases"]
 pub struct Purchase {
     pub id: i64,
@@ -15,34 +16,6 @@ pub struct Purchase {
 }
 
 impl Purchase {
-    fn to_items(data: JsonValue) -> Result<Vec<Item>, ModelError> {
-        let mut items = vec![];
-
-        if data == json!(null) || data == json!({}) || data == json!([]) {
-            return Err(ModelError::EmptyItems);
-        }
-
-        for item in data.as_array().unwrap() {
-            let name = item["name"].as_str().unwrap().to_string();
-            let price = item["price"].as_i64().unwrap();
-            let tax = item["tax"].as_f64().unwrap() as f32;
-
-            items.push(Item::new(name, price, tax));
-        }
-
-        Ok(items)
-    }
-
-    fn validate(data: &JsonValue, db: &PgConnection) -> Result<(), ModelError> {
-        let items = Purchase::to_items(data.clone())?;
-
-        for item in items {
-            item.validate(db)?;
-        }
-
-        Ok(())
-    }
-
     pub fn create(db: &PgConnection, data: JsonValue) -> Result<Purchase, ModelError> {
         Purchase::validate(&data, db)?;
 
@@ -85,13 +58,13 @@ impl Purchase {
         Ok(dsl::purchases.load::<Purchase>(db).unwrap())
     }
 
-    pub fn update(db: &PgConnection, data: JsonValue) -> Result<Purchase, ModelError> {
+    pub fn update(db: &PgConnection, id: i64, data: JsonValue) -> Result<Purchase, ModelError> {
         Purchase::validate(&data, db)?;
 
         let time = Local::now().naive_local();
         let total = Purchase::calculate_total(&data);
 
-        let result = diesel::update(dsl::purchases.filter(dsl::id.eq(1)))
+        let result = diesel::update(dsl::purchases.filter(dsl::id.eq(id)))
             .set((
                 dsl::items.eq(data),
                 dsl::ctime.eq(time),
@@ -130,5 +103,33 @@ impl Purchase {
         }
 
         total
+    }
+
+    fn to_items(data: JsonValue) -> Result<Vec<Item>, ModelError> {
+        let mut items = vec![];
+
+        if data == json!(null) || data == json!({}) || data == json!([]) {
+            return Err(ModelError::EmptyItems);
+        }
+
+        for item in data.as_array().unwrap() {
+            let name = item["name"].as_str().unwrap().to_string();
+            let price = item["price"].as_i64().unwrap();
+            let tax = item["tax"].as_f64().unwrap() as f32;
+
+            items.push(Item::new(name, price, tax));
+        }
+
+        Ok(items)
+    }
+
+    fn validate(data: &JsonValue, db: &PgConnection) -> Result<(), ModelError> {
+        let items = Purchase::to_items(data.clone())?;
+
+        for item in items {
+            item.validate(db)?;
+        }
+
+        Ok(())
     }
 }

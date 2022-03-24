@@ -3,6 +3,9 @@
 #[macro_use]
 extern crate diesel;
 
+#[macro_use]
+extern crate actix_web;
+
 mod app;
 mod schema;
 use app::App;
