@@ -26,6 +26,7 @@ pub async fn create(db: Data<DbPool>, purchase: Json<JsonValue>) -> HttpResponse
     let purchase = purchase.into_inner();
     let purchase = purchase["items"].clone();
     let purchase = Purchase::create(&db, purchase);
+
     handle_result(purchase)
 }
 
