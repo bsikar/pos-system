@@ -14,9 +14,15 @@ there will be an admin pannel where the database entries can be deleted or alter
 # start
 ## start the database using docker-compose
 ```sh
-sudo docker-compose up
+docker-compose up
 ```
 this works because it uses the `docker-compose.yml` file
+
+if this command does not work then add yourself to the docker group (you may need to re-login)
+```sh
+usermod -a -G docker $USER
+```
+
 
 ## start the backend
 ```sh
