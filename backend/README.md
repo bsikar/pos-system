@@ -29,8 +29,6 @@ the code currently uses config files located at `./config/`
 diesel uses a `.env` file for its cli utils while developing, this file can be ignored, but if you are developing you need to make sure the file is properly updated
 # testing
 ```sh
-sudo docker-compose up                                    # start the docker container
-sh generate_test_seeds.sh                                 # generate test seeds to the database
-cargo test -- --test-threads=1 --nocapture --color=always # run the tests
-sh remove_test_seeds.sh                                   # remove the seeds from the database
+python test_backend.py
 ```
+this will start a docker container, add test seeds to the database, run the rust tests, then stop the docker container removing all test seed data
