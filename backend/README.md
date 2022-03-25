@@ -12,181 +12,25 @@ once the has entered all of the required items, they will be able to press compl
 there will be an admin pannel where the database entries can be deleted or altered and there will be an option to allow cash tranations to be added in the sale database.
 
 # start
-## start the database using docker-compose (easiest)
+## start the database using docker-compose
 ```sh
 sudo docker-compose up
 ```
 this works because it uses the `docker-compose.yml` file
 
-## start the database using docker cli
-to start the database run the following command:
+## start the backend
 ```sh
-sudo docker run --rm \
-	--name pos-pg \
-	-v $PWD/postgres-data/:/var/lib/postgresql/data \
-	-p 5432:5432 \
-	-e POSTGRES_USER=pos_user \
-	-e POSTGRES_PASSWORD=pos_password \
-	-e POSTGRES_DB=pos_db \
-	postgres:14
+cargo run --release
 ```
-heres the break down of what that command does:
 
-`run` : start an instance of a docker container
+## config files
+the code currently uses config files located at `./config/`
 
-`--rm` :  removes a container after it exits
-
-`--name pos-pg` : assign the name `pos-pg` to the container (`pos-pg` meaning "point of sale postgres")
-
-`-v <host directory>:<container directory>`
-
-`-v $PWD/postgres-data/:/var/lib/postgresql/data` :  put the data from the container to the local host
-
-`-p <container's TCP port>:<host's TCP port>`
-
-`-p 5432:5432 ` : bind the container's TCP port `5432` to the host's port `5432`
-
-the port of `5432` is usually the default port for postgres
-
-`-e "POSTGRES_USER=pos_user"` : set the enviromental variable `POSTGRES_USER` to `pos_user`
-
-`-e "POSTGRES_PASSWORD=postgres"` : set the enviromental variable `POSTGRES_PASSWORD` to `pos_password`
-
-`-e "POSTGRES_DB=pos_db"` : set the enviromental variable `POSTGRES_DB` to `pos_db`
-
-
-`postgres:14` : use the [docker image](https://hub.docker.com/_/postgres) `posgres` version `14`
-
-## to check the database
-to check the contents of the database and to preform maintance on the database run the following command:
+diesel uses a `.env` file for its cli utils while developing, this file can be ignored, but if you are developing you need to make sure the file is properly updated
+# testing
 ```sh
-docker exec -i -t -u postgres pos-pg psql
+sudo docker-compose up                                    # start the docker container
+sh generate_test_seeds.sh                                 # generate test seeds to the database
+cargo test -- --test-threads=1 --nocapture --color=always # run the tests
+sh remove_test_seeds.sh                                   # remove the seeds from the database
 ```
-heres the break down of what that command does:
-
-`exec` : run a command in a running docker container
-
-`-i` : keep STDIN open even if its not attached meaning make it interactive
-
-`-t` : allocate a pseudo-TTY
-
-`-u postgres` : access with username `postgres`
-
-`pos-pg` : the docker container is called `pos-pg`
-
-`psql` : the command is called `psql`
-
-`psql` is a command which allows us to access and mess with the database
-
-# production tests
-```sh
-python list-db.py
-```
-```sh
-sh test-db.sh
-```
-
-# development
-## setup
-uncomment `model::db`'s `init_db` function
-```rs
-pub async fn init_db() -> Result<Db, sqlx::Error> {
-    // create the database with the root user (for development only)
-    {
-        let root_db = new_db_pool(PG_HOST, _PG_ROOT_DB, _PG_ROOT_USER, _PG_ROOT_PWD, 1).await?;
-        pexec(&root_db, SQL_RECREATE).await?;
-    }
-```
-uncomment `sql/01-create-scheme.sql`
-```sql
-ALTER SEQUENCE purchase_id_seq RESTART WITH 1000; -- start id at 1000 so our test data wont overlap
-```
-rename `sql/00-recreate-db.sql-dev` to `sql/00-recreate-db.sql`
-
-rename  `sql/02-dev-seed.sql-dev` to `sql/02-dev-seed.sql`
-
-## run docker
-to start the database run the following command:
-```sh
-docker run --rm -p 5432:5432 -e "POSTGRES_PASSWORD=postgres" --name pos-pg postgres:14
-```
-heres the break down of what that command does:
-
-`run` : start an instance of a docker container
-
-`--rm` :  removes a container after it exits
-
-`-p <container's TCP port>:<host's TCP port>`
-
-`-p 5432:5432 ` : bind the container's TCP port `5432` to the host's port `5432`
-
-the port of `5432` is usually the default port for postgres
-
-`-e "POSTGRES_PASSWORD=postgres"` : set the enviromental variable `POSTGRES_PASSWORD` to `postgres`
-
-`--name pos-pg` : assign the name `pos-pg` to the container (`pos-pg` meaning "point of sale postgres")
-
-`postgres:14` : use the [docker image](https://hub.docker.com/_/postgres) `posgres` version `14`
-
-## run tests
-to test the code (run tests) run the following command
-```sh
-cargo watch -q -c -w src/ -x 'test model_ -- --test-threads=1 --nocapture --color=always'
-```
-heres the break down of waht that command does:
-
-`-q` : suppress output from cargo-watch
-
-`-c` : clear the screen before each run
-
-`-w src/` : watch the `src/` directory
-
-`-x <command>` : run the following cargo command to execute changes
-
-the command: `test model_db_ -- --test-threads=1 --nocapture`
-
-`test model_` : run the tests that start with the name `model_`
-
-`--` : this is needed before the test flags to run the application with those flags
-
-`--test-threads=1` : use one thread when testing
-
-`--nocapture` : show output of the test
-
-`--color=always` : enable color in the output
-
-you can run the web tests in the same way
-```sh
-cargo watch -q -c -w src/ -x 'test web_ -- --test-threads=1 --nocapture --color=always'
-```
-
-to run all tests
-```sh
-cargo watch -q -c -w src/ -x 'test -- --test-threads=1 --nocapture --color=always'
-```
-
-## start the website
-```sh
-cargo watch -q -c -w src/ -x 'run -- -i ../frontend/web-folder -f actix -p 3030'
-```
-heres the break down of waht that command does:
-
-`-q` : suppress output from cargo-watch
-
-`-c` : clear the screen before each run
-
-`-w src/` : watch the `src/` directory
-
-`-x <command>` : run the following cargo command to execute changes
-
-the command: `test model_db_ -- --test-threads=1 --nocapture`
-
-`test model_` : run the tests that start with the name `model_`
-
-`--` : this is needed before the test flags to run the application with those flags
-
-`-i ../frontend/web-folder` : this is the path to the webfolder which will be used
-
-`-f actix` : this is the web framework that the server will use
-
-`-p 3030` : bind the http server to port `3030`

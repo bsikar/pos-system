@@ -10,8 +10,8 @@ use web::Error as WebError;
 
 #[derive(Debug, Deserialize)]
 pub struct App {
-    database: Database,
-    webserver: WebServer,
+    pub database: Database,
+    pub webserver: WebServer,
 }
 
 impl App {

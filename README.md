@@ -5,7 +5,6 @@ TODO:
 
 **backend**:
 * readd tests
-* fix readme
 * add script to add seed data to the app for testing
 * add user login info (one for user one for admin)
 
