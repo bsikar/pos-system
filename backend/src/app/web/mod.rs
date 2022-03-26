@@ -30,7 +30,7 @@ impl WebServer {
         .bind((self.net_id.clone(), self.port))?;
 
         println!(
-            "Starting server on {}:{} with folder: {}",
+            "Started server on {}:{} with folder: {}",
             self.net_id, self.port, self.folder
         );
         server.run().await.map_err(Error::from)
