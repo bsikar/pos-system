@@ -17,13 +17,11 @@ pub struct App {
 impl App {
     pub fn new() -> Result<Self, ConfigError> {
         let path = format!("{}{}", env!("CARGO_MANIFEST_DIR"), "/config");
-        let db_toml = &format!("{}/{}", path, "database.toml");
-        let web_toml = &format!("{}/{}", path, "webserver.toml");
+        let pos_toml = &format!("{}/{}", path, "pos_config.toml");
         let default_toml = &format!("{}/{}", path, ".defaults/POS_DEFAULTS.toml");
 
         let s = Config::builder()
-            .add_source(File::with_name(db_toml))
-            .add_source(File::with_name(web_toml))
+            .add_source(File::with_name(pos_toml))
             .add_source(File::with_name(default_toml))
             .build()?;
 

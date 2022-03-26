@@ -8,3 +8,8 @@ root_pwd = "postgres"
 db_name = "pos_db"
 user = "pos_user"
 pwd = "pos_user"
+
+[webserver]
+net_id = "0.0.0.0"
+port = 8080
+folder = "../frontend/web-folder/"

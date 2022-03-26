@@ -1,44 +1,10 @@
 # config
-## webserver
-in `webserver.toml` (example config)
-```toml
-[webserver]
-net_id = "0.0.0.0"
-port = 3030
-folder = "web-folder/"
-```
-if you don't put some of the values for the variables defualt ones will be used
+## in pos_config.toml
+in `pos_config.toml` add changes to the backend the default values are:
 
-
-the default values are:
-```toml
-net_id = "0.0.0.0"
-port = 8080
-folder = "../frontend/web-folder/"
-```
-### net_id -- default value: `"0.0.0.0"`
-this is the ip address to connect to, e.g `127.0.0.1` or `0.0.0.0`
-### web_port -- default value: `8080`
-this is the port that the server will bind to
-### web_folder -- default value: `"../frontend/web-folder/"`
-this is the servers front end files
-
-## database
-in `database.toml` (example config)
+## default values
 ```toml
 [database]
-max_connections = 3
-root_db_name = "postgres"
-root_pwd = "root password"
-db_name = "DATABASE"
-user = "USER"
-pwd = "PASSWORD"
-```
-if you don't put some of the values for the variables defualt ones will be used
-
-
-the default values are:
-```toml
 net_id = "0.0.0.0"
 port = 5432
 max_connections = 5
@@ -48,22 +14,20 @@ root_pwd = "postgres"
 db_name = "pos_db"
 user = "pos_user"
 pwd = "pos_user"
+
+[webserver]
+net_id = "0.0.0.0"
+port = 8080
+folder = "../frontend/web-folder/"
 ```
-### net_id -- default value: `"0.0.0.0"`
-this is the ip address to connect to, e.g `127.0.0.1` or `0.0.0.0`
-### port -- default value: `5432`
-this is the port that the database will bind to
-### max_connections -- default value: `5`
-this is the max number of connections to the database at one time
-### root_db_name -- default value: `"postgres"`
-this is the name of the root database
-### root_user -- default value: `"postgres"`
-this is the root users name
-### root_pwd -- default value: `"postgres"`
-this is the password for the root user
-### db_name -- default value: `"pos_db"`
-this is the primary database name
-### user -- default value: `"pos_user"`
-this is the name of the primary user
-### pwd -- default value: `"pos_user"`
-this is the password for the primary user
+
+## example config
+```toml
+[database]
+root_user = "root"
+root_pwd = "root"
+
+[webserver]
+port = 3030
+```
+this will only change the database's `root_user` and `root_pwd` and the webserver's `port` all other values will be defaulted to
