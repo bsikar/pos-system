@@ -62,3 +62,7 @@ pub enum Error {
     #[error("Empty Items")]
     EmptyItems,
 }
+
+#[cfg(test)]
+#[path = "../../../tests/model_tests/db.rs"]
+mod model_tests;

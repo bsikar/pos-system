@@ -4,7 +4,7 @@ use diesel::associations::HasTable;
 use diesel::{ExpressionMethods, PgConnection, QueryDsl, Queryable, RunQueryDsl};
 use serde::{Deserialize, Serialize};
 
-#[derive(Queryable, Insertable, AsChangeset, Debug, Deserialize, Serialize)]
+#[derive(Queryable, QueryableByName, Insertable, AsChangeset, Debug, Deserialize, Serialize)]
 #[table_name = "items"]
 pub struct Item {
     pub name: String,

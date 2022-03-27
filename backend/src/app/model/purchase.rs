@@ -6,7 +6,7 @@ use diesel::{ExpressionMethods, PgConnection, QueryDsl, RunQueryDsl};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value as JsonValue};
 
-#[derive(Queryable, Insertable, AsChangeset, Debug, Deserialize, Serialize)]
+#[derive(Queryable, QueryableByName, Insertable, AsChangeset, Debug, Deserialize, Serialize)]
 #[table_name = "purchases"]
 pub struct Purchase {
     pub id: i64,
