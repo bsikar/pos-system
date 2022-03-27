@@ -16,8 +16,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: testing printing pwd
+      run: echo $PWD
     - name: Cd into backend
-      run: cd ../../backend 
+      run: cd backend 
     - name: Build
       run: cargo build --verbose
     - name: Install Dependecies
