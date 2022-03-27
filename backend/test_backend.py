@@ -5,7 +5,7 @@ from pprint import pp as pprint
 from glob import glob
 from termcolor import colored
 
-data = toml.load('config/pos_config.toml')    
+data = toml.load('config/pos_config.toml')
 user = data['database']['user']
 password = data['database']['pwd']
 name = data['database']['db_name']
@@ -57,12 +57,11 @@ def load_schema(conn, cur):
     cur.execute(schema)
     conn.commit()
 
-
 def generate_test_data(conn, cur):
     def add_item(name, price, tax):
         cur.execute(f"""INSERT INTO items (name, price, tax) VALUES ('{name}', {price}, {tax})""")
         conn.commit()
-    
+
     def add_purchase(id, items, total):
         cur.execute(f"""INSERT INTO purchases (id, items, total) VALUES ({id}, '{items}', {total})""")
         conn.commit()
@@ -76,10 +75,10 @@ def generate_test_data(conn, cur):
     add_purchase(102, '[{"name": "half dozen glazed donuts","price": 625,"quantity": 1},{"name": "dozen glazed donuts","price": 1099,"quantity": 2}]', 2823)
 
 def print_database(cur):
-    cur.execute("""SELECT * FROM items""")
+    cur.execute('SELECT * FROM items')
     pprint(cur.fetchall())
 
-    cur.execute("""SELECT * FROM purchases""")
+    cur.execute('SELECT * FROM purchases')
     pprint(cur.fetchall())
 
 def run_rust_tests():
