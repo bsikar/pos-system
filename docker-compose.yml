@@ -8,6 +8,6 @@ services:
             - '5432:5432'
         environment:
             - POSTGRES_USER=pos_user
-            - POSTGRES_PASSWORD=pos_password
+            - POSTGRES_PASSWORD=pos_user
             - POSTGRES_DB=pos_db
         image: 'postgres:14'

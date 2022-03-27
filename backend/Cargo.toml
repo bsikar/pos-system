@@ -11,13 +11,6 @@ license = "MIT"
 keywords = ["pos"]
 
 [dependencies]
-#async
-tokio = { version = "1.17.0", features = ["full"] }
-async-trait = "0.1.52"
-
-# cli
-clap = { version = "3.1.2", features = ["cargo"] }
-
 # errors
 thiserror = "1.0.30"
 
@@ -32,13 +25,15 @@ actix-files = "0.6.0"
 actix-rt = "2.7.0"
 
 # database
-sqlx = { version = "0.5.11", features = ["runtime-tokio-rustls", "postgres", "chrono"] }
+diesel = { version = "1.4.8", features = ["postgres", "chrono", "serde_json", "r2d2"] }
+r2d2 = "0.8.9"
 
 # date
 chrono = { version = "0.4.19", features = ["serde"] }
 
-# env
-dotenv = "0.15.0"
+# others
+config = "0.12.0"
+colored = "2.0.0"
 
 [dev-dependencies]
 anyhow = "1.0.55"
