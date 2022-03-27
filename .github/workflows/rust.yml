@@ -16,9 +16,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Cd into backend
+      run: cd ../../backend 
     - name: Build
       run: cargo build --verbose
     - name: Install Dependecies
-      run: pip install -r ../../backend/requirements.txt
+      run: pip install -r requirements.txt
     - name: Run tests
-      run: python ../../backend/test_backend.py
+      run: python test_backend.py
