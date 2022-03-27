@@ -84,7 +84,7 @@ def print_database(cur):
 
 def run_rust_tests():
     print('Running rust tests:')
-    subprocess.run('cargo test -- --test-threads=1 --nocapture --color=always', shell=True)
+    subprocess.run('cargo test --verbose -- --test-threads=1 --nocapture --color=always', shell=True)
     print(colored('done', 'green'))
 
 if __name__ == '__main__':
