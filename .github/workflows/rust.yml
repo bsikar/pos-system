@@ -13,13 +13,13 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./backend
 
     steps:
     - uses: actions/checkout@v2
-    - name: testing printing pwd
-      run: echo $PWD
-    - name: Cd into backend
-      run: cd backend 
     - name: Build
       run: cargo build --verbose
     - name: Install Dependecies
