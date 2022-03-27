@@ -1,4 +1,5 @@
 use crate::app::{model::Database, web::WebServer};
+use colored::Colorize;
 use config::{Config, ConfigError, File};
 use diesel::result::Error as DieselError;
 use serde::Deserialize;
@@ -74,19 +75,19 @@ services:
     }
 
     pub async fn run(self) -> Result<(), WebError> {
-        print!("Generating docker-compose.yml\t");
+        print!("Generating docker-compose.yml ... ");
         self.generate_docker_compose_yml();
-        println!("ok");
+        println!("{}", "done".green());
 
-        print!("Generating .evn file\t");
+        print!("Generating .evn file ... ");
         self.generate_env_file();
-        println!("ok");
+        println!("{}", "done".green());
 
-        print!("Starting docker\t");
+        print!("Starting docker ... ");
         self.start_docker();
-        println!("ok");
+        println!("{}", "done".green());
 
-        println!("Starting server...");
+        print!("Starting server ... ");
         let connection = self.database.establish_db_conn();
 
         self.webserver.establish_webserver(connection).await

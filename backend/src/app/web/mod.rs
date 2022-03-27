@@ -2,6 +2,7 @@ use crate::app::model::{DbPool, Error as ModelError};
 use actix_files::Files;
 use actix_web::HttpResponse;
 use actix_web::{web::Data, App, HttpServer};
+use colored::Colorize;
 use serde::{Deserialize, Serialize};
 use thiserror::Error as ThisError;
 
@@ -29,10 +30,12 @@ impl WebServer {
         })
         .bind((self.net_id.clone(), self.port))?;
 
-        println!(
+        let msg = format!(
             "Started server on {}:{} with folder: {}",
             self.net_id, self.port, self.folder
         );
+
+        println!("{}", msg.green());
         server.run().await.map_err(Error::from)
     }
 }

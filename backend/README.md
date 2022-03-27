@@ -35,6 +35,7 @@ the code currently uses config files located at `./config/`
 diesel uses a `.env` file for its cli utils while developing, this file can be ignored, but if you are developing you need to make sure the file is properly updated
 # testing
 ```sh
+pip install -r requirements.txt
 python test_backend.py
 ```
 this will start a docker container, add test seeds to the database, run the rust tests, then stop the docker container removing all test seed data
