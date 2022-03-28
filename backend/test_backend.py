@@ -57,6 +57,15 @@ def load_schema(conn, cur):
     cur.execute(schema)
     conn.commit()
 
+def drop_tables(conn, cur):
+    schema = open(glob('migrations/*_create_items/down.sql')[0], 'r').read()
+    cur.execute(schema)
+    conn.commit()
+
+    schema = open(glob('migrations/*_create_purchases/down.sql')[0], 'r').read()
+    cur.execute(schema)
+    conn.commit()
+
 def generate_test_data(conn, cur):
     def add_item(name, price, tax):
         cur.execute(f"""INSERT INTO items (name, price, tax) VALUES ('{name}', {price}, {tax})""")
@@ -81,9 +90,18 @@ def print_database(cur):
     cur.execute('SELECT * FROM purchases')
     pprint(cur.fetchall())
 
-def run_rust_tests():
-    print('Running rust tests:')
-    subprocess.run('cargo test -- --test-threads=1 --nocapture --color=always', shell=True)
+def run_rust_tests(conn, cur):
+    tests = subprocess.run('cargo test -- --list --format terse', shell=True, capture_output=True).stdout.decode('utf-8').replace(': test', '').split('\n')[:-1]
+    print(f'Running {len(tests)} rust tests:')
+
+    for cnt, test in enumerate(tests):
+        print(f'{cnt+1}. Running test: {test} ... ', end='')
+        drop_tables(conn, cur)
+        load_schema(conn, cur)
+        generate_test_data(conn, cur)
+        x = subprocess.run(f'cargo test {test} -- --color=always', shell=True, capture_output=True).stdout.decode('utf-8').split('\n')
+        x = [i for i in x if 'test result' in i][0]
+        print(x)
     print(colored('done', 'green'))
 
 if __name__ == '__main__':
@@ -91,10 +109,6 @@ if __name__ == '__main__':
     conn = wait_for_database()
     cur = conn.cursor()
 
-    load_schema(conn, cur)
-    generate_test_data(conn, cur)
-
-    print_database(cur)
-    run_rust_tests()
+    run_rust_tests(conn, cur)
 
     stop_docker(ps)

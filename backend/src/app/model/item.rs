@@ -19,9 +19,9 @@ impl Item {
 
     pub fn get_by_name(db: &PgConnection, name: String) -> Result<Item, ModelError> {
         dsl::items
-            .filter(dsl::name.eq(name))
+            .filter(dsl::name.eq(name.clone()))
             .first::<Item>(db)
-            .map_err(|err| ModelError::ItemNotFound(format!("Item not found: {}", err)))
+            .map_err(|_| ModelError::ItemNotFound(name))
     }
 
     pub fn validate(&self, db: &PgConnection) -> Result<(), ModelError> {
@@ -105,3 +105,7 @@ impl Item {
             .map_or_else(|e| Err(ModelError::DieselError(e)), |_| item)
     }
 }
+
+#[cfg(test)]
+#[path = "../../../tests/model_tests/item.rs"]
+mod model_tests;
