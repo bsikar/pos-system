@@ -133,3 +133,7 @@ impl Purchase {
         Ok(())
     }
 }
+
+#[cfg(test)]
+#[path = "../../../tests/model_tests/purchase.rs"]
+mod model_tests;

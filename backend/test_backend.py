@@ -19,7 +19,7 @@ def start_docker():
         postgres:14
         """
 
-    print('Starting docker ... ', end='')
+    print('Starting docker ... ', end='', flush=True)
     ps = subprocess.run(command, shell=True, capture_output=True)
     print(colored('done', 'green'))
 
@@ -27,12 +27,12 @@ def start_docker():
 
 def stop_docker(ps):
     command = f"""docker stop {ps.stdout.decode('utf-8')}"""
-    print('Stopping docker ... ', end='')
+    print('Stopping docker ... ', end='', flush=True)
     subprocess.run(command, shell=True, capture_output=True)
     print(colored('done', 'green'))
 
 def wait_for_database():
-    print('Waiting for docker to start ... ', end='')
+    print('Waiting for docker to start ... ', end='', flush=True)
     while True:
         try:
             conn = psycopg2.connect(
@@ -91,24 +91,49 @@ def print_database(cur):
     pprint(cur.fetchall())
 
 def run_rust_tests(conn, cur):
-    tests = subprocess.run('cargo test -- --list --format terse', shell=True, capture_output=True).stdout.decode('utf-8').replace(': test', '').split('\n')[:-1]
-    print(f'Running {len(tests)} rust tests:')
+    did_fail = False
 
+    print('Compiling (this might take a while) ... ', end='', flush=True)
+    result = subprocess.run('cargo test --no-run --color=always', shell=True, capture_output=True)
+    if result.returncode != 0: 
+        print(colored('failed', 'red'))
+        output = result.stderr.decode('utf-8')
+        print(output)
+        return True
+    print(colored('done', 'green'))
+
+    print('Fetching tests ... ', end='', flush=True)
+    tests = subprocess.run('cargo test -- --list --format=terse', shell=True, capture_output=True).stdout.decode('utf-8').replace(': test', '').split('\n')[:-1]
+    print(colored('done', 'green'))
+
+    print(f'Running {len(tests)} rust tests:')
     for cnt, test in enumerate(tests):
-        print(f'{cnt+1}. Running test: {test} ... ', end='')
+        print(f'{cnt+1}. Running test: {test} ... ', end='', flush=True)
+
         drop_tables(conn, cur)
         load_schema(conn, cur)
         generate_test_data(conn, cur)
-        x = subprocess.run(f'cargo test {test} -- --color=always', shell=True, capture_output=True).stdout.decode('utf-8').split('\n')
-        x = [i for i in x if 'test result' in i][0]
-        print(x)
-    print(colored('done', 'green'))
+
+        out = subprocess.run(f'cargo test {test} -- --color=always', shell=True, capture_output=True).stdout.decode('utf-8').split('\n')
+        x = [i for i in out if 'test result' in i][0]
+
+        if 'FAILED' in x: 
+            print('\n'.join(out))
+            did_fail = True
+        else: print(x)
+
+    if did_fail: print(colored('done', 'red'))
+    else: print(colored('done', 'green'))
+
+    return did_fail
 
 if __name__ == '__main__':
     ps = start_docker()
     conn = wait_for_database()
     cur = conn.cursor()
 
-    run_rust_tests(conn, cur)
+    result = run_rust_tests(conn, cur)
 
     stop_docker(ps)
+
+    if result: exit(1)
