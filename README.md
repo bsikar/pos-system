@@ -4,6 +4,7 @@ a server and website for a point of sale system
 TODO:
 
 **backend**:
+* readd tests
 * add user login info (one for user one for admin)
 
 **frontend**:
