@@ -41,7 +41,7 @@ impl Purchase {
         dsl::purchases
             .find(id)
             .first::<Purchase>(db)
-            .map_or_else(|e| Err(ModelError::DieselError(e)), Ok)
+            .map_or_else(|_| Err(ModelError::PurchaseNotFound(id)), Ok)
     }
 
     pub fn get_last_purchase(db: &PgConnection) -> Result<Purchase, ModelError> {
@@ -61,31 +61,27 @@ impl Purchase {
     pub fn update(db: &PgConnection, id: i64, data: JsonValue) -> Result<Purchase, ModelError> {
         Purchase::validate(&data, db)?;
 
-        let time = Local::now().naive_local();
         let total = Purchase::calculate_total(&data);
 
         let result = diesel::update(dsl::purchases.filter(dsl::id.eq(id)))
-            .set((
-                dsl::items.eq(data),
-                dsl::ctime.eq(time),
-                dsl::total.eq(total),
-            ))
+            .set((dsl::items.eq(data), dsl::total.eq(total)))
             .execute(db);
 
         if let Err(e) = result {
             Err(ModelError::DieselError(e))
         } else {
-            Ok(Purchase::get_last_purchase(db).unwrap())
+            Ok(Purchase::get_by_id(db, id).unwrap())
         }
     }
 
-    pub fn delete(db: &PgConnection, id: i64) -> Result<(), ModelError> {
+    pub fn delete(db: &PgConnection, id: i64) -> Result<Purchase, ModelError> {
+        let purchase = Purchase::get_by_id(db, id)?;
         let result = diesel::delete(dsl::purchases.filter(dsl::id.eq(id))).execute(db);
 
         if let Err(e) = result {
             Err(ModelError::DieselError(e))
         } else {
-            Ok(())
+            Ok(purchase)
         }
     }
 

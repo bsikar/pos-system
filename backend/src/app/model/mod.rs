@@ -46,6 +46,10 @@ pub enum Error {
     #[error(transparent)]
     DieselConnectionError(#[from] diesel::ConnectionError),
 
+    // purchase
+    #[error("Purchase Not Found {0}")]
+    PurchaseNotFound(i64),
+
     // Item
     #[error("Item Not Found - {0}")]
     ItemNotFound(String),

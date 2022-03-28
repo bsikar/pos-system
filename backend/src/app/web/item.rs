@@ -54,3 +54,7 @@ pub fn item_rest_filters(cfg: &mut actix_web::web::ServiceConfig) {
     cfg.service(update);
     cfg.service(delete);
 }
+
+#[cfg(test)]
+#[path = "../../../tests/web_tests/item.rs"]
+mod web_tests;
