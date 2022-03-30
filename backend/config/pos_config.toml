@@ -1,5 +1,5 @@
 [database]
-net_id = "0.0.0.0"
+net_id = "127.0.0.1"
 port = 5432
 max_connections = 5
 root_db_name = "postgres"
@@ -10,6 +10,6 @@ user = "pos_user"
 pwd = "pos_user"
 
 [webserver]
-net_id = "0.0.0.0"
+net_id = "127.0.0.1"
 port = 8080
 folder = "../frontend/web-folder/"

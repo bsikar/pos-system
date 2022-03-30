@@ -1,6 +1,7 @@
 import toml
 import subprocess
 import psycopg2
+import traceback
 from pprint import pp as pprint
 from glob import glob
 from termcolor import colored
@@ -33,6 +34,7 @@ def stop_docker(ps):
 
 def wait_for_database():
     print('Waiting for docker to start ... ', end='', flush=True)
+    err = ''
     while True:
         try:
             conn = psycopg2.connect(
@@ -45,7 +47,11 @@ def wait_for_database():
             print(colored('done', 'green'))
             return conn
         except:
-            pass
+            if err != traceback.format_exc():
+                print(colored('failed', 'red'))
+                print(traceback.format_exc().rstrip())
+                err = traceback.format_exc()
+                print('Retrying ... ', end='', flush=True)
 
 def load_schema(conn, cur):
     schema = open(glob('migrations/*_create_items/up.sql')[0], 'r').read()

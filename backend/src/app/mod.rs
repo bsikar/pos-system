@@ -24,8 +24,8 @@ impl App {
         let default_toml = &format!("{}/{}", path, ".defaults/POS_DEFAULTS.toml");
 
         let s = Config::builder()
-            .add_source(File::with_name(pos_toml))
             .add_source(File::with_name(default_toml))
+            .add_source(File::with_name(pos_toml))
             .build()?;
 
         let app: App = s.try_deserialize()?;
@@ -50,18 +50,26 @@ services:
         image: 'postgres:14'\n",
             self.database.port, self.database.user, self.database.pwd, self.database.db_name
         );
+        std::env::set_var("POSTGRES_USER", self.database.user.clone());
+        std::env::set_var("POSTGRES_PASSWORD", self.database.pwd.clone());
+        std::env::set_var("POSTGRES_DB", self.database.db_name.clone());
         let path = format!("{}{}", env!("CARGO_MANIFEST_DIR"), "/../docker-compose.yml");
         let mut file = StdFile::create(path).unwrap();
         file.write_all(body.as_bytes()).unwrap();
     }
 
     fn start_docker(&self) {
-        let command = "docker-compose up -d";
-        std::process::Command::new("sh")
-            .arg("-c")
-            .arg(command)
-            .output()
-            .expect("failed to execute process");
+        if cfg!(windows) {
+            std::process::Command::new("cmd")
+                .args(&["/C", "docker-compose up -d"])
+                .output()
+                .expect("failed to execute process");
+        } else {
+            std::process::Command::new("sh")
+                .args(&["-c", "docker-compose up -d"])
+                .output()
+                .expect("failed to execute process");
+        }
     }
 
     fn generate_env_file(&self) {
@@ -69,6 +77,7 @@ services:
             "DATABASE_URL=postgres://{}:{}@{}/{}",
             self.database.user, self.database.pwd, self.database.net_id, self.database.db_name
         );
+        println!("{}", self.database.net_id.green());
         let path = format!("{}{}", env!("CARGO_MANIFEST_DIR"), "/.env");
         let mut file = StdFile::create(path).unwrap();
         file.write_all(body.as_bytes()).unwrap();
@@ -79,7 +88,7 @@ services:
         self.generate_docker_compose_yml();
         println!("{}", "done".green());
 
-        print!("Generating .evn file ... ");
+        print!("Generating .env file ... ");
         self.generate_env_file();
         println!("{}", "done".green());
 
