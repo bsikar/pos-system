@@ -48,10 +48,9 @@ def wait_for_database():
             return conn
         except:
             if err != traceback.format_exc():
-                print(colored('failed', 'red'))
-                print(traceback.format_exc().rstrip())
+                print(colored(f'failed: {traceback.format_exc().rstrip()}', 'red'));
                 err = traceback.format_exc()
-                print('Retrying ... ', end='', flush=True)
+                print(colored('Retrying ... ', 'yellow'), end='', flush=True)
 
 def load_schema(conn, cur):
     schema = open(glob('migrations/*_create_items/up.sql')[0], 'r').read()
@@ -97,7 +96,7 @@ def print_database(cur):
     pprint(cur.fetchall())
 
 def run_rust_tests(conn, cur):
-    did_fail = False
+    failed_tests = []
 
     print('Compiling (this might take a while) ... ', end='', flush=True)
     result = subprocess.run('cargo test --no-run --color=always', shell=True, capture_output=True)
@@ -120,18 +119,27 @@ def run_rust_tests(conn, cur):
         load_schema(conn, cur)
         generate_test_data(conn, cur)
 
-        out = subprocess.run(f'cargo test {test} -- --color=always', shell=True, capture_output=True).stdout.decode('utf-8').split('\n')
-        x = [i for i in out if 'test result' in i][0]
+        x = y = err = ''
+        while True:
+            try:
+                out = subprocess.run(f'cargo test {test} -- --color=always --exact', shell=True, capture_output=True).stdout.decode('utf-8').split('\n')
+                x = [i for i in out if 'test result' in i][0]
+                break
+            except:
+                if err != traceback.format_exc():
+                    print(colored(f'failed: {traceback.format_exc().rstrip()}', 'red'));
+                    err = traceback.format_exc()
+                    print(colored('Retrying ... ', 'yellow'), end='', flush=True)
 
         if 'FAILED' in x: 
-            print('\n'.join(out))
-            did_fail = True
-        else: print(x)
+            print(colored('\n'.join(out), 'red'))
+            failed_tests.append(test)
+        else: print(colored(x, 'green'))
 
-    if did_fail: print(colored('done', 'red'))
+    if len(failed_tests) > 0: print(colored('done', 'red'))
     else: print(colored('done', 'green'))
 
-    return did_fail
+    return failed_tests
 
 if __name__ == '__main__':
     ps = start_docker()
@@ -142,4 +150,7 @@ if __name__ == '__main__':
 
     stop_docker(ps)
 
-    if result: exit(1)
+    if len(result) > 0: 
+        print(colored('\n\nRust tests failed:', 'red'))
+        for test in result: print(test)
+        exit(1)
