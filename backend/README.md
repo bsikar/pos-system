@@ -39,3 +39,13 @@ pip install -r requirements.txt
 python test_backend.py
 ```
 this will start a docker container, add test seeds to the database, run the rust tests, then stop the docker container removing all test seed data
+
+# Windows
+`libpg` isnt on windows, install [`postgres`](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
+then add `PG_LIB_DIR` to your path by running
+```ps1
+setx PQ_LIB_DIR "C:\Program Files\PostgreSQL\14\lib"
+```
+
+# Common Problems
+make sure that the ports you are binding to are not already in use
