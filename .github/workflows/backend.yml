@@ -10,10 +10,15 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  check-rust-code:
+    strategy:
+      matrix:
+        # eventually will make this have windows and mac
+        os: [ubuntu-latest]
+        rust: [stable, beta, nightly]
+        
+    runs-on: ${{ matrix.os }}
+    
     defaults:
       run:
         working-directory: ./backend
