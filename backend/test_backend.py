@@ -3,32 +3,22 @@ import subprocess
 import psycopg2
 import traceback
 import time
-import sys
 from pprint import pp as pprint
 from glob import glob
 from termcolor import colored
-
 
 data = toml.load('config/pos_config.toml')
 user = data['database']['user']
 password = data['database']['pwd']
 name = data['database']['db_name']
 
-def try_loop(command):
-    err = ''
-    t_end = time.time() + 30
-    while time.time() < t_end:
-        try:
-            result = subprocess.run(command, shell=True, capture_output=True)
-            print(colored('\ndone', 'green'))
-            return result
-        except:
-            if err != traceback.format_exc():
-                print(colored(f'failed: {traceback.format_exc().rstrip()}', 'red'));
-                err = traceback.format_exc()
-            print(colored(f'Retrying {int(round(t_end - time.time()))} seconds left ... ', 'yellow'), end='\r', flush=True)
-    print(colored('\nfailed', 'red'))
-    exit(1)
+def try_command(command):
+    result = subprocess.run(command, shell=True, capture_output=True)
+    if result.returncode != 0:
+        print(colored(f'failed: {result.stderr.decode("utf-8")}', 'red'))
+        exit(1)
+    print(colored('\ndone', 'green'))
+    return result.stdout.decode('utf-8')
 
 def start_docker():
     command = f"""docker run --rm -d \
@@ -40,14 +30,14 @@ def start_docker():
         """
 
     print('Starting docker ... ', end='', flush=True)
-    ps = try_loop(command)
 
-    return ps
+    return try_command(command)
 
 def stop_docker(ps):
-    command = f"""docker stop {ps.stdout.decode('utf-8')}"""
+    command = f'docker stop {ps}'
     print('Stopping docker ... ', end='', flush=True)
-    try_loop(command)
+
+    try_command(command)
 
 def wait_for_database():
     print('Waiting for docker to start ... ', end='', flush=True)
@@ -68,7 +58,7 @@ def wait_for_database():
             if err != traceback.format_exc():
                 print(colored(f'failed: {traceback.format_exc().rstrip()}', 'red'));
                 err = traceback.format_exc()
-            print(colored(f'Retrying {int(round(t_end - time.time()))} seconds left ... ', 'yellow'), end='\r', flush=True)
+                print(colored(f'Retrying {int(round(t_end - time.time()))} seconds left ... ', 'yellow'), end='\r', flush=True)
     print(colored('\nfailed', 'red'))
     exit(1)
 
@@ -162,12 +152,11 @@ def run_rust_tests(conn, cur):
     else: print(colored('done', 'green'))
 
 if __name__ == '__main__':
-    ps = ''
-    if '-D' not in sys.argv: ps = start_docker()
+    ps = start_docker()
 
     conn = wait_for_database()
     cur = conn.cursor()
 
     test_results = run_rust_tests(conn, cur)
 
-    if '-D' not in sys.argv: stop_docker(ps)
+    stop_docker(ps)
