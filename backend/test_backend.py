@@ -2,14 +2,33 @@ import toml
 import subprocess
 import psycopg2
 import traceback
+import time
+import sys
 from pprint import pp as pprint
 from glob import glob
 from termcolor import colored
+
 
 data = toml.load('config/pos_config.toml')
 user = data['database']['user']
 password = data['database']['pwd']
 name = data['database']['db_name']
+
+def try_loop(command):
+    err = ''
+    t_end = time.time() + 30
+    while time.time() < t_end:
+        try:
+            result = subprocess.run(command, shell=True, capture_output=True)
+            print(colored('\ndone', 'green'))
+            return result
+        except:
+            if err != traceback.format_exc():
+                print(colored(f'failed: {traceback.format_exc().rstrip()}', 'red'));
+                err = traceback.format_exc()
+            print(colored(f'Retrying {int(round(t_end - time.time()))} seconds left ... ', 'yellow'), end='\r', flush=True)
+    print(colored('\nfailed', 'red'))
+    exit(1)
 
 def start_docker():
     command = f"""docker run --rm -d \
@@ -21,21 +40,20 @@ def start_docker():
         """
 
     print('Starting docker ... ', end='', flush=True)
-    ps = subprocess.run(command, shell=True, capture_output=True)
-    print(colored('done', 'green'))
+    ps = try_loop(command)
 
     return ps
 
 def stop_docker(ps):
     command = f"""docker stop {ps.stdout.decode('utf-8')}"""
     print('Stopping docker ... ', end='', flush=True)
-    subprocess.run(command, shell=True, capture_output=True)
-    print(colored('done', 'green'))
+    try_loop(command)
 
 def wait_for_database():
     print('Waiting for docker to start ... ', end='', flush=True)
     err = ''
-    while True:
+    t_end = time.time() + 30
+    while time.time() < t_end:
         try:
             conn = psycopg2.connect(
                 user=user,
@@ -44,13 +62,15 @@ def wait_for_database():
                 port='5432',
                 database=name
             )
-            print(colored('done', 'green'))
+            print(colored('\ndone', 'green'))
             return conn
         except:
             if err != traceback.format_exc():
                 print(colored(f'failed: {traceback.format_exc().rstrip()}', 'red'));
                 err = traceback.format_exc()
-                print(colored('Retrying ... ', 'yellow'), end='', flush=True)
+            print(colored(f'Retrying {int(round(t_end - time.time()))} seconds left ... ', 'yellow'), end='\r', flush=True)
+    print(colored('\nfailed', 'red'))
+    exit(1)
 
 def load_schema(conn, cur):
     schema = open(glob('migrations/*_create_items/up.sql')[0], 'r').read()
@@ -99,7 +119,7 @@ def run_rust_tests(conn, cur):
     failed_tests = []
 
     print('Compiling (this might take a while) ... ', end='', flush=True)
-    result = subprocess.run('cargo test --no-run --color=always', shell=True, capture_output=True)
+    result = subprocess.run('cargo test --no-run', shell=True, capture_output=True)
     if result.returncode != 0: 
         print(colored('failed', 'red'))
         output = result.stderr.decode('utf-8')
@@ -122,7 +142,7 @@ def run_rust_tests(conn, cur):
         x = y = err = ''
         while True:
             try:
-                out = subprocess.run(f'cargo test {test} -- --color=always --exact', shell=True, capture_output=True).stdout.decode('utf-8').split('\n')
+                out = subprocess.run(f'cargo test {test} -- --exact', shell=True, capture_output=True).stdout.decode('utf-8').split('\n')
                 x = [i for i in out if 'test result' in i][0]
                 break
             except:
@@ -136,21 +156,18 @@ def run_rust_tests(conn, cur):
             failed_tests.append(test)
         else: print(colored(x, 'green'))
 
-    if len(failed_tests) > 0: print(colored('done', 'red'))
+    if len(failed_tests) > 0: 
+        print(colored('done', 'red'))
+        exit(1)
     else: print(colored('done', 'green'))
 
-    return failed_tests
-
 if __name__ == '__main__':
-    ps = start_docker()
+    ps = ''
+    if '-D' not in sys.argv: ps = start_docker()
+
     conn = wait_for_database()
     cur = conn.cursor()
 
-    result = run_rust_tests(conn, cur)
+    test_results = run_rust_tests(conn, cur)
 
-    stop_docker(ps)
-
-    if len(result) > 0: 
-        print(colored('\n\nRust tests failed:', 'red'))
-        for test in result: print(test)
-        exit(1)
+    if '-D' not in sys.argv: stop_docker(ps)
