@@ -1,6 +1,6 @@
 import toml
 import subprocess
-import psycopg2
+import sqlite3
 import traceback
 import time
 from pprint import pp as pprint
@@ -12,64 +12,34 @@ user = data['database']['user']
 password = data['database']['pwd']
 name = data['database']['db_name']
 
-def try_command(command):
-    result = subprocess.run(command, shell=True, capture_output=True)
-    if result.returncode != 0:
-        print(colored(f'failed: {result.stderr.decode("utf-8")}', 'red'))
-        exit(1)
-    print(colored('\ndone', 'green'))
-    return result.stdout.decode('utf-8')
+def start_database():
+    print('Starting database ... ', end='', flush=True)
+    pid = subprocess.Popen(['cargo', 'run'])
+    print(colored('done', 'green'))
+    return pid
 
-def start_docker():
-    command = f"""docker run --rm -d \
-        -p 5432:5432 \
-        -e POSTGRES_USER={user} \
-        -e POSTGRES_PASSWORD={password} \
-        -e POSTGRES_DB={name} \
-        postgres:14
-        """
+def edit_pos_config():
+    print('Moving `config/pos_config.toml` -> `config/.pos_config.toml.bk` ... ', end='', flush=True)
+    subprocess.run('mv config/pos_config.toml config/.pos_config.toml.bk', shell=True)
+    print(colored('done', 'green'))
 
-    print('Starting docker ... ', end='', flush=True)
+    print('Editing `config/pos_config.toml` ... ', end='', flush=True)
+    body = '[database]\nfile_path = "pos_testing_db.db"'
+    with open('config/pos_config.toml', 'w') as f: f.write(body)
+    print(colored('done', 'green'))
 
-    return try_command(command)
-
-def stop_docker(ps):
-    command = f'docker stop {ps}'
-    print('Stopping docker ... ', end='', flush=True)
-
-    try_command(command)
-
-def wait_for_database():
-    print('Waiting for docker to start ... ', end='', flush=True)
-    err = ''
-    t_end = time.time() + 30
-    while time.time() < t_end:
-        try:
-            conn = psycopg2.connect(
-                user=user,
-                password=password,
-                host='localhost',
-                port='5432',
-                database=name
-            )
-            print(colored('\ndone', 'green'))
-            return conn
-        except:
-            if err != traceback.format_exc():
-                print(colored(f'failed: {traceback.format_exc().rstrip()}', 'red'));
-                err = traceback.format_exc()
-                print(colored(f'Retrying {int(round(t_end - time.time()))} seconds left ... ', 'yellow'), end='\r', flush=True)
-    print(colored('\nfailed', 'red'))
-    exit(1)
+def restore_pos_config():
+    print('Restoring `config/pos_config.toml` ... ', end='', flush=True)
+    subprocess.run('mv config/.pos_config.toml.bk config/pos_config.toml', shell=True)
+    print(colored('done', 'green'))
 
 def load_schema(conn, cur):
     schema = open(glob('migrations/*_create_items/up.sql')[0], 'r').read()
-    cur.execute(schema)
+    cur.executescript(schema)
     conn.commit()
 
     schema = open(glob('migrations/*_create_purchases/up.sql')[0], 'r').read()
-    schema += 'ALTER SEQUENCE purchases_id_seq RESTART WITH 1000;'
-    cur.execute(schema)
+    cur.executescript(schema)
     conn.commit()
 
 def drop_tables(conn, cur):
@@ -83,29 +53,24 @@ def drop_tables(conn, cur):
 
 def generate_test_data(conn, cur):
     def add_item(name, price, tax):
-        cur.execute(f"""INSERT INTO items (name, price, tax) VALUES ('{name}', {price}, {tax})""")
+        cur.execute(f"""INSERT INTO items (name, price, tax) VALUES (:name, :price, :tax)""", {'name': name, 'price': price, 'tax': tax})
         conn.commit()
 
     def add_purchase(id, items, total):
-        cur.execute(f"""INSERT INTO purchases (id, items, total) VALUES ({id}, '{items}', {total})""")
+        cur.execute(f"""INSERT INTO purchases (id, items, total, ctime) VALUES (:id, :items, :total, :ctime)""", {'id': id, 'items': items, 'total': total, 'ctime': '2022-04-05 02:20:23.870212463'})
         conn.commit()
 
     add_item('single glazed donut', 120, 1.00)
     add_item('half dozen glazed donuts', 625, 1.00)
     add_item('dozen glazed donuts', 1099, 1.00)
 
-    add_purchase(100, '[{"name": "single glazed donut","price": 120,"quantity": 1}]', 120)
-    add_purchase(101, '[{"name": "half dozen glazed donuts","price": 625,"quantity": 2}]', 1250)
-    add_purchase(102, '[{"name": "half dozen glazed donuts","price": 625,"quantity": 1},{"name": "dozen glazed donuts","price": 1099,"quantity": 2}]', 2823)
+    add_purchase(1, '[{"name": "single glazed donut","price": 120,"quantity": 1}]', 120)
+    add_purchase(2, '[{"name": "half dozen glazed donuts","price": 625,"quantity": 2}]', 1250)
+    add_purchase(3, '[{"name": "half dozen glazed donuts","price": 625,"quantity": 1},{"name": "dozen glazed donuts","price": 1099,"quantity": 2}]', 2823)
 
-def print_database(cur):
-    cur.execute('SELECT * FROM items')
-    pprint(cur.fetchall())
-
-    cur.execute('SELECT * FROM purchases')
-    pprint(cur.fetchall())
-
-def run_rust_tests(conn, cur):
+def run_rust_tests():
+    conn = sqlite3.connect('pos_testing_db.db')
+    cur = conn.cursor()    
     failed_tests = []
 
     print('Compiling (this might take a while) ... ', end='', flush=True)
@@ -148,15 +113,31 @@ def run_rust_tests(conn, cur):
 
     if len(failed_tests) > 0: 
         print(colored('done', 'red'))
-        exit(1)
+        print(colored(f'{len(failed_tests)} tests failed:', 'red'))
+        for test in failed_tests: print(colored(f'\t{test}', 'red'))
+        return None
     else: print(colored('done', 'green'))
 
+def clean_up(pid):
+    print('Cleaning up ... ', end='', flush=True)
+    pid.terminate()
+    restore_pos_config()
+    remove_db()
+    print(colored('done', 'green'))
+
+def remove_db():
+    print('Removing `pos_testing_db.db` ... ', end='', flush=True)
+    subprocess.run('rm pos_testing_db.db', shell=True)
+    print(colored('done', 'green'))
+
 if __name__ == '__main__':
-    ps = start_docker()
+    remove_db()
+    edit_pos_config()
 
-    conn = wait_for_database()
-    cur = conn.cursor()
+    pid = start_database()
 
-    test_results = run_rust_tests(conn, cur)
+    if run_rust_tests() is None:
+        clean_up(pid)
+        exit(1)
 
-    stop_docker(ps)
+    clean_up(pid)

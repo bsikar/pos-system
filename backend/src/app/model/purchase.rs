@@ -1,26 +1,29 @@
 use crate::app::model::item::Item;
 use crate::app::model::Error as ModelError;
 use crate::schema::purchases::{self, dsl};
-use chrono::{Local, NaiveDateTime};
-use diesel::{ExpressionMethods, PgConnection, QueryDsl, RunQueryDsl};
+use chrono::Local;
+use chrono::NaiveDateTime;
+use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl, SqliteConnection};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value as JsonValue};
 
 #[derive(Queryable, QueryableByName, Insertable, AsChangeset, Debug, Deserialize, Serialize)]
 #[table_name = "purchases"]
 pub struct Purchase {
-    pub id: i64,
-    pub ctime: NaiveDateTime,
-    pub items: JsonValue,
-    pub total: i64,
+    pub id: i32,
+    pub ctime: String,
+    pub items: String,
+    pub total: i32,
 }
 
 impl Purchase {
-    pub fn create(db: &PgConnection, data: JsonValue) -> Result<Purchase, ModelError> {
+    pub fn create(db: &SqliteConnection, data: JsonValue) -> Result<Purchase, ModelError> {
         Purchase::validate(&data, db)?;
 
         let time = Local::now().naive_local();
         let total = Purchase::calculate_total(&data);
+        let data = format!("{}", data);
+        let time = format!("{}", time);
 
         let result = diesel::insert_into(dsl::purchases)
             .values((
@@ -37,14 +40,14 @@ impl Purchase {
         }
     }
 
-    pub fn get_by_id(db: &PgConnection, id: i64) -> Result<Purchase, ModelError> {
+    pub fn get_by_id(db: &SqliteConnection, id: i32) -> Result<Purchase, ModelError> {
         dsl::purchases
             .find(id)
             .first::<Purchase>(db)
             .map_or_else(|_| Err(ModelError::PurchaseNotFound(id)), Ok)
     }
 
-    pub fn get_last_purchase(db: &PgConnection) -> Result<Purchase, ModelError> {
+    pub fn get_last_purchase(db: &SqliteConnection) -> Result<Purchase, ModelError> {
         let result = dsl::purchases.order(dsl::id.desc()).first::<Purchase>(db);
 
         if let Err(e) = result {
@@ -54,14 +57,15 @@ impl Purchase {
         }
     }
 
-    pub fn list(db: &PgConnection) -> Result<Vec<Purchase>, ModelError> {
+    pub fn list(db: &SqliteConnection) -> Result<Vec<Purchase>, ModelError> {
         Ok(dsl::purchases.load::<Purchase>(db).unwrap())
     }
 
-    pub fn update(db: &PgConnection, id: i64, data: JsonValue) -> Result<Purchase, ModelError> {
+    pub fn update(db: &SqliteConnection, id: i32, data: JsonValue) -> Result<Purchase, ModelError> {
         Purchase::validate(&data, db)?;
 
         let total = Purchase::calculate_total(&data);
+        let data = format!("{}", data);
 
         let result = diesel::update(dsl::purchases.filter(dsl::id.eq(id)))
             .set((dsl::items.eq(data), dsl::total.eq(total)))
@@ -74,7 +78,7 @@ impl Purchase {
         }
     }
 
-    pub fn delete(db: &PgConnection, id: i64) -> Result<Purchase, ModelError> {
+    pub fn delete(db: &SqliteConnection, id: i32) -> Result<Purchase, ModelError> {
         let purchase = Purchase::get_by_id(db, id)?;
         let result = diesel::delete(dsl::purchases.filter(dsl::id.eq(id))).execute(db);
 
@@ -85,7 +89,7 @@ impl Purchase {
         }
     }
 
-    pub fn calculate_total(data: &JsonValue) -> i64 {
+    pub fn calculate_total(data: &JsonValue) -> i32 {
         let mut total = 0;
 
         if let Some(values) = data.as_array() {
@@ -94,11 +98,20 @@ impl Purchase {
                 let quantity = item["quantity"].as_i64().unwrap();
                 let tax = item["tax"].as_f64().unwrap() as f32;
 
-                total += ((price * quantity) as f32 * tax) as i64;
+                total += ((price * quantity) as f32 * tax) as i32;
             }
         }
 
         total
+    }
+
+    pub fn ctime_to_ndt(&self) -> NaiveDateTime {
+        let fmt = "%Y-%m-%d %H:%M:%S%.f";
+        NaiveDateTime::parse_from_str(&self.ctime, fmt).unwrap()
+    }
+
+    pub fn items_to_json(&self) -> JsonValue {
+        serde_json::from_str(&self.items).unwrap()
     }
 
     fn to_items(data: JsonValue) -> Result<Vec<Item>, ModelError> {
@@ -110,7 +123,7 @@ impl Purchase {
 
         for item in data.as_array().unwrap() {
             let name = item["name"].as_str().unwrap().to_string();
-            let price = item["price"].as_i64().unwrap();
+            let price = item["price"].as_i64().unwrap() as i32;
             let tax = item["tax"].as_f64().unwrap() as f32;
 
             items.push(Item::new(name, price, tax));
@@ -119,7 +132,7 @@ impl Purchase {
         Ok(items)
     }
 
-    fn validate(data: &JsonValue, db: &PgConnection) -> Result<(), ModelError> {
+    fn validate(data: &JsonValue, db: &SqliteConnection) -> Result<(), ModelError> {
         let items = Purchase::to_items(data.clone())?;
 
         for item in items {

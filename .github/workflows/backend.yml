@@ -10,8 +10,7 @@ jobs:
   check-rust-code:
     strategy:
       matrix:
-        # will add Windows soon
-        os: [ubuntu-latest, macOS-latest]
+        os: [ubuntu-latest, macOS-latest, windows-latest]
         rust: [stable, beta, nightly]
         
     runs-on: ${{ matrix.os }}
@@ -22,10 +21,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Install Docker on macOS
-      if: matrix.os == 'macOS-latest'
-      uses: docker-practice/actions-setup-docker@v1
 
     - name: Install Python on macOS
       if: matrix.os == 'macOS-latest'
@@ -34,11 +29,6 @@ jobs:
     - name: Fix Python PATH on macOS
       if: matrix.os == 'macOS-latest'
       run: tee -a ~/.profile <<< 'export PATH="$pythonLocation/bin:$PATH"'
-    
-    - name: Fix libpg PATH on Windows
-      if: matrix.os == 'windows-latest'
-      run: |
-        "PQ_LIB_DIR=C:\Program Files\PostgreSQL\14\lib" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
     
     - name: Install Python dependecies
       run: pip install -r requirements.txt

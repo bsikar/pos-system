@@ -14,6 +14,7 @@ root_pwd = "postgres"
 db_name = "pos_db"
 user = "pos_user"
 pwd = "pos_user"
+file_path = "pos_db.db"
 
 [webserver]
 net_id = "0.0.0.0"

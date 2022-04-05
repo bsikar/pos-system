@@ -1,13 +1,13 @@
 use crate::app::DieselError;
 use diesel::r2d2::ConnectionManager;
-use diesel::PgConnection;
+use diesel::SqliteConnection;
 use serde::Deserialize;
 use thiserror::Error as ThisError;
 
 pub mod item;
 pub mod purchase;
 
-pub type DbPool = r2d2::Pool<ConnectionManager<PgConnection>>;
+pub type DbPool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
 
 #[derive(Debug, Deserialize)]
 #[allow(unused)]
@@ -21,16 +21,12 @@ pub struct Database {
     pub db_name: String,
     pub user: String,
     pub pwd: String,
+    pub file_path: String,
 }
 
 impl Database {
     pub fn establish_db_conn(&self) -> DbPool {
-        let url = format!(
-            "postgres://{}:{}@{}:{}/{}",
-            self.user, self.pwd, self.net_id, self.port, self.db_name
-        );
-
-        let migr = ConnectionManager::<PgConnection>::new(url);
+        let migr = ConnectionManager::<SqliteConnection>::new(&self.file_path);
         r2d2::Pool::builder()
             .build(migr)
             .expect("could not build connection pool")
@@ -48,14 +44,14 @@ pub enum Error {
 
     // purchase
     #[error("Purchase Not Found {0}")]
-    PurchaseNotFound(i64),
+    PurchaseNotFound(i32),
 
     // Item
     #[error("Item Not Found - {0}")]
     ItemNotFound(String),
 
     #[error("Invalid Item Price - {0}")]
-    InvalidItemPrice(i64),
+    InvalidItemPrice(i32),
 
     #[error("Item Already Exists - {0}")]
     ItemAlreadyExists(String),
