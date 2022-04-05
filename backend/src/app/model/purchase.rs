@@ -58,7 +58,10 @@ impl Purchase {
     }
 
     pub fn list(db: &SqliteConnection) -> Result<Vec<Purchase>, ModelError> {
-        Ok(dsl::purchases.load::<Purchase>(db).unwrap())
+        match dsl::purchases.load::<Purchase>(db) {
+            Ok(purchases) => Ok(purchases),
+            Err(e) => Err(ModelError::DieselError(e)),
+        }
     }
 
     pub fn update(db: &SqliteConnection, id: i32, data: JsonValue) -> Result<Purchase, ModelError> {

@@ -58,7 +58,10 @@ impl Item {
     }
 
     pub fn list(db: &SqliteConnection) -> Result<Vec<Item>, ModelError> {
-        Ok(dsl::items.load::<Item>(db).unwrap())
+        match dsl::items.load::<Item>(db) {
+            Ok(items) => Ok(items),
+            Err(e) => Err(ModelError::DieselError(e)),
+        }
     }
 
     pub fn get(db: &SqliteConnection, data: Item) -> Result<Item, ModelError> {

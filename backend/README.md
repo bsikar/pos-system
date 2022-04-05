@@ -11,7 +11,17 @@ once the has entered all of the required items, they will be able to press compl
 
 there will be an admin pannel where the database entries can be deleted or altered and there will be an option to allow cash tranations to be added in the sale database.
 
+
 ## start the backend
+make `<database>.db`
+```sh
+diesel migration run
+```
+delete and make new `<database>.db` * **you will lose all your database data**
+```sh
+diesel migration redo
+```
+start the server
 ```sh
 cargo run --release
 ```
@@ -28,4 +38,5 @@ python test_backend.py
 this will start a docker container, add test seeds to the database, run the rust tests, then stop the docker container removing all test seed data
 
 # Common Problems
-make sure that the ports you are binding to are not already in use
+* make sure that the ports you are binding to are not already in use
+* make sure you have sqlite installed
