@@ -96,9 +96,9 @@ async fn model_purchase_create_ok_1() {
 
     let purchase_created = Purchase::create(&conn, items.clone()).unwrap();
 
-    assert_eq!(purchase_created.items, items);
+    assert_eq!(purchase_created.items_to_json(), items);
     assert_eq!(purchase_created.total, 120);
-    assert!(purchase_created.id >= 1000, "id should be >= 1000");
+    assert!(purchase_created.id >= 1, "id should be >= 1");
 }
 
 #[actix_rt::test]
@@ -114,9 +114,9 @@ async fn model_purchase_create_ok_2() {
 
     let purchase_created = Purchase::create(&conn, items.clone()).unwrap();
 
-    assert_eq!(purchase_created.items, items);
+    assert_eq!(purchase_created.items_to_json(), items);
     assert_eq!(purchase_created.total, 745);
-    assert!(purchase_created.id >= 1000, "id should be >= 1000");
+    assert!(purchase_created.id >= 1, "id should be >= 1");
 }
 
 #[actix_rt::test]
@@ -128,12 +128,12 @@ async fn model_purchase_get_ok_1() {
         .get()
         .unwrap();
 
-    let purchase = Purchase::get_by_id(&conn, 100).unwrap();
+    let purchase = Purchase::get_by_id(&conn, 1).unwrap();
 
     // check
     let json = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1}]);
-    assert_eq!(purchase.id, 100);
-    assert_eq!(purchase.items, json);
+    assert_eq!(purchase.id, 1);
+    assert_eq!(purchase.items_to_json(), json);
     assert_eq!(purchase.total, 120)
 }
 
@@ -146,7 +146,7 @@ async fn model_purchase_get_ok_2() {
         .get()
         .unwrap();
 
-    let purchase = Purchase::get_by_id(&conn, 102).unwrap();
+    let purchase = Purchase::get_by_id(&conn, 3).unwrap();
 
     // check
     let json = json!([
@@ -154,8 +154,8 @@ async fn model_purchase_get_ok_2() {
         {"name": "dozen glazed donuts", "price": 1099, "quantity" : 2},
     ]);
 
-    assert_eq!(purchase.id, 102);
-    assert_eq!(purchase.items, json);
+    assert_eq!(purchase.id, 3);
+    assert_eq!(purchase.items_to_json(), json);
     assert_eq!(purchase.total, 2823);
 }
 
@@ -196,20 +196,20 @@ async fn model_purchase_list() {
         [{"name": "single glazed donut", "price": 120, "quantity": 1}],
     ]);
 
-    assert_eq!(purchases[0].id, 100);
-    assert_eq!(purchases[0].items, json[2]);
+    assert_eq!(purchases[0].id, 1);
+    assert_eq!(purchases[0].items_to_json(), json[2]);
     assert_eq!(purchases[0].total, 120);
 
-    assert_eq!(purchases[1].id, 101);
-    assert_eq!(purchases[1].items, json[1]);
+    assert_eq!(purchases[1].id, 2);
+    assert_eq!(purchases[1].items_to_json(), json[1]);
     assert_eq!(purchases[1].total, 1250);
 
-    assert_eq!(purchases[2].id, 102);
-    assert_eq!(purchases[2].items, json[0]);
+    assert_eq!(purchases[2].id, 3);
+    assert_eq!(purchases[2].items_to_json(), json[0]);
     assert_eq!(purchases[2].total, 2823);
 
-    assert!(purchases[0].ctime.timestamp() >= purchases[1].ctime.timestamp());
-    assert!(purchases[1].ctime.timestamp() >= purchases[2].ctime.timestamp());
+    assert!(purchases[0].ctime_to_ndt().timestamp() >= purchases[1].ctime_to_ndt().timestamp());
+    assert!(purchases[1].ctime_to_ndt().timestamp() >= purchases[2].ctime_to_ndt().timestamp());
 }
 
 #[actix_rt::test]
@@ -221,11 +221,11 @@ async fn model_purchase_delete() {
         .get()
         .unwrap();
 
-    let purchase = Purchase::delete(&conn, 100).unwrap();
+    let purchase = Purchase::delete(&conn, 1).unwrap();
 
     let json = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1}]);
-    assert_eq!(purchase.id, 100);
-    assert_eq!(purchase.items, json);
+    assert_eq!(purchase.id, 1);
+    assert_eq!(purchase.items_to_json(), json);
     assert_eq!(purchase.total, 120);
 
     // check - list
@@ -285,10 +285,10 @@ async fn model_purchase_update() {
         {"name": "half dozen glazed donuts", "price": 625, "quantity" : 2, "tax": 1.0},
     ]);
 
-    let purchase = Purchase::update(&conn, 100, items.clone()).unwrap();
+    let purchase = Purchase::update(&conn, 1, items.clone()).unwrap();
 
-    assert_eq!(purchase.id, 100);
-    assert_eq!(purchase.items, items);
+    assert_eq!(purchase.id, 1);
+    assert_eq!(purchase.items_to_json(), items);
     assert_eq!(purchase.total, 1370);
 }
 

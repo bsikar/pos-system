@@ -13,7 +13,7 @@ pub async fn list(db: Data<DbPool>) -> HttpResponse {
 }
 
 #[get("/api/purchases/{id}")]
-pub async fn get(db: Data<DbPool>, id: Path<i64>) -> HttpResponse {
+pub async fn get(db: Data<DbPool>, id: Path<i32>) -> HttpResponse {
     let db = db.get().unwrap();
     let purchase = Purchase::get_by_id(&db, *id);
 
@@ -31,7 +31,7 @@ pub async fn create(db: Data<DbPool>, purchase: Json<JsonValue>) -> HttpResponse
 }
 
 #[put("/api/purchases/{id}")]
-pub async fn update(db: Data<DbPool>, id: Path<i64>, purchase: Json<JsonValue>) -> HttpResponse {
+pub async fn update(db: Data<DbPool>, id: Path<i32>, purchase: Json<JsonValue>) -> HttpResponse {
     let db = db.get().unwrap();
     let purchase = purchase.into_inner();
     let purchase = Purchase::update(&db, *id, purchase);
@@ -40,7 +40,7 @@ pub async fn update(db: Data<DbPool>, id: Path<i64>, purchase: Json<JsonValue>) 
 }
 
 #[delete("/api/purchases/{id}")]
-pub async fn delete(db: Data<DbPool>, id: Path<i64>) -> HttpResponse {
+pub async fn delete(db: Data<DbPool>, id: Path<i32>) -> HttpResponse {
     let db = db.get().unwrap();
     let purchase = Purchase::delete(&db, *id);
 

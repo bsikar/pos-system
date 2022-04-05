@@ -33,67 +33,16 @@ impl App {
         Ok(app)
     }
 
-    fn generate_docker_compose_yml(&self) {
-        let body = format!(
-            "version: '3.3'
-services:
-    postgres:
-        container_name: pos-pg
-        volumes:
-            - ./postgres-data/:/var/lib/postgresql/data
-        ports:
-            - '{0}:{0}'
-        environment:
-            - POSTGRES_USER={1}
-            - POSTGRES_PASSWORD={2}
-            - POSTGRES_DB={3}
-        image: 'postgres:14'\n",
-            self.database.port, self.database.user, self.database.pwd, self.database.db_name
-        );
-        std::env::set_var("POSTGRES_USER", self.database.user.clone());
-        std::env::set_var("POSTGRES_PASSWORD", self.database.pwd.clone());
-        std::env::set_var("POSTGRES_DB", self.database.db_name.clone());
-        let path = format!("{}{}", env!("CARGO_MANIFEST_DIR"), "/../docker-compose.yml");
-        let mut file = StdFile::create(path).unwrap();
-        file.write_all(body.as_bytes()).unwrap();
-    }
-
-    fn start_docker(&self) {
-        if cfg!(windows) {
-            std::process::Command::new("cmd")
-                .args(&["/C", "docker-compose up -d"])
-                .output()
-                .expect("failed to execute process");
-        } else {
-            std::process::Command::new("sh")
-                .args(&["-c", "docker-compose up -d"])
-                .output()
-                .expect("failed to execute process");
-        }
-    }
-
     fn generate_env_file(&self) {
-        let body = format!(
-            "DATABASE_URL=postgres://{}:{}@{}/{}",
-            self.database.user, self.database.pwd, self.database.net_id, self.database.db_name
-        );
-        println!("{}", self.database.net_id.green());
+        let body = format!("DATABASE_URL={}", self.database.file_path);
         let path = format!("{}{}", env!("CARGO_MANIFEST_DIR"), "/.env");
         let mut file = StdFile::create(path).unwrap();
         file.write_all(body.as_bytes()).unwrap();
     }
 
     pub async fn run(self) -> Result<(), WebError> {
-        print!("Generating docker-compose.yml ... ");
-        self.generate_docker_compose_yml();
-        println!("{}", "done".green());
-
         print!("Generating .env file ... ");
         self.generate_env_file();
-        println!("{}", "done".green());
-
-        print!("Starting docker ... ");
-        self.start_docker();
         println!("{}", "done".green());
 
         print!("Starting server ... ");

@@ -1,18 +1,18 @@
 table! {
     items (name) {
         name -> Text,
-        price -> Int8,
-        tax -> Float4,
+        price -> Integer,
+        tax -> Float,
     }
 }
 
 table! {
     purchases (id) {
-        id -> Int8,
-        ctime -> Timestamp,
-        items -> Jsonb,
-        total -> Int8,
+        id -> Integer,
+        ctime -> Text,
+        items -> Text,
+        total -> Integer,
     }
 }
 
-allow_tables_to_appear_in_same_query!(items, purchases,);
+allow_tables_to_appear_in_same_query!(items, purchases);

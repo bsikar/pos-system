@@ -30,23 +30,23 @@ async fn web_purchase_list() {
         [{"name": "single glazed donut", "price": 120, "quantity": 1}],
     ]);
 
-    assert_eq!(body[0].id, 100);
-    assert_eq!(body[0].items, json[2]);
+    assert_eq!(body[0].id, 1);
+    assert_eq!(body[0].items_to_json(), json[2]);
     assert_eq!(body[0].total, 120);
-    assert!(body[0].ctime.timestamp() > 0);
-    assert!(body[0].ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
+    assert!(body[0].ctime_to_ndt().timestamp() > 0);
+    assert!(body[0].ctime_to_ndt().timestamp() <= chrono::offset::Utc::now().timestamp());
 
-    assert_eq!(body[1].id, 101);
-    assert_eq!(body[1].items, json[1]);
+    assert_eq!(body[1].id, 2);
+    assert_eq!(body[1].items_to_json(), json[1]);
     assert_eq!(body[1].total, 1250);
-    assert!(body[1].ctime.timestamp() > 0);
-    assert!(body[1].ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
+    assert!(body[1].ctime_to_ndt().timestamp() > 0);
+    assert!(body[1].ctime_to_ndt().timestamp() <= chrono::offset::Utc::now().timestamp());
 
-    assert_eq!(body[2].id, 102);
-    assert_eq!(body[2].items, json[0]);
+    assert_eq!(body[2].id, 3);
+    assert_eq!(body[2].items_to_json(), json[0]);
     assert_eq!(body[2].total, 2823);
-    assert!(body[2].ctime.timestamp() > 0);
-    assert!(body[2].ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
+    assert!(body[2].ctime_to_ndt().timestamp() > 0);
+    assert!(body[2].ctime_to_ndt().timestamp() <= chrono::offset::Utc::now().timestamp());
 }
 
 #[actix_rt::test]
@@ -60,7 +60,7 @@ async fn web_purchase_get_ok_1() {
     let mut app = test::init_service(app).await;
 
     let resp = TestRequest::get()
-        .uri("/api/purchases/101")
+        .uri("/api/purchases/2")
         .send_request(&mut app)
         .await;
 
@@ -68,14 +68,14 @@ async fn web_purchase_get_ok_1() {
 
     let body: Purchase = test::read_body_json(resp).await;
 
-    assert_eq!(body.id, 101);
+    assert_eq!(body.id, 2);
     assert_eq!(
-        body.items,
+        body.items_to_json(),
         json!([{"name": "half dozen glazed donuts", "price": 625, "quantity": 2}])
     );
     assert_eq!(body.total, 1250);
-    assert!(body.ctime.timestamp() > 0);
-    assert!(body.ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
+    assert!(body.ctime_to_ndt().timestamp() > 0);
+    assert!(body.ctime_to_ndt().timestamp() <= chrono::offset::Utc::now().timestamp());
 }
 
 #[actix_rt::test]
@@ -89,7 +89,7 @@ async fn web_purchase_get_ok_2() {
     let mut app = test::init_service(app).await;
 
     let resp = TestRequest::get()
-        .uri("/api/purchases/102")
+        .uri("/api/purchases/3")
         .send_request(&mut app)
         .await;
 
@@ -97,14 +97,14 @@ async fn web_purchase_get_ok_2() {
 
     let body: Purchase = test::read_body_json(resp).await;
 
-    assert_eq!(body.id, 102);
+    assert_eq!(body.id, 3);
     assert_eq!(
-        body.items,
+        body.items_to_json(),
         json!([{"name": "half dozen glazed donuts", "price": 625, "quantity": 1}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2}])
     );
     assert_eq!(body.total, 2823);
-    assert!(body.ctime.timestamp() > 0);
-    assert!(body.ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
+    assert!(body.ctime_to_ndt().timestamp() > 0);
+    assert!(body.ctime_to_ndt().timestamp() <= chrono::offset::Utc::now().timestamp());
 }
 
 #[actix_rt::test]
@@ -193,11 +193,11 @@ async fn web_purchase_create_ok_1() {
 
     let purchase: Purchase = test::read_body_json(resp).await;
 
-    assert!(purchase.id >= 1000, "purchase.id should be >= to 1000");
-    assert_eq!(purchase.items, body["items"]);
+    assert!(purchase.id >= 1, "purchase.id should be >= to 1");
+    assert_eq!(purchase.items_to_json(), body["items"]);
     assert_eq!(purchase.total, 1099);
-    assert!(purchase.ctime.timestamp() > 0);
-    assert!(purchase.ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
+    assert!(purchase.ctime_to_ndt().timestamp() > 0);
+    assert!(purchase.ctime_to_ndt().timestamp() <= chrono::offset::Utc::now().timestamp());
 }
 
 #[actix_rt::test]
@@ -223,9 +223,9 @@ async fn web_purchase_create_ok_2() {
 
     let purchase: Purchase = test::read_body_json(resp).await;
 
-    assert!(purchase.id >= 1000, "purchase.id should be >= to 1000");
-    assert_eq!(purchase.items, body["items"]);
+    assert!(purchase.id >= 1, "purchase.id should be >= to 1");
+    assert_eq!(purchase.items_to_json(), body["items"]);
     assert_eq!(purchase.total, 1370);
-    assert!(purchase.ctime.timestamp() > 0);
-    assert!(purchase.ctime.timestamp() <= chrono::offset::Utc::now().timestamp());
+    assert!(purchase.ctime_to_ndt().timestamp() > 0);
+    assert!(purchase.ctime_to_ndt().timestamp() <= chrono::offset::Utc::now().timestamp());
 }
