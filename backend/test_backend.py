@@ -70,12 +70,12 @@ def generate_test_data(conn, cur):
 
 def run_rust_tests():
     conn = sqlite3.connect('pos_testing_db.db')
-    cur = conn.cursor()    
+    cur = conn.cursor()
     failed_tests = []
 
     print('Compiling (this might take a while) ... ', end='', flush=True)
     result = subprocess.run('cargo test --no-run', shell=True, capture_output=True)
-    if result.returncode != 0: 
+    if result.returncode != 0:
         print(colored('failed', 'red'))
         output = result.stderr.decode('utf-8')
         print(output)
@@ -106,17 +106,18 @@ def run_rust_tests():
                     err = traceback.format_exc()
                     print(colored('Retrying ... ', 'yellow'), end='', flush=True)
 
-        if 'FAILED' in x: 
+        if 'FAILED' in x:
             print(colored('\n'.join(out), 'red'))
             failed_tests.append(test)
         else: print(colored(x, 'green'))
 
-    if len(failed_tests) > 0: 
+    if len(failed_tests) > 0:
         print(colored('done', 'red'))
         print(colored(f'{len(failed_tests)} tests failed:', 'red'))
         for test in failed_tests: print(colored(f'\t{test}', 'red'))
-        return None
+        return False
     else: print(colored('done', 'green'))
+    return True
 
 def clean_up(pid):
     print('Cleaning up ... ', end='', flush=True)
@@ -136,7 +137,7 @@ if __name__ == '__main__':
 
     pid = start_database()
 
-    if run_rust_tests() is None:
+    if not run_rust_tests():
         clean_up(pid)
         exit(1)
 
