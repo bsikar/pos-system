@@ -11,19 +11,6 @@ once the has entered all of the required items, they will be able to press compl
 
 there will be an admin pannel where the database entries can be deleted or altered and there will be an option to allow cash tranations to be added in the sale database.
 
-# start
-## start the database using docker-compose
-```sh
-docker-compose up
-```
-this works because it uses the `docker-compose.yml` file
-
-if this command does not work then add yourself to the docker group (you may need to re-login)
-```sh
-usermod -a -G docker $USER
-```
-
-
 ## start the backend
 ```sh
 cargo run --release
@@ -39,13 +26,6 @@ pip install -r requirements.txt
 python test_backend.py
 ```
 this will start a docker container, add test seeds to the database, run the rust tests, then stop the docker container removing all test seed data
-
-# Windows
-`libpg` isnt on windows, install [`postgres`](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads)
-then add `PG_LIB_DIR` to your path by running
-```ps1
-setx PQ_LIB_DIR "C:\Program Files\PostgreSQL\14\lib"
-```
 
 # Common Problems
 make sure that the ports you are binding to are not already in use
