@@ -47,6 +47,10 @@ impl Item {
             return Err(ModelError::InvalidItemPrice(data.price));
         }
 
+        if data.tax < 0.0 {
+            return Err(ModelError::InvalidItemTax(data.tax));
+        }
+
         if data.name.is_empty() {
             return Err(ModelError::EmptyItemName);
         }
@@ -75,7 +79,6 @@ impl Item {
     }
 
     pub fn update(db: &SqliteConnection, name: String, data: Item) -> Result<Item, ModelError> {
-        // set the current item with the name `name` to the data
         let item = Item::get_by_name(db, name.clone());
 
         if let Err(err) = item {

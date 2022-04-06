@@ -99,9 +99,15 @@ impl Purchase {
             for item in values {
                 let price = item["price"].as_i64().unwrap();
                 let quantity = item["quantity"].as_i64().unwrap();
-                let tax = item["tax"].as_f64().unwrap() as f32;
+                let tax_percent = 1.0 + item["tax"].as_f64().unwrap() as f32 / 100.0;
 
-                total += ((price * quantity) as f32 * tax) as i32;
+                let mut subtotal = price as f32 / 100.0 * quantity as f32;
+                subtotal *= tax_percent;
+
+                let subtotal = format!("{:.2}", subtotal);
+                let subtotal: i32 = subtotal.replace('.', "").parse().unwrap();
+
+                total += subtotal;
             }
         }
 
@@ -115,6 +121,15 @@ impl Purchase {
 
     pub fn items_to_json(&self) -> JsonValue {
         serde_json::from_str(&self.items).unwrap()
+    }
+
+    pub fn to_json(&self) -> JsonValue {
+        json!({
+            "id": self.id,
+            "ctime": self.ctime,
+            "items": self.items_to_json(),
+            "total": self.total,
+        })
     }
 
     fn to_items(data: JsonValue) -> Result<Vec<Item>, ModelError> {

@@ -42,9 +42,8 @@ async fn model_item_create_duplicate() {
 
     match result {
         Ok(_) => panic!("Expected error"),
-        Err(ModelError::ItemAlreadyExists(name)) => {
-            assert_eq!(name, "single glazed donut");
-        }
+        Err(ModelError::ItemAlreadyExists(name)) => assert_eq!(name, "single glazed donut"),
+
         other_err => panic!("unexpected error: {:?}", other_err),
     }
 }
@@ -68,9 +67,32 @@ async fn model_item_create_invalid_price() {
 
     match result {
         Ok(_) => panic!("Expected error"),
-        Err(ModelError::InvalidItemPrice(price)) => {
-            assert_eq!(price, -30);
-        }
+        Err(ModelError::InvalidItemPrice(price)) => assert_eq!(price, -30),
+        other_err => panic!("unexpected error: {:?}", other_err),
+    }
+}
+
+#[actix_rt::test]
+async fn model_item_create_invalid_tax() {
+    let conn = App::new()
+        .unwrap()
+        .database
+        .establish_db_conn()
+        .get()
+        .unwrap();
+
+    let item = Item {
+        name: "single donut hole".to_string(),
+        price: 30,
+        tax: -1.0,
+    };
+
+    let result = Item::create(&conn, item);
+
+    match result {
+        Ok(_) => panic!("Expected error"),
+        Err(ModelError::InvalidItemTax(tax)) => assert_eq!(tax, -1.0),
+
         other_err => panic!("unexpected error: {:?}", other_err),
     }
 }

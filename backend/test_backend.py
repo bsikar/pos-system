@@ -99,17 +99,16 @@ def run_rust_tests():
             try:
                 out = subprocess.run(f'cargo test {test} -- --exact', shell=True, capture_output=True).stdout.decode('utf-8').split('\n')
                 x = [i for i in out if 'test result' in i][0]
+                if 'FAILED' in x:
+                    print(colored('\n'.join(out), 'red'))
+                    failed_tests.append(test)
+                else: print(colored(x, 'green'))
                 break
             except:
                 if err != traceback.format_exc():
                     print(colored(f'failed: {traceback.format_exc().rstrip()}', 'red'));
                     err = traceback.format_exc()
                     print(colored('Retrying ... ', 'yellow'), end='', flush=True)
-
-        if 'FAILED' in x:
-            print(colored('\n'.join(out), 'red'))
-            failed_tests.append(test)
-        else: print(colored(x, 'green'))
 
     if len(failed_tests) > 0:
         print(colored('done', 'red'))

@@ -53,6 +53,9 @@ pub enum Error {
     #[error("Invalid Item Price - {0}")]
     InvalidItemPrice(i32),
 
+    #[error("Invalid Item Tax - {0}")]
+    InvalidItemTax(f32),
+
     #[error("Item Already Exists - {0}")]
     ItemAlreadyExists(String),
 

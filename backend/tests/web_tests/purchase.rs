@@ -2,7 +2,27 @@ use crate::app::web::purchase::{purchase_rest_filters, Purchase};
 use crate::app::App as ModelApp;
 use actix_web::test::{self, TestRequest};
 use actix_web::{web::Data, App};
-use serde_json::json;
+use serde::{Deserialize, Serialize};
+use serde_json::{json, Value as JsonValue};
+
+#[derive(Debug, Deserialize, Serialize)]
+struct PurchaseMac {
+    id: i32,
+    ctime: String,
+    items: JsonValue,
+    total: i32,
+}
+
+impl PurchaseMac {
+    fn to_purchase(&self) -> Purchase {
+        Purchase {
+            id: self.id,
+            ctime: self.ctime.clone(),
+            items: format!("{}", self.items),
+            total: self.total,
+        }
+    }
+}
 
 #[actix_rt::test]
 async fn web_purchase_list() {
@@ -21,7 +41,11 @@ async fn web_purchase_list() {
 
     assert!(resp.status().is_success());
 
-    let body: Vec<Purchase> = test::read_body_json(resp).await;
+    let body_mac: Vec<PurchaseMac> = test::read_body_json(resp).await;
+    let body = body_mac
+        .iter()
+        .map(|p| p.to_purchase())
+        .collect::<Vec<Purchase>>();
 
     assert_eq!(body.len(), 3, "purchases count");
     let json = json!([
@@ -66,11 +90,12 @@ async fn web_purchase_get_ok_1() {
 
     assert!(resp.status().is_success());
 
-    let body: Purchase = test::read_body_json(resp).await;
+    let body_mac: PurchaseMac = test::read_body_json(resp).await;
+    let body = body_mac.to_purchase();
 
     assert_eq!(body.id, 2);
     assert_eq!(
-        body.items_to_json(),
+        body_mac.items,
         json!([{"name": "half dozen glazed donuts", "price": 625, "quantity": 2}])
     );
     assert_eq!(body.total, 1250);
@@ -95,11 +120,12 @@ async fn web_purchase_get_ok_2() {
 
     assert!(resp.status().is_success());
 
-    let body: Purchase = test::read_body_json(resp).await;
+    let body_mac: PurchaseMac = test::read_body_json(resp).await;
+    let body = body_mac.to_purchase();
 
     assert_eq!(body.id, 3);
     assert_eq!(
-        body.items_to_json(),
+        body_mac.items,
         json!([{"name": "half dozen glazed donuts", "price": 625, "quantity": 1}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2}])
     );
     assert_eq!(body.total, 2823);
@@ -180,7 +206,7 @@ async fn web_purchase_create_ok_1() {
     let mut app = test::init_service(app).await;
 
     let json =
-        json!([{"name": "dozen glazed donuts", "price": 1099i64, "quantity": 1i64, "tax": 1.0}]);
+        json!([{"name": "dozen glazed donuts", "price": 1099i64, "quantity": 1i64, "tax": 0.0}]);
     let body = json!({"items": json, "total": Purchase::calculate_total(&json)});
 
     let resp = TestRequest::post()
@@ -210,7 +236,7 @@ async fn web_purchase_create_ok_2() {
 
     let mut app = test::init_service(app).await;
 
-    let json = json!([{"name": "single glazed donut", "price": 120, "quantity": 1, "tax": 1.0}, {"name": "half dozen glazed donuts", "price": 625, "quantity": 2, "tax": 1.0}]);
+    let json = json!([{"name": "single glazed donut", "price": 120, "quantity": 1, "tax": 0.0}, {"name": "half dozen glazed donuts", "price": 625, "quantity": 2, "tax": 0.0}]);
     let body = json!({"items": json, "total": Purchase::calculate_total(&json)});
 
     let resp = TestRequest::post()

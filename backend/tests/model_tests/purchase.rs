@@ -72,7 +72,7 @@ async fn model_purchase_create_not_in_database() {
         .get()
         .unwrap();
 
-    let items = json!([{"name": "some random item", "price": 120, "quantity" : 1, "tax": 1.0}]);
+    let items = json!([{"name": "some random item", "price": 120, "quantity" : 1, "tax": 0.0}]);
 
     let result = Purchase::create(&conn, items);
 
@@ -92,7 +92,7 @@ async fn model_purchase_create_ok_1() {
         .get()
         .unwrap();
 
-    let items = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1, "tax": 1.0}]);
+    let items = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1, "tax": 0.0}]);
 
     let purchase_created = Purchase::create(&conn, items.clone()).unwrap();
 
@@ -110,7 +110,7 @@ async fn model_purchase_create_ok_2() {
         .get()
         .unwrap();
 
-    let items = json!([{"name": "single glazed donut", "price": 120, "quantity": 1, "tax": 1.0}, {"name": "half dozen glazed donuts", "price": 625, "quantity" : 1, "tax": 1.0}]);
+    let items = json!([{"name": "single glazed donut", "price": 120, "quantity": 1, "tax": 0.0}, {"name": "half dozen glazed donuts", "price": 625, "quantity" : 1, "tax": 0.0}]);
 
     let purchase_created = Purchase::create(&conn, items.clone()).unwrap();
 
@@ -281,8 +281,8 @@ async fn model_purchase_update() {
         .unwrap();
 
     let items = json!([
-        {"name": "single glazed donut", "price": 120, "quantity" : 1, "tax": 1.0},
-        {"name": "half dozen glazed donuts", "price": 625, "quantity" : 2, "tax": 1.0},
+        {"name": "single glazed donut", "price": 120, "quantity" : 1, "tax": 0.0},
+        {"name": "half dozen glazed donuts", "price": 625, "quantity" : 2, "tax": 0.0},
     ]);
 
     let purchase = Purchase::update(&conn, 1, items.clone()).unwrap();
@@ -294,14 +294,14 @@ async fn model_purchase_update() {
 
 #[actix_rt::test]
 async fn model_purchase_calculate_total_1() {
-    let json = json!([{"name": "single donut hole", "price": 30, "quantity": 1, "tax": 1.0}]);
+    let json = json!([{"name": "single donut hole", "price": 30, "quantity": 1, "tax": 0.0}]);
 
     assert_eq!(Purchase::calculate_total(&json), 30);
 }
 
 #[actix_rt::test]
 async fn model_purchase_calculate_total_2() {
-    let json = json!([{"name": "single donut hole", "price": 30, "quantity": 2, "tax": 1.0}, {"name": "dozen donut holes", "price": 200, "quantity": 1, "tax": 1.0}]);
+    let json = json!([{"name": "single donut hole", "price": 30, "quantity": 2, "tax": 0.0}, {"name": "dozen donut holes", "price": 200, "quantity": 1, "tax": 0.0}]);
 
     assert_eq!(Purchase::calculate_total(&json), 260);
 }
