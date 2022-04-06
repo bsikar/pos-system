@@ -8,9 +8,6 @@ from glob import glob
 from termcolor import colored
 
 data = toml.load('config/pos_config.toml')
-user = data['database']['user']
-password = data['database']['pwd']
-name = data['database']['db_name']
 
 def start_database():
     print('Starting database ... ', end='', flush=True)

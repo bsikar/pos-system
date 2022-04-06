@@ -10,17 +10,7 @@ pub mod purchase;
 pub type DbPool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
 
 #[derive(Debug, Deserialize)]
-#[allow(unused)]
 pub struct Database {
-    pub net_id: String,
-    pub port: u16,
-    pub max_connections: u32,
-    pub root_db_name: String,
-    pub root_user: String,
-    pub root_pwd: String,
-    pub db_name: String,
-    pub user: String,
-    pub pwd: String,
     pub file_path: String,
 }
 

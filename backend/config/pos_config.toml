@@ -1,13 +1,4 @@
 [database]
-net_id = "127.0.0.1"
-port = 5432
-max_connections = 5
-root_db_name = "postgres"
-root_user = "postgres"
-root_pwd = "postgres"
-db_name = "pos_db"
-user = "pos_user"
-pwd = "pos_user"
 file_path = "pos_db.db"
 
 [webserver]
