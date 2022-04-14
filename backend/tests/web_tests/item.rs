@@ -25,19 +25,25 @@ async fn web_item_list() {
 
     assert_eq!(body.len(), 3, "items count");
     let json = json!([
-        {"name": "single glazed donut", "price": 120, "tax": 1.0},
-        {"name": "half dozen glazed donuts", "price": 625, "tax": 1.0},
-        {"name": "dozen glazed donuts", "price": 1099, "tax": 1.0}
+        {"name": "single glazed donut", "price": 120, "tax": 1.0, "type": "food"},
+        {"name": "half dozen glazed donuts", "price": 625, "tax": 1.0, "type": "food"},
+        {"name": "dozen glazed donuts", "price": 1099, "tax": 1.0, "type": "food"},
     ]);
 
     assert_eq!(body[0].name, json[0]["name"]);
     assert_eq!(body[0].price, json[0]["price"]);
+    assert_eq!(body[0].tax, json[0]["tax"]);
+    assert_eq!(body[0].type_, json[0]["type"]);
 
     assert_eq!(body[1].name, json[1]["name"]);
     assert_eq!(body[1].price, json[1]["price"]);
+    assert_eq!(body[1].tax, json[1]["tax"]);
+    assert_eq!(body[1].type_, json[1]["type"]);
 
     assert_eq!(body[2].name, json[2]["name"]);
     assert_eq!(body[2].price, json[2]["price"]);
+    assert_eq!(body[2].tax, json[2]["tax"]);
+    assert_eq!(body[2].type_, json[2]["type"]);
 }
 
 #[actix_rt::test]
@@ -61,6 +67,8 @@ async fn web_item_get_ok() {
 
     assert_eq!(body.name, "single glazed donut");
     assert_eq!(body.price, 120);
+    assert_eq!(body.tax, 1.0);
+    assert_eq!(body.type_, "food");
 }
 
 #[actix_rt::test]
@@ -93,7 +101,7 @@ async fn web_item_create_ok() {
 
     let resp = TestRequest::post()
         .uri("/api/items")
-        .set_json(&json!({"name": "single donut hole", "price": 30, "tax": 1.0}))
+        .set_json(&json!({"name": "single donut hole", "price": 30, "tax": 1.0, "type_": "food"}))
         .send_request(&mut app)
         .await;
 
@@ -103,6 +111,8 @@ async fn web_item_create_ok() {
 
     assert_eq!(body.name, "single donut hole");
     assert_eq!(body.price, 30);
+    assert_eq!(body.tax, 1.0);
+    assert_eq!(body.type_, "food");
 }
 
 #[actix_rt::test]
@@ -117,7 +127,9 @@ async fn web_item_create_duplicate() {
 
     let resp = TestRequest::post()
         .uri("/api/items")
-        .set_json(&json!({"name": "single glazed donut", "price": 120, "tax": 1.0}))
+        .set_json(
+            &json!({"name": "single glazed donut", "price": 120, "tax": 1.0, "type_": "food"}),
+        )
         .send_request(&mut app)
         .await;
 

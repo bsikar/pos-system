@@ -143,8 +143,9 @@ impl Purchase {
             let name = item["name"].as_str().unwrap().to_string();
             let price = item["price"].as_i64().unwrap() as i32;
             let tax = item["tax"].as_f64().unwrap() as f32;
+            let type_ = item["type"].as_str().unwrap().to_string();
 
-            items.push(Item::new(name, price, tax));
+            items.push(Item::new(name, price, tax, type_));
         }
 
         Ok(items)

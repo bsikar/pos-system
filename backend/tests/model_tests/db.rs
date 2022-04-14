@@ -1,6 +1,6 @@
-use crate::app::model::item::Item;
-use crate::app::model::purchase::Purchase;
 use crate::app::App;
+use crate::schema::items::dsl::items;
+use crate::schema::purchases::dsl::purchases;
 use diesel::RunQueryDsl;
 
 #[actix_rt::test]
@@ -11,11 +11,9 @@ async fn model_db_purchase() {
         .establish_db_conn()
         .get()
         .unwrap();
-    let result: Vec<Purchase> = diesel::sql_query("SELECT * from purchases")
-        .load(&conn)
-        .unwrap();
+    let all_purchases = purchases.load::<(i32, String, String, i32)>(&conn).unwrap();
 
-    assert_eq!(result.len(), 3, "number of seed purchases");
+    assert_eq!(all_purchases.len(), 3, "number of seed purchases");
 }
 
 #[actix_rt::test]
@@ -26,9 +24,8 @@ async fn model_db_item() {
         .establish_db_conn()
         .get()
         .unwrap();
-    let result: Vec<Item> = diesel::sql_query("SELECT * from items")
-        .load(&conn)
-        .unwrap();
 
-    assert_eq!(result.len(), 3, "number of seed items");
+    let all_items = items.load::<(String, i32, f32, String)>(&conn).unwrap();
+
+    assert_eq!(all_items.len(), 3, "number of seed items");
 }

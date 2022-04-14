@@ -1,6 +1,7 @@
 use crate::app::model::purchase::Purchase;
 use crate::app::model::Error as ModelError;
 use crate::app::App;
+use chrono::Local;
 use serde_json::json;
 
 #[actix_rt::test]
@@ -72,7 +73,7 @@ async fn model_purchase_create_not_in_database() {
         .get()
         .unwrap();
 
-    let items = json!([{"name": "some random item", "price": 120, "quantity" : 1, "tax": 0.0}]);
+    let items = json!([{"name": "some random item", "price": 120, "quantity" : 1, "tax": 0.0, "type": "food"}]);
 
     let result = Purchase::create(&conn, items);
 
@@ -92,13 +93,16 @@ async fn model_purchase_create_ok_1() {
         .get()
         .unwrap();
 
-    let items = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1, "tax": 0.0}]);
+    let items = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1, "tax": 0.0, "type": "food"}]);
+    let time_before = Local::now().naive_local();
 
     let purchase_created = Purchase::create(&conn, items.clone()).unwrap();
 
     assert_eq!(purchase_created.items_to_json(), items);
     assert_eq!(purchase_created.total, 120);
     assert!(purchase_created.id >= 1, "id should be >= 1");
+    assert!(purchase_created.ctime_to_ndt() >= time_before);
+    assert!(purchase_created.ctime_to_ndt() <= Local::now().naive_local());
 }
 
 #[actix_rt::test]
@@ -110,13 +114,16 @@ async fn model_purchase_create_ok_2() {
         .get()
         .unwrap();
 
-    let items = json!([{"name": "single glazed donut", "price": 120, "quantity": 1, "tax": 0.0}, {"name": "half dozen glazed donuts", "price": 625, "quantity" : 1, "tax": 0.0}]);
+    let items = json!([{"name": "single glazed donut", "price": 120, "quantity": 1, "tax": 0.0, "type": "food"}, {"name": "half dozen glazed donuts", "price": 625, "quantity" : 1, "tax": 0.0, "type": "food"}]);
 
+    let time_before = Local::now().naive_local();
     let purchase_created = Purchase::create(&conn, items.clone()).unwrap();
 
     assert_eq!(purchase_created.items_to_json(), items);
     assert_eq!(purchase_created.total, 745);
     assert!(purchase_created.id >= 1, "id should be >= 1");
+    assert!(purchase_created.ctime_to_ndt() >= time_before);
+    assert!(purchase_created.ctime_to_ndt() <= Local::now().naive_local());
 }
 
 #[actix_rt::test]
@@ -130,11 +137,13 @@ async fn model_purchase_get_ok_1() {
 
     let purchase = Purchase::get_by_id(&conn, 1).unwrap();
 
+    println!("{:#?}", purchase);
+
     // check
     let json = json!([{"name": "single glazed donut", "price": 120, "quantity" : 1}]);
     assert_eq!(purchase.id, 1);
     assert_eq!(purchase.items_to_json(), json);
-    assert_eq!(purchase.total, 120)
+    assert_eq!(purchase.total, 120);
 }
 
 #[actix_rt::test]
@@ -281,8 +290,8 @@ async fn model_purchase_update() {
         .unwrap();
 
     let items = json!([
-        {"name": "single glazed donut", "price": 120, "quantity" : 1, "tax": 0.0},
-        {"name": "half dozen glazed donuts", "price": 625, "quantity" : 2, "tax": 0.0},
+        {"name": "single glazed donut", "price": 120, "quantity" : 1, "tax": 0.0, "type": "food"},
+        {"name": "half dozen glazed donuts", "price": 625, "quantity" : 2, "tax": 0.0, "type": "food"},
     ]);
 
     let purchase = Purchase::update(&conn, 1, items.clone()).unwrap();
