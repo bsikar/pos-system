@@ -4,6 +4,7 @@ use diesel::associations::HasTable;
 use diesel::ExpressionMethods;
 use diesel::{QueryDsl, Queryable, RunQueryDsl, SqliteConnection};
 use serde::{Deserialize, Serialize};
+use serde_json::Value as JsonValue;
 
 #[derive(Queryable, QueryableByName, Insertable, AsChangeset, Debug, Deserialize, Serialize)]
 #[table_name = "items"]
@@ -41,6 +42,20 @@ impl Item {
         } else {
             Ok(())
         }
+    }
+
+    pub fn from_json(data: JsonValue) -> Item {
+        Item::new(
+            data["name"].as_str().unwrap().to_string(),
+            data["price"].as_i64().unwrap() as i32,
+            data["tax"].as_f64().unwrap() as f32,
+            data["type"].as_str().unwrap().to_string(),
+        )
+    }
+
+    pub fn create_from_json(db: &SqliteConnection, data: JsonValue) -> Result<Item, ModelError> {
+        let data = Item::from_json(data);
+        Item::create(db, data)
     }
 
     pub fn create(db: &SqliteConnection, data: Item) -> Result<Item, ModelError> {

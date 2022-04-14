@@ -13,6 +13,16 @@ pub struct PurchaseMac {
     pub total: i32,
 }
 
+#[post("/api/purchases")]
+pub async fn create(db: Data<DbPool>, purchase: Json<JsonValue>) -> HttpResponse {
+    let db = db.get().unwrap();
+    let purchase = purchase.into_inner();
+    let purchase = purchase["items"].clone();
+    let purchase = Purchase::create(&db, purchase);
+
+    handle_result(purchase)
+}
+
 #[get("/api/purchases")]
 pub async fn list(db: Data<DbPool>) -> HttpResponse {
     let db = db.get().unwrap();
@@ -41,16 +51,6 @@ pub async fn get(db: Data<DbPool>, id: Path<i32>) -> HttpResponse {
     let purchase = purchase.unwrap().to_json();
 
     handle_result(Ok(purchase))
-}
-
-#[post("/api/purchases")]
-pub async fn create(db: Data<DbPool>, purchase: Json<JsonValue>) -> HttpResponse {
-    let db = db.get().unwrap();
-    let purchase = purchase.into_inner();
-    let purchase = purchase["items"].clone();
-    let purchase = Purchase::create(&db, purchase);
-
-    handle_result(purchase)
 }
 
 #[put("/api/purchases/{id}")]

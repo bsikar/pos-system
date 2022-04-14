@@ -2,12 +2,13 @@ use crate::app::model::{item::Item, DbPool};
 use crate::app::web::handle_result;
 use actix_web::web::{Data, Json, Path};
 use actix_web::HttpResponse;
+use serde_json::Value as JsonValue;
 
 #[post("/api/items")]
-pub async fn create(db: Data<DbPool>, item: Json<Item>) -> HttpResponse {
+pub async fn create(db: Data<DbPool>, item: Json<JsonValue>) -> HttpResponse {
     let db = db.get().unwrap();
     let item = item.into_inner();
-    let item = Item::create(&db, item);
+    let item = Item::create_from_json(&db, item);
 
     handle_result(item)
 }
@@ -29,10 +30,11 @@ pub async fn get(db: Data<DbPool>, name: Path<String>) -> HttpResponse {
 }
 
 #[put("/api/items/{name}")]
-pub async fn update(db: Data<DbPool>, name: Path<String>, item: Json<Item>) -> HttpResponse {
+pub async fn update(db: Data<DbPool>, name: Path<String>, item: Json<JsonValue>) -> HttpResponse {
     let name = name.replace("%20", " ");
     let db = db.get().unwrap();
     let item = item.into_inner();
+    let item = Item::from_json(item);
     let item = Item::update(&db, name, item);
 
     handle_result(item)

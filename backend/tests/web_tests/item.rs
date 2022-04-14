@@ -101,7 +101,7 @@ async fn web_item_create_ok() {
 
     let resp = TestRequest::post()
         .uri("/api/items")
-        .set_json(&json!({"name": "single donut hole", "price": 30, "tax": 1.0, "type_": "food"}))
+        .set_json(&json!({"name": "single donut hole", "price": 30, "tax": 1.0, "type": "food"}))
         .send_request(&mut app)
         .await;
 
@@ -127,9 +127,7 @@ async fn web_item_create_duplicate() {
 
     let resp = TestRequest::post()
         .uri("/api/items")
-        .set_json(
-            &json!({"name": "single glazed donut", "price": 120, "tax": 1.0, "type_": "food"}),
-        )
+        .set_json(&json!({"name": "single glazed donut", "price": 120, "tax": 1.0, "type": "food"}))
         .send_request(&mut app)
         .await;
 
@@ -148,7 +146,7 @@ async fn web_item_create_food() {
 
     let resp = TestRequest::post()
         .uri("/api/items")
-        .set_json(&json!({"name": "long john donut", "price": 125, "tax": 1.0, "type_": "food"}))
+        .set_json(&json!({"name": "long john donut", "price": 125, "tax": 1.0, "type": "food"}))
         .send_request(&mut app)
         .await;
 
@@ -174,7 +172,7 @@ async fn web_item_create_drink() {
 
     let resp = TestRequest::post()
         .uri("/api/items")
-        .set_json(&json!({"name": "energy drink", "price": 300, "tax": 1.0, "type_": "drink"}))
+        .set_json(&json!({"name": "energy drink", "price": 300, "tax": 1.0, "type": "drink"}))
         .send_request(&mut app)
         .await;
 
@@ -200,7 +198,7 @@ async fn web_item_create_other() {
 
     let resp = TestRequest::post()
         .uri("/api/items")
-        .set_json(&json!({"name": "amazing art", "price": 999, "tax": 100.0, "type_": "other"}))
+        .set_json(&json!({"name": "amazing art", "price": 999, "tax": 100.0, "type": "other"}))
         .send_request(&mut app)
         .await;
 
@@ -227,7 +225,7 @@ async fn web_item_create_invalid_type() {
     let resp = TestRequest::post()
         .uri("/api/items")
         .set_json(
-            &json!({"name": "invalid type", "price": 999, "tax": 100.0, "type_": "something-random"}),
+            &json!({"name": "invalid type", "price": 999, "tax": 100.0, "type": "something-random"}),
         )
         .send_request(&mut app)
         .await;
