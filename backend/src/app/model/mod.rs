@@ -43,6 +43,9 @@ pub enum Error {
     #[error("Invalid Item Price - {0}")]
     InvalidItemPrice(i32),
 
+    #[error("Invalid Item Type - {0}")]
+    InvalidItemType(String),
+
     #[error("Invalid Item Tax - {0}")]
     InvalidItemTax(f32),
 

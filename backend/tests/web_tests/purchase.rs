@@ -164,17 +164,39 @@ async fn web_purchase_create_wrong_name() {
     let resp = TestRequest::post()
         .uri("/api/purchases")
         .set_json(&json!({
-            "items": [{"name": "half dozen glazed donuts", "price": 625, "quantity": 1, "tax": 1.0, "type": "food"}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2, "tax": 1.0, "type": "food"}],
+            "items": [{"name": "half dozen glazed donuts", "price": 625, "quantity": 1, "tax": 1.0, "type": "food"}, {"name": "THIS IS A WRONG NAME", "price": 1099, "quantity": 2, "tax": 1.0, "type": "food"}],
             "total": 2823,
         }))
         .send_request(&mut app)
         .await;
 
-    assert!(resp.status().is_success());
+    assert!(resp.status().is_server_error());
 }
 
 #[actix_rt::test]
-async fn web_purchase_create_wrong_price() {
+async fn web_purchase_create_wrong_price_1() {
+    let conn = ModelApp::new().unwrap().database.establish_db_conn();
+
+    let app = App::new()
+        .app_data(Data::new(conn))
+        .configure(purchase_rest_filters);
+
+    let mut app = test::init_service(app).await;
+
+    let resp = TestRequest::post()
+        .uri("/api/purchases")
+        .set_json(&json!({
+            "items": [{"name": "half dozen glazed donuts", "price": 6250, "quantity": 1, "tax": 1.0, "type": "food"}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2, "tax": 1.0, "type": "food"}],
+            "total": 2823,
+        }))
+        .send_request(&mut app)
+        .await;
+
+    assert!(resp.status().is_server_error());
+}
+
+#[actix_rt::test]
+async fn web_purchase_create_wrong_price_2() {
     let conn = ModelApp::new().unwrap().database.establish_db_conn();
 
     let app = App::new()
@@ -187,7 +209,7 @@ async fn web_purchase_create_wrong_price() {
         .uri("/api/purchases")
         .set_json(&json!({
             "items": [{"name": "half dozen glazed donuts", "price": 625, "quantity": 1, "tax": 1.0, "type": "food"}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2, "tax": 1.0, "type": "food"}],
-            "total": 2823,
+            "total": 282300,
         }))
         .send_request(&mut app)
         .await;

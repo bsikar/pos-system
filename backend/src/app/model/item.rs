@@ -62,6 +62,13 @@ impl Item {
             return Err(ModelError::EmptyItemName);
         }
 
+        match data.type_.to_ascii_lowercase().as_str() {
+            "food" | "drink" | "other" => {}
+            _ => {
+                return Err(ModelError::InvalidItemType(data.type_));
+            }
+        }
+
         diesel::insert_into(dsl::items)
             .values(&data)
             .execute(db)
