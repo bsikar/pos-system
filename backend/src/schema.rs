@@ -3,6 +3,8 @@ table! {
         name -> Text,
         price -> Integer,
         tax -> Float,
+        #[sql_name = "type"]
+        type_ -> Text,
     }
 }
 

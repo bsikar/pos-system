@@ -1,7 +1,8 @@
 use crate::app::model::Error as ModelError;
 use crate::schema::items::{self, dsl};
 use diesel::associations::HasTable;
-use diesel::{ExpressionMethods, QueryDsl, Queryable, RunQueryDsl, SqliteConnection};
+use diesel::ExpressionMethods;
+use diesel::{QueryDsl, Queryable, RunQueryDsl, SqliteConnection};
 use serde::{Deserialize, Serialize};
 
 #[derive(Queryable, QueryableByName, Insertable, AsChangeset, Debug, Deserialize, Serialize)]
@@ -10,11 +11,17 @@ pub struct Item {
     pub name: String,
     pub price: i32,
     pub tax: f32,
+    pub type_: String,
 }
 
 impl Item {
-    pub fn new(name: String, price: i32, tax: f32) -> Self {
-        Item { name, price, tax }
+    pub fn new(name: String, price: i32, tax: f32, type_: String) -> Self {
+        Item {
+            name,
+            price,
+            tax,
+            type_,
+        }
     }
 
     pub fn get_by_name(db: &SqliteConnection, name: String) -> Result<Item, ModelError> {

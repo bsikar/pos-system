@@ -15,12 +15,15 @@ async fn model_item_create_ok() {
         name: "single donut hole".to_string(),
         price: 30,
         tax: 1.0,
+        type_: "food".to_string(),
     };
 
     let item_created = Item::create(&conn, item).unwrap();
 
     assert_eq!(item_created.name, "single donut hole");
     assert_eq!(item_created.price, 30);
+    assert_eq!(item_created.tax, 1.0);
+    assert_eq!(item_created.type_, "food");
 }
 
 #[actix_rt::test]
@@ -36,6 +39,7 @@ async fn model_item_create_duplicate() {
         name: "single glazed donut".to_string(),
         price: 220,
         tax: 1.0,
+        type_: "food".to_string(),
     };
 
     let result = Item::create(&conn, item);
@@ -61,6 +65,7 @@ async fn model_item_create_invalid_price() {
         name: "single donut hole".to_string(),
         price: -30,
         tax: 1.0,
+        type_: "food".to_string(),
     };
 
     let result = Item::create(&conn, item);
@@ -85,6 +90,7 @@ async fn model_item_create_invalid_tax() {
         name: "single donut hole".to_string(),
         price: 30,
         tax: -1.0,
+        type_: "food".to_string(),
     };
 
     let result = Item::create(&conn, item);
@@ -110,6 +116,7 @@ async fn model_item_create_empty_name() {
         name: "".to_string(),
         price: 30,
         tax: 1.0,
+        type_: "food".to_string(),
     };
 
     let result = Item::create(&conn, item);
@@ -154,12 +161,18 @@ async fn model_item_list() {
 
     assert_eq!(items[0].name, "single glazed donut");
     assert_eq!(items[0].price, 120);
+    assert_eq!(items[0].tax, 1.0);
+    assert_eq!(items[0].type_, "food");
 
     assert_eq!(items[1].name, "half dozen glazed donuts");
     assert_eq!(items[1].price, 625);
+    assert_eq!(items[1].tax, 1.0);
+    assert_eq!(items[1].type_, "food");
 
     assert_eq!(items[2].name, "dozen glazed donuts");
     assert_eq!(items[2].price, 1099);
+    assert_eq!(items[2].tax, 1.0);
+    assert_eq!(items[2].type_, "food");
 }
 
 #[actix_rt::test]
@@ -182,9 +195,13 @@ async fn model_item_delete() {
 
     assert_eq!(list[0].name, "half dozen glazed donuts");
     assert_eq!(list[0].price, 625);
+    assert_eq!(list[0].tax, 1.0);
+    assert_eq!(list[0].type_, "food");
 
     assert_eq!(list[1].name, "dozen glazed donuts");
     assert_eq!(list[1].price, 1099);
+    assert_eq!(list[1].tax, 1.0);
+    assert_eq!(list[1].type_, "food");
 }
 
 #[actix_rt::test]
@@ -219,10 +236,13 @@ async fn model_item_update() {
         name: name.clone(),
         price: 999,
         tax: 1.0,
+        type_: "food".to_string(),
     };
 
     let item_updated = Item::update(&conn, name, item).unwrap();
 
     assert_eq!(item_updated.name, "single glazed donut");
     assert_eq!(item_updated.price, 999);
+    assert_eq!(item_updated.tax, 1.0);
+    assert_eq!(item_updated.type_, "food");
 }

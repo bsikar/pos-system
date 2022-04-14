@@ -49,17 +49,17 @@ def drop_tables(conn, cur):
     conn.commit()
 
 def generate_test_data(conn, cur):
-    def add_item(name, price, tax):
-        cur.execute(f"""INSERT INTO items (name, price, tax) VALUES (:name, :price, :tax)""", {'name': name, 'price': price, 'tax': tax})
+    def add_item(name, price, tax, type_):
+        cur.execute(f"""INSERT INTO items (name, price, tax, type) VALUES (:name, :price, :tax, :type)""", {'name': name, 'price': price, 'tax': tax, 'type': type_})
         conn.commit()
 
     def add_purchase(id, items, total):
         cur.execute(f"""INSERT INTO purchases (id, items, total, ctime) VALUES (:id, :items, :total, :ctime)""", {'id': id, 'items': items, 'total': total, 'ctime': '2022-04-05 02:20:23.870212463'})
         conn.commit()
 
-    add_item('single glazed donut', 120, 1.00)
-    add_item('half dozen glazed donuts', 625, 1.00)
-    add_item('dozen glazed donuts', 1099, 1.00)
+    add_item('single glazed donut', 120, 1.00, 'food')
+    add_item('half dozen glazed donuts', 625, 1.00, 'food')
+    add_item('dozen glazed donuts', 1099, 1.00, 'food')
 
     add_purchase(1, '[{"name": "single glazed donut","price": 120,"quantity": 1}]', 120)
     add_purchase(2, '[{"name": "half dozen glazed donuts","price": 625,"quantity": 2}]', 1250)
