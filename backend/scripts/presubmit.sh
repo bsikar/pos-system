@@ -17,8 +17,6 @@ fi
 
 echo "Cargo fmt succeeded..."
 
-echo "Running more restrictive clippy against the current diff..."
-cargo-clippy-diff origin/main HEAD -- --no-deps -- -W clippy::unwrap_used -W clippy::unwrap_in_result
 echo "Running clippy..."
 cargo clippy --tests -- -D warnings
 echo "clippy succeeded..."

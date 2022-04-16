@@ -21,8 +21,6 @@ pip install -r requirements.txt
 
 cargo install diesel_cli --no-default-features --features sqlite
 
-cargo install cargo-diff-tools
-
 cd ..
 
 diesel migration run

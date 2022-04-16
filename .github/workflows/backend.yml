@@ -30,8 +30,5 @@ jobs:
       if: matrix.os == 'macOS-latest'
       run: tee -a ~/.profile <<< 'export PATH="$pythonLocation/bin:$PATH"'
 
-    - name: Install cargo-diff-tools
-      run: cargo install cargo-diff-tools
-
     - name: Check Clippy and Tests
       run: bash presubmit.sh
