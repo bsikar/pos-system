@@ -12,7 +12,6 @@ use app::App;
 
 #[actix_web::main]
 async fn main() {
-    let mut x = 123;
     let app = App::new().unwrap();
 
     match app.run().await {
