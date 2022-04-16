@@ -17,7 +17,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./backend
+        working-directory: ./backend/scripts
 
     steps:
     - uses: actions/checkout@v2
@@ -30,8 +30,8 @@ jobs:
       if: matrix.os == 'macOS-latest'
       run: tee -a ~/.profile <<< 'export PATH="$pythonLocation/bin:$PATH"'
 
-    - name: Install Python dependecies
-      run: pip install -r requirements.txt
+    - name: Install cargo-diff-tools
+      run: cargo install cargo-diff-tools
 
-    - name: Run tests
-      run: python test_backend.py
+    - name: Check Clippy and Tests
+      run: bash presubmit.sh
