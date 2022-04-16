@@ -14,7 +14,6 @@ if [[ $EXIT_CODE -ne 0 ]]; then
     echo 'Run `'$FMT_COMMAND'` to fix.'
     exit $EXIT_CODE
 fi
-
 echo "Cargo fmt succeeded..."
 
 echo "Running clippy..."
