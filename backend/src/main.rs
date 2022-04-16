@@ -16,6 +16,9 @@ async fn main() {
 
     match app.run().await {
         Ok(_) => println!("Server stopped"),
-        Err(e) => eprintln!("Server failed to start: {}", e),
+        Err(e) => {
+            eprintln!("Server failed to start: {}", e);
+            std::process::exit(1);
+        }
     }
 }

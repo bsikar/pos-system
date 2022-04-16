@@ -32,11 +32,11 @@ async fn web_purchase_list() {
         .app_data(Data::new(conn))
         .configure(purchase_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::get()
         .uri("/api/purchases")
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_success());
@@ -81,11 +81,11 @@ async fn web_purchase_get_ok_1() {
         .app_data(Data::new(conn))
         .configure(purchase_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::get()
         .uri("/api/purchases/2")
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_success());
@@ -111,11 +111,11 @@ async fn web_purchase_get_ok_2() {
         .app_data(Data::new(conn))
         .configure(purchase_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::get()
         .uri("/api/purchases/3")
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_success());
@@ -141,11 +141,11 @@ async fn web_purchase_get_wrong_id() {
         .app_data(Data::new(conn))
         .configure(purchase_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::get()
         .uri("/api/purchases/999")
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_server_error());
@@ -159,7 +159,7 @@ async fn web_purchase_create_wrong_name() {
         .app_data(Data::new(conn))
         .configure(purchase_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::post()
         .uri("/api/purchases")
@@ -167,7 +167,7 @@ async fn web_purchase_create_wrong_name() {
             "items": [{"name": "half dozen glazed donuts", "price": 625, "quantity": 1, "tax": 1.0, "type": "food"}, {"name": "THIS IS A WRONG NAME", "price": 1099, "quantity": 2, "tax": 1.0, "type": "food"}],
             "total": 2823,
         }))
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_server_error());
@@ -181,7 +181,7 @@ async fn web_purchase_create_wrong_price_1() {
         .app_data(Data::new(conn))
         .configure(purchase_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::post()
         .uri("/api/purchases")
@@ -189,7 +189,7 @@ async fn web_purchase_create_wrong_price_1() {
             "items": [{"name": "half dozen glazed donuts", "price": 6250, "quantity": 1, "tax": 1.0, "type": "food"}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2, "tax": 1.0, "type": "food"}],
             "total": 2823,
         }))
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_server_error());
@@ -203,7 +203,7 @@ async fn web_purchase_create_wrong_price_2() {
         .app_data(Data::new(conn))
         .configure(purchase_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::post()
         .uri("/api/purchases")
@@ -211,7 +211,7 @@ async fn web_purchase_create_wrong_price_2() {
             "items": [{"name": "half dozen glazed donuts", "price": 625, "quantity": 1, "tax": 1.0, "type": "food"}, {"name": "dozen glazed donuts", "price": 1099, "quantity": 2, "tax": 1.0, "type": "food"}],
             "total": 282300,
         }))
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_success());
@@ -225,7 +225,7 @@ async fn web_purchase_create_ok_1() {
         .app_data(Data::new(conn))
         .configure(purchase_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let json = json!([{"name": "dozen glazed donuts", "price": 1099i64, "quantity": 1i64, "tax": 0.0, "type": "food"}]);
     let body = json!({"items": json, "total": Purchase::calculate_total(&json)});
@@ -233,7 +233,7 @@ async fn web_purchase_create_ok_1() {
     let resp = TestRequest::post()
         .uri("/api/purchases")
         .set_json(&body)
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_success());
@@ -255,7 +255,7 @@ async fn web_purchase_create_ok_2() {
         .app_data(Data::new(conn))
         .configure(purchase_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let json = json!([{"name": "single glazed donut", "price": 120, "quantity": 1, "tax": 0.0, "type": "food"}, {"name": "half dozen glazed donuts", "price": 625, "quantity": 2, "tax": 0.0, "type": "food"}]);
     let body = json!({"items": json, "total": Purchase::calculate_total(&json)});
@@ -263,7 +263,7 @@ async fn web_purchase_create_ok_2() {
     let resp = TestRequest::post()
         .uri("/api/purchases")
         .set_json(&body)
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_success());

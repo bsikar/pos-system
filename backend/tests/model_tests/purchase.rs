@@ -271,7 +271,7 @@ async fn model_purchase_update_empty_items() {
 
     let items = json!([]);
 
-    let purchase = Purchase::update(&conn, 100, items.clone());
+    let purchase = Purchase::update(&conn, 100, items);
 
     match purchase {
         Ok(_) => panic!("Expected error"),

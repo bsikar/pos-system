@@ -3,13 +3,13 @@ this is the backend of the point of sale (pos) system.
 
 the goal of this code is to have a point of sale system where a business is able to have employees press icons that represent items when checking some one else.
 
-some busineeses have employees memorize all the prices of goods and then manually enter them into the cash register, but that requires more time training their employees and it could lead to the employees entering the wrong prices for goods.
+some businesses have employees memorize all the prices of goods and then manually enter them into the cash register, but that requires more time training their employees and it could lead to the employees entering the wrong prices for goods.
 
-instead of relying on employees memory which can result in error and loss of sales it is more efficient for them to just press the icon for the coresponding items.
+instead of relying on employees memory which can result in error and loss of sales it is more efficient for them to just press the icon for the corresponding items.
 
-once the has entered all of the required items, they will be able to press complete transation which will tell them how much the sale was and enter the sale in a database.
+once the has entered all of the required items, they will be able to press complete transactions which will tell them how much the sale was and enter the sale in a database.
 
-there will be an admin pannel where the database entries can be deleted or altered and there will be an option to allow cash tranations to be added in the sale database.
+there will be an admin panel where the database entries can be deleted or altered and there will be an option to allow cash transactions to be added in the sale database.
 
 
 ## start the backend
@@ -30,12 +30,31 @@ cargo run --release
 the code currently uses config files located at `./config/`
 
 diesel uses a `.env` file for its cli utils while developing, this file can be ignored, but if you are developing you need to make sure the file is properly updated
+
+# development
+install dependencies
+```sh
+cd scripts
+bash bootstrap.sh
+```
+before pushing run the `presubmit.sh` script
+```sh
+cd scripts
+bash presubmit.sh
+```
+to quickly add data to the database run the `test-db.sh` script
+```sh
+cd scripts
+bash test-db.sh
+```
+
 # testing
 ```sh
+cd scripts
 pip install -r requirements.txt
 python test_backend.py
 ```
-this will start a docker container, add test seeds to the database, run the rust tests, then stop the docker container removing all test seed data
+this will start the server and run the tests by adding seed data to the database
 
 # Common Problems
 * make sure that the ports you are binding to are not already in use

@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import toml
 import subprocess
 import sqlite3
@@ -7,44 +9,47 @@ from pprint import pp as pprint
 from glob import glob
 from termcolor import colored
 
-data = toml.load('config/pos_config.toml')
+data = toml.load('../config/pos_config.toml')
 
 def start_database():
     print('Starting database ... ', end='', flush=True)
     pid = subprocess.Popen(['cargo', 'run'])
     print(colored('done', 'green'))
+    x = subprocess.run('mv pos_testing_db.db ..', shell=True, capture_output=True)
+    print('Moving pos_testing_db.db')
+    print(colored('done', 'green'))
     return pid
 
 def edit_pos_config():
-    print('Moving `config/pos_config.toml` -> `config/.pos_config.toml.bk` ... ', end='', flush=True)
-    subprocess.run('mv config/pos_config.toml config/.pos_config.toml.bk', shell=True)
+    print('Moving `../config/pos_config.toml` -> `../config/.pos_config.toml.bk` ... ', end='', flush=True)
+    subprocess.run('mv ../config/pos_config.toml ../config/.pos_config.toml.bk', shell=True)
     print(colored('done', 'green'))
 
-    print('Editing `config/pos_config.toml` ... ', end='', flush=True)
+    print('Editing `../config/pos_config.toml` ... ', end='', flush=True)
     body = '[database]\nfile_path = "pos_testing_db.db"'
-    with open('config/pos_config.toml', 'w') as f: f.write(body)
+    with open('../config/pos_config.toml', 'w') as f: f.write(body)
     print(colored('done', 'green'))
 
 def restore_pos_config():
-    print('Restoring `config/pos_config.toml` ... ', end='', flush=True)
-    subprocess.run('mv config/.pos_config.toml.bk config/pos_config.toml', shell=True)
+    print('Restoring `../config/pos_config.toml` ... ', end='', flush=True)
+    subprocess.run('mv ../config/.pos_config.toml.bk ../config/pos_config.toml', shell=True)
     print(colored('done', 'green'))
 
 def load_schema(conn, cur):
-    schema = open(glob('migrations/*_create_items/up.sql')[0], 'r').read()
+    schema = open(glob('../migrations/*_create_items/up.sql')[0], 'r').read()
     cur.executescript(schema)
     conn.commit()
 
-    schema = open(glob('migrations/*_create_purchases/up.sql')[0], 'r').read()
+    schema = open(glob('../migrations/*_create_purchases/up.sql')[0], 'r').read()
     cur.executescript(schema)
     conn.commit()
 
 def drop_tables(conn, cur):
-    schema = open(glob('migrations/*_create_items/down.sql')[0], 'r').read()
+    schema = open(glob('../migrations/*_create_items/down.sql')[0], 'r').read()
     cur.execute(schema)
     conn.commit()
 
-    schema = open(glob('migrations/*_create_purchases/down.sql')[0], 'r').read()
+    schema = open(glob('../migrations/*_create_purchases/down.sql')[0], 'r').read()
     cur.execute(schema)
     conn.commit()
 
@@ -66,7 +71,7 @@ def generate_test_data(conn, cur):
     add_purchase(3, '[{"name": "half dozen glazed donuts","price": 625,"quantity": 1},{"name": "dozen glazed donuts","price": 1099,"quantity": 2}]', 2823)
 
 def run_rust_tests():
-    conn = sqlite3.connect('pos_testing_db.db')
+    conn = sqlite3.connect('../pos_testing_db.db')
     cur = conn.cursor()
     failed_tests = []
 
@@ -124,6 +129,7 @@ def clean_up(pid):
 
 def remove_db():
     print('Removing `pos_testing_db.db` ... ', end='', flush=True)
+    subprocess.run('rm ../pos_testing_db.db', shell=True)
     subprocess.run('rm pos_testing_db.db', shell=True)
     print(colored('done', 'green'))
 

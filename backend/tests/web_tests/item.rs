@@ -12,11 +12,11 @@ async fn web_item_list() {
         .app_data(Data::new(conn))
         .configure(item_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::get()
         .uri("/api/items")
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_success());
@@ -54,11 +54,11 @@ async fn web_item_get_ok() {
         .app_data(Data::new(conn))
         .configure(item_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::get()
         .uri("/api/items/single%20glazed%20donut")
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_success());
@@ -79,11 +79,11 @@ async fn web_item_wrong_name() {
         .app_data(Data::new(conn))
         .configure(item_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::get()
         .uri("/api/items/wrong%20name")
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_server_error()); // TODO make client error
@@ -97,12 +97,12 @@ async fn web_item_create_ok() {
         .app_data(Data::new(conn))
         .configure(item_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::post()
         .uri("/api/items")
         .set_json(&json!({"name": "single donut hole", "price": 30, "tax": 1.0, "type": "food"}))
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_success());
@@ -123,12 +123,12 @@ async fn web_item_create_duplicate() {
         .app_data(Data::new(conn))
         .configure(item_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::post()
         .uri("/api/items")
         .set_json(&json!({"name": "single glazed donut", "price": 120, "tax": 1.0, "type": "food"}))
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_server_error()); // TODO make client error
@@ -142,12 +142,12 @@ async fn web_item_create_food() {
         .app_data(Data::new(conn))
         .configure(item_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::post()
         .uri("/api/items")
         .set_json(&json!({"name": "long john donut", "price": 125, "tax": 1.0, "type": "food"}))
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_success());
@@ -168,12 +168,12 @@ async fn web_item_create_drink() {
         .app_data(Data::new(conn))
         .configure(item_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::post()
         .uri("/api/items")
         .set_json(&json!({"name": "energy drink", "price": 300, "tax": 1.0, "type": "drink"}))
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_success());
@@ -194,12 +194,12 @@ async fn web_item_create_other() {
         .app_data(Data::new(conn))
         .configure(item_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::post()
         .uri("/api/items")
         .set_json(&json!({"name": "amazing art", "price": 999, "tax": 100.0, "type": "other"}))
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_success());
@@ -220,14 +220,14 @@ async fn web_item_create_invalid_type() {
         .app_data(Data::new(conn))
         .configure(item_rest_filters);
 
-    let mut app = test::init_service(app).await;
+    let app = test::init_service(app).await;
 
     let resp = TestRequest::post()
         .uri("/api/items")
         .set_json(
             &json!({"name": "invalid type", "price": 999, "tax": 100.0, "type": "something-random"}),
         )
-        .send_request(&mut app)
+        .send_request(&app)
         .await;
 
     assert!(resp.status().is_server_error());
