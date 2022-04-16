@@ -52,7 +52,7 @@ bash test-db.sh
 ```sh
 cd scripts
 pip install -r requirements.txt
-python test_backend.py
+python test-backend.py
 ```
 this will start the server and run the tests by adding seed data to the database
 
