@@ -10,9 +10,11 @@ echo "Running $FMT_COMMAND..."
 set -e
 EXIT_CODE=0
 $FMT_COMMAND -- --check || EXIT_CODE=$?
-if [[ $EXIT_CODE -ne 0 ]]; then
-    echo 'Run `'$FMT_COMMAND'` to fix.'
-    exit $EXIT_CODE
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    if [[ $EXIT_CODE -ne 0 ]]; then
+        echo 'Run `'$FMT_COMMAND'` to fix.'
+        exit $EXIT_CODE
+    fi
 fi
 echo "Cargo fmt succeeded..."
 
