@@ -81,7 +81,7 @@ def run_rust_tests():
         print(colored('failed', 'red'))
         output = result.stderr.decode('utf-8')
         print(output)
-        return True
+        return False
     print(colored('done', 'green'))
 
     print('Fetching tests ... ', end='', flush=True)
