@@ -66,6 +66,14 @@ def generate_test_data(conn, cur):
     add_item('half dozen glazed donuts', 625, 1.00, 'food')
     add_item('dozen glazed donuts', 1099, 1.00, 'food')
 
+    add_item('small chocolate milk', 169, 1.00, 'drink')
+    add_item('large chocolate milk', 249, 1.00, 'drink')
+    add_item('energy drink', 300, 1.25, 'drink')
+
+    add_item('painting one', 5000, 1.00, 'other')
+    add_item('painting two', 10000, 1.00, 'other')
+    add_item('painting three', 7500, 1.00, 'other')
+
     add_purchase(1, '[{"name": "single glazed donut","price": 120,"quantity": 1}]', 120)
     add_purchase(2, '[{"name": "half dozen glazed donuts","price": 625,"quantity": 2}]', 1250)
     add_purchase(3, '[{"name": "half dozen glazed donuts","price": 625,"quantity": 1},{"name": "dozen glazed donuts","price": 1099,"quantity": 2}]', 2823)

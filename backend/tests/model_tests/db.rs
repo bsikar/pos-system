@@ -27,5 +27,5 @@ async fn model_db_item() {
 
     let all_items = items.load::<(String, i32, f32, String)>(&conn).unwrap();
 
-    assert_eq!(all_items.len(), 3, "number of seed items");
+    assert_eq!(all_items.len(), 9, "number of seed items");
 }

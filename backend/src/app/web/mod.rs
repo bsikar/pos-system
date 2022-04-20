@@ -1,4 +1,5 @@
 use crate::app::model::{DbPool, Error as ModelError};
+use actix_cors::Cors;
 use actix_files::Files;
 use actix_web::HttpResponse;
 use actix_web::{web::Data, App, HttpServer};
@@ -23,6 +24,7 @@ impl WebServer {
 
         let server = HttpServer::new(move || {
             App::new()
+                .wrap(Cors::default().allowed_origin("http://localhost:3000"))
                 .app_data(Data::new(connection.clone()))
                 .configure(item::item_rest_filters)
                 .configure(purchase::purchase_rest_filters)

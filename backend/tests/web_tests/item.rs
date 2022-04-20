@@ -23,7 +23,7 @@ async fn web_item_list() {
 
     let body: Vec<Item> = test::read_body_json(resp).await;
 
-    assert_eq!(body.len(), 3, "items count");
+    assert_eq!(body.len(), 9, "items count");
     let json = json!([
         {"name": "single glazed donut", "price": 120, "tax": 1.0, "type": "food"},
         {"name": "half dozen glazed donuts", "price": 625, "tax": 1.0, "type": "food"},
@@ -57,7 +57,7 @@ async fn web_item_get_ok() {
     let app = test::init_service(app).await;
 
     let resp = TestRequest::get()
-        .uri("/api/items/single%20glazed%20donut")
+        .uri("/api/items/name/single%20glazed%20donut")
         .send_request(&app)
         .await;
 
@@ -82,7 +82,7 @@ async fn web_item_wrong_name() {
     let app = test::init_service(app).await;
 
     let resp = TestRequest::get()
-        .uri("/api/items/wrong%20name")
+        .uri("/api/items/name/wrong%20name")
         .send_request(&app)
         .await;
 
@@ -172,7 +172,7 @@ async fn web_item_create_drink() {
 
     let resp = TestRequest::post()
         .uri("/api/items")
-        .set_json(&json!({"name": "energy drink", "price": 300, "tax": 1.0, "type": "drink"}))
+        .set_json(&json!({"name": "small coffee", "price": 200, "tax": 1.25, "type": "drink"}))
         .send_request(&app)
         .await;
 
@@ -180,9 +180,9 @@ async fn web_item_create_drink() {
 
     let body: Item = test::read_body_json(resp).await;
 
-    assert_eq!(body.name, "energy drink");
-    assert_eq!(body.price, 300);
-    assert_eq!(body.tax, 1.0);
+    assert_eq!(body.name, "small coffee");
+    assert_eq!(body.price, 200);
+    assert_eq!(body.tax, 1.25);
     assert_eq!(body.type_, "drink");
 }
 

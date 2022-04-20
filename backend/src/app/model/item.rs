@@ -32,6 +32,18 @@ impl Item {
             .map_err(|_| ModelError::ItemNotFound(name))
     }
 
+    pub fn is_food(&self) -> bool {
+        self.type_ == "food"
+    }
+
+    pub fn is_drink(&self) -> bool {
+        self.type_ == "drink"
+    }
+
+    pub fn is_other(&self) -> bool {
+        self.type_ == "other"
+    }
+
     pub fn validate(&self, db: &SqliteConnection) -> Result<(), ModelError> {
         let result = Item::get_by_name(db, self.name.clone());
 

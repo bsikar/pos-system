@@ -27,6 +27,69 @@ async fn model_item_create_ok() {
 }
 
 #[actix_rt::test]
+async fn model_item_is_food() {
+    let conn = App::new()
+        .unwrap()
+        .database
+        .establish_db_conn()
+        .get()
+        .unwrap();
+
+    let item = Item {
+        name: "single donut hole".to_string(),
+        price: 30,
+        tax: 1.0,
+        type_: "food".to_string(),
+    };
+
+    let item_created = Item::create(&conn, item).unwrap();
+
+    assert!(item_created.is_food());
+}
+
+#[actix_rt::test]
+async fn model_item_is_drink() {
+    let conn = App::new()
+        .unwrap()
+        .database
+        .establish_db_conn()
+        .get()
+        .unwrap();
+
+    let item = Item {
+        name: "single donut hole".to_string(),
+        price: 30,
+        tax: 1.0,
+        type_: "drink".to_string(),
+    };
+
+    let item_created = Item::create(&conn, item).unwrap();
+
+    assert!(item_created.is_drink());
+}
+
+#[actix_rt::test]
+async fn model_item_is_other() {
+    let conn = App::new()
+        .unwrap()
+        .database
+        .establish_db_conn()
+        .get()
+        .unwrap();
+
+    let item = Item {
+        name: "single donut hole".to_string(),
+        price: 30,
+        tax: 1.0,
+        type_: "other".to_string(),
+    };
+
+    let item_created = Item::create(&conn, item).unwrap();
+
+    assert!(item_created.is_other());
+}
+
+#[actix_rt::test]
 async fn model_item_create_duplicate() {
     let conn = App::new()
         .unwrap()
@@ -157,7 +220,7 @@ async fn model_item_list() {
 
     let items = Item::list(&conn).unwrap();
 
-    assert_eq!(items.len(), 3, "number of seed items");
+    assert_eq!(items.len(), 9, "number of seed items");
 
     assert_eq!(items[0].name, "single glazed donut");
     assert_eq!(items[0].price, 120);
@@ -173,6 +236,36 @@ async fn model_item_list() {
     assert_eq!(items[2].price, 1099);
     assert_eq!(items[2].tax, 1.0);
     assert_eq!(items[2].type_, "food");
+
+    assert_eq!(items[3].name, "small chocolate milk");
+    assert_eq!(items[3].price, 169);
+    assert_eq!(items[3].tax, 1.0);
+    assert_eq!(items[3].type_, "drink");
+
+    assert_eq!(items[4].name, "large chocolate milk");
+    assert_eq!(items[4].price, 249);
+    assert_eq!(items[4].tax, 1.0);
+    assert_eq!(items[4].type_, "drink");
+
+    assert_eq!(items[5].name, "energy drink");
+    assert_eq!(items[5].price, 300);
+    assert_eq!(items[5].tax, 1.25);
+    assert_eq!(items[5].type_, "drink");
+
+    assert_eq!(items[6].name, "painting one");
+    assert_eq!(items[6].price, 5000);
+    assert_eq!(items[6].tax, 1.0);
+    assert_eq!(items[6].type_, "other");
+
+    assert_eq!(items[7].name, "painting two");
+    assert_eq!(items[7].price, 10000);
+    assert_eq!(items[7].tax, 1.0);
+    assert_eq!(items[7].type_, "other");
+
+    assert_eq!(items[8].name, "painting three");
+    assert_eq!(items[8].price, 7500);
+    assert_eq!(items[8].tax, 1.0);
+    assert_eq!(items[8].type_, "other");
 }
 
 #[actix_rt::test]
@@ -191,7 +284,7 @@ async fn model_item_delete() {
 
     let list = Item::list(&conn).unwrap();
 
-    assert_eq!(list.len(), 2);
+    assert_eq!(list.len(), 8);
 
     assert_eq!(list[0].name, "half dozen glazed donuts");
     assert_eq!(list[0].price, 625);
@@ -202,6 +295,36 @@ async fn model_item_delete() {
     assert_eq!(list[1].price, 1099);
     assert_eq!(list[1].tax, 1.0);
     assert_eq!(list[1].type_, "food");
+
+    assert_eq!(list[2].name, "small chocolate milk");
+    assert_eq!(list[2].price, 169);
+    assert_eq!(list[2].tax, 1.0);
+    assert_eq!(list[2].type_, "drink");
+
+    assert_eq!(list[3].name, "large chocolate milk");
+    assert_eq!(list[3].price, 249);
+    assert_eq!(list[3].tax, 1.0);
+    assert_eq!(list[3].type_, "drink");
+
+    assert_eq!(list[4].name, "energy drink");
+    assert_eq!(list[4].price, 300);
+    assert_eq!(list[4].tax, 1.25);
+    assert_eq!(list[4].type_, "drink");
+
+    assert_eq!(list[5].name, "painting one");
+    assert_eq!(list[5].price, 5000);
+    assert_eq!(list[5].tax, 1.0);
+    assert_eq!(list[5].type_, "other");
+
+    assert_eq!(list[6].name, "painting two");
+    assert_eq!(list[6].price, 10000);
+    assert_eq!(list[6].tax, 1.0);
+    assert_eq!(list[6].type_, "other");
+
+    assert_eq!(list[7].name, "painting three");
+    assert_eq!(list[7].price, 7500);
+    assert_eq!(list[7].tax, 1.0);
+    assert_eq!(list[7].type_, "other");
 }
 
 #[actix_rt::test]

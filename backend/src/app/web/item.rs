@@ -21,7 +21,49 @@ pub async fn list(db: Data<DbPool>) -> HttpResponse {
     handle_result(items)
 }
 
-#[get("/api/items/{name}")]
+#[get("/api/items/food")]
+pub async fn list_food(db: Data<DbPool>) -> HttpResponse {
+    let db = db.get().unwrap();
+    let items = Item::list(&db);
+
+    match items {
+        Ok(items) => {
+            let items: Vec<&Item> = items.iter().filter(|item| item.is_food()).collect();
+            HttpResponse::Ok().json(items)
+        }
+        Err(err) => HttpResponse::InternalServerError().body(format!("{:?}", err)),
+    }
+}
+
+#[get("/api/items/drinks")]
+pub async fn list_drink(db: Data<DbPool>) -> HttpResponse {
+    let db = db.get().unwrap();
+    let items = Item::list(&db);
+
+    match items {
+        Ok(items) => {
+            let items: Vec<&Item> = items.iter().filter(|item| item.is_drink()).collect();
+            HttpResponse::Ok().json(items)
+        }
+        Err(err) => HttpResponse::InternalServerError().body(format!("{:?}", err)),
+    }
+}
+
+#[get("/api/items/other")]
+pub async fn list_other(db: Data<DbPool>) -> HttpResponse {
+    let db = db.get().unwrap();
+    let items = Item::list(&db);
+
+    match items {
+        Ok(items) => {
+            let items: Vec<&Item> = items.iter().filter(|item| item.is_other()).collect();
+            HttpResponse::Ok().json(items)
+        }
+        Err(err) => HttpResponse::InternalServerError().body(format!("{:?}", err)),
+    }
+}
+
+#[get("/api/items/name/{name}")]
 pub async fn get(db: Data<DbPool>, name: Path<String>) -> HttpResponse {
     let db = db.get().unwrap();
     let item = Item::get_by_name(&db, name.to_string());
@@ -52,6 +94,9 @@ pub async fn delete(db: Data<DbPool>, name: Path<String>) -> HttpResponse {
 pub fn item_rest_filters(cfg: &mut actix_web::web::ServiceConfig) {
     cfg.service(create);
     cfg.service(list);
+    cfg.service(list_food);
+    cfg.service(list_drink);
+    cfg.service(list_other);
     cfg.service(get);
     cfg.service(update);
     cfg.service(delete);
