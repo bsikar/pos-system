@@ -5,7 +5,7 @@ use actix_web::{web::Data, App};
 use serde_json::{json, Value as JsonValue};
 
 #[actix_rt::test]
-async fn web_item_list() {
+async fn web_item_list_all() {
     let conn = ModelApp::new().unwrap().database.establish_db_conn();
 
     let app = App::new()
@@ -29,22 +29,125 @@ async fn web_item_list() {
         {"name": "single glazed donut", "price": 120, "tax": 1.0, "type": "food"},
         {"name": "half dozen glazed donuts", "price": 625, "tax": 1.0, "type": "food"},
         {"name": "dozen glazed donuts", "price": 1099, "tax": 1.0, "type": "food"},
+        {"name": "small chocolate milk", "price": 169, "tax": 1.0, "type": "drink"},
+        {"name": "large chocolate milk", "price": 249, "tax": 1.0, "type": "drink"},
+        {"name": "energy drink", "price": 300, "tax": 1.25, "type": "drink"},
+        {"name": "painting one", "price": 5000, "tax": 1.0, "type": "other"},
+        {"name": "painting two", "price": 10000, "tax": 1.0, "type": "other"},
+        {"name": "painting three", "price": 7500, "tax": 1.0, "type": "other"},
     ]);
 
-    assert_eq!(body[0].name, json[0]["name"]);
-    assert_eq!(body[0].price, json[0]["price"]);
-    assert_eq!(body[0].tax, json[0]["tax"]);
-    assert_eq!(body[0].type_, json[0]["type"]);
+    for i in 0..body.len() {
+        assert_eq!(body[i].name, json[i]["name"].as_str().unwrap());
+        assert_eq!(body[i].price, json[i]["price"].as_i64().unwrap() as i32);
+        assert_eq!(body[i].tax, json[i]["tax"].as_f64().unwrap() as f32);
+        assert_eq!(body[i].type_, json[i]["type"].as_str().unwrap());
+    }
+}
 
-    assert_eq!(body[1].name, json[1]["name"]);
-    assert_eq!(body[1].price, json[1]["price"]);
-    assert_eq!(body[1].tax, json[1]["tax"]);
-    assert_eq!(body[1].type_, json[1]["type"]);
+#[actix_rt::test]
+async fn web_item_list_food() {
+    let conn = ModelApp::new().unwrap().database.establish_db_conn();
 
-    assert_eq!(body[2].name, json[2]["name"]);
-    assert_eq!(body[2].price, json[2]["price"]);
-    assert_eq!(body[2].tax, json[2]["tax"]);
-    assert_eq!(body[2].type_, json[2]["type"]);
+    let app = App::new()
+        .app_data(Data::new(conn))
+        .configure(item_rest_filters);
+
+    let app = test::init_service(app).await;
+
+    let resp = TestRequest::get()
+        .uri("/api/items/food")
+        .send_request(&app)
+        .await;
+
+    assert!(resp.status().is_success());
+
+    let body: Vec<JsonValue> = test::read_body_json(resp).await;
+    let body = body.into_iter().map(Item::from_json).collect::<Vec<_>>();
+
+    assert_eq!(body.len(), 3, "items count");
+    let json = json!([
+        {"name": "single glazed donut", "price": 120, "tax": 1.0, "type": "food"},
+        {"name": "half dozen glazed donuts", "price": 625, "tax": 1.0, "type": "food"},
+        {"name": "dozen glazed donuts", "price": 1099, "tax": 1.0, "type": "food"},
+    ]);
+
+    for i in 0..body.len() {
+        assert_eq!(body[i].name, json[i]["name"].as_str().unwrap());
+        assert_eq!(body[i].price, json[i]["price"].as_i64().unwrap() as i32);
+        assert_eq!(body[i].tax, json[i]["tax"].as_f64().unwrap() as f32);
+        assert_eq!(body[i].type_, json[i]["type"].as_str().unwrap());
+    }
+}
+
+#[actix_rt::test]
+async fn web_item_list_drink() {
+    let conn = ModelApp::new().unwrap().database.establish_db_conn();
+
+    let app = App::new()
+        .app_data(Data::new(conn))
+        .configure(item_rest_filters);
+
+    let app = test::init_service(app).await;
+
+    let resp = TestRequest::get()
+        .uri("/api/items/drinks")
+        .send_request(&app)
+        .await;
+
+    assert!(resp.status().is_success());
+
+    let body: Vec<JsonValue> = test::read_body_json(resp).await;
+    let body = body.into_iter().map(Item::from_json).collect::<Vec<_>>();
+
+    assert_eq!(body.len(), 3, "items count");
+    let json = json!([
+        {"name": "small chocolate milk", "price": 169, "tax": 1.0, "type": "drink"},
+        {"name": "large chocolate milk", "price": 249, "tax": 1.0, "type": "drink"},
+        {"name": "energy drink", "price": 300, "tax": 1.25, "type": "drink"},
+    ]);
+
+    for i in 0..body.len() {
+        assert_eq!(body[i].name, json[i]["name"].as_str().unwrap());
+        assert_eq!(body[i].price, json[i]["price"].as_i64().unwrap() as i32);
+        assert_eq!(body[i].tax, json[i]["tax"].as_f64().unwrap() as f32);
+        assert_eq!(body[i].type_, json[i]["type"].as_str().unwrap());
+    }
+}
+
+#[actix_rt::test]
+async fn web_item_list_other() {
+    let conn = ModelApp::new().unwrap().database.establish_db_conn();
+
+    let app = App::new()
+        .app_data(Data::new(conn))
+        .configure(item_rest_filters);
+
+    let app = test::init_service(app).await;
+
+    let resp = TestRequest::get()
+        .uri("/api/items/other")
+        .send_request(&app)
+        .await;
+
+    assert!(resp.status().is_success());
+
+    let body: Vec<JsonValue> = test::read_body_json(resp).await;
+    let body = body.into_iter().map(Item::from_json).collect::<Vec<_>>();
+
+    assert_eq!(body.len(), 3, "items count");
+    let json = json!([
+        {"name": "painting one", "price": 5000, "tax": 1.0, "type": "other"},
+        {"name": "painting two", "price": 10000, "tax": 1.0, "type": "other"},
+        {"name": "painting three", "price": 7500, "tax": 1.0, "type": "other"},
+    ]);
+
+    for i in 0..body.len() {
+        assert_eq!(body[i].name, json[i]["name"].as_str().unwrap());
+        assert_eq!(body[i].price, json[i]["price"].as_i64().unwrap() as i32);
+        assert_eq!(body[i].tax, json[i]["tax"].as_f64().unwrap() as f32);
+        assert_eq!(body[i].type_, json[i]["type"].as_str().unwrap());
+    }
 }
 
 #[actix_rt::test]
