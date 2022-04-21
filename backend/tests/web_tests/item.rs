@@ -2,7 +2,7 @@ use crate::app::web::item::{item_rest_filters, Item};
 use crate::app::App as ModelApp;
 use actix_web::test::{self, TestRequest};
 use actix_web::{web::Data, App};
-use serde_json::json;
+use serde_json::{json, Value as JsonValue};
 
 #[actix_rt::test]
 async fn web_item_list() {
@@ -21,7 +21,8 @@ async fn web_item_list() {
 
     assert!(resp.status().is_success());
 
-    let body: Vec<Item> = test::read_body_json(resp).await;
+    let body: Vec<JsonValue> = test::read_body_json(resp).await;
+    let body = body.into_iter().map(Item::from_json).collect::<Vec<_>>();
 
     assert_eq!(body.len(), 9, "items count");
     let json = json!([
@@ -63,7 +64,8 @@ async fn web_item_get_ok() {
 
     assert!(resp.status().is_success());
 
-    let body: Item = test::read_body_json(resp).await;
+    let body: JsonValue = test::read_body_json(resp).await;
+    let body = Item::from_json(body);
 
     assert_eq!(body.name, "single glazed donut");
     assert_eq!(body.price, 120);
@@ -107,7 +109,8 @@ async fn web_item_create_ok() {
 
     assert!(resp.status().is_success());
 
-    let body: Item = test::read_body_json(resp).await;
+    let body: JsonValue = test::read_body_json(resp).await;
+    let body = Item::from_json(body);
 
     assert_eq!(body.name, "single donut hole");
     assert_eq!(body.price, 30);
@@ -152,7 +155,8 @@ async fn web_item_create_food() {
 
     assert!(resp.status().is_success());
 
-    let body: Item = test::read_body_json(resp).await;
+    let body: JsonValue = test::read_body_json(resp).await;
+    let body = Item::from_json(body);
 
     assert_eq!(body.name, "long john donut");
     assert_eq!(body.price, 125);
@@ -178,7 +182,8 @@ async fn web_item_create_drink() {
 
     assert!(resp.status().is_success());
 
-    let body: Item = test::read_body_json(resp).await;
+    let body: JsonValue = test::read_body_json(resp).await;
+    let body = Item::from_json(body);
 
     assert_eq!(body.name, "small coffee");
     assert_eq!(body.price, 200);
@@ -204,7 +209,8 @@ async fn web_item_create_other() {
 
     assert!(resp.status().is_success());
 
-    let body: Item = test::read_body_json(resp).await;
+    let body: JsonValue = test::read_body_json(resp).await;
+    let body = Item::from_json(body);
 
     assert_eq!(body.name, "amazing art");
     assert_eq!(body.price, 999);

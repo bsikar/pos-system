@@ -26,13 +26,12 @@ pub async fn list_food(db: Data<DbPool>) -> HttpResponse {
     let db = db.get().unwrap();
     let items = Item::list(&db);
 
-    match items {
-        Ok(items) => {
-            let items: Vec<&Item> = items.iter().filter(|item| item.is_food()).collect();
-            HttpResponse::Ok().json(items)
-        }
-        Err(err) => HttpResponse::InternalServerError().body(format!("{:?}", err)),
-    }
+    handle_result(items.map(|items| {
+        items
+            .into_iter()
+            .filter(|item| item.is_food())
+            .collect::<Vec<_>>()
+    }))
 }
 
 #[get("/api/items/drinks")]
@@ -40,13 +39,12 @@ pub async fn list_drink(db: Data<DbPool>) -> HttpResponse {
     let db = db.get().unwrap();
     let items = Item::list(&db);
 
-    match items {
-        Ok(items) => {
-            let items: Vec<&Item> = items.iter().filter(|item| item.is_drink()).collect();
-            HttpResponse::Ok().json(items)
-        }
-        Err(err) => HttpResponse::InternalServerError().body(format!("{:?}", err)),
-    }
+    handle_result(items.map(|items| {
+        items
+            .into_iter()
+            .filter(|item| item.is_drink())
+            .collect::<Vec<_>>()
+    }))
 }
 
 #[get("/api/items/other")]
@@ -54,13 +52,12 @@ pub async fn list_other(db: Data<DbPool>) -> HttpResponse {
     let db = db.get().unwrap();
     let items = Item::list(&db);
 
-    match items {
-        Ok(items) => {
-            let items: Vec<&Item> = items.iter().filter(|item| item.is_other()).collect();
-            HttpResponse::Ok().json(items)
-        }
-        Err(err) => HttpResponse::InternalServerError().body(format!("{:?}", err)),
-    }
+    handle_result(items.map(|items| {
+        items
+            .into_iter()
+            .filter(|item| item.is_other())
+            .collect::<Vec<_>>()
+    }))
 }
 
 #[get("/api/items/name/{name}")]

@@ -44,7 +44,13 @@ impl WebServer {
 
 pub fn handle_result<T: Serialize>(result: Result<T, ModelError>) -> HttpResponse {
     match result {
-        Ok(item) => HttpResponse::Ok().json(item),
+        Ok(item) => {
+            let mut json = serde_json::to_string(&item).unwrap();
+            json = json.replace(r#""type_":"#, r#""type":"#);
+            HttpResponse::Ok()
+                .content_type("application/json")
+                .body(json)
+        }
         Err(err) => HttpResponse::InternalServerError().body(format!("{:?}", err)),
     }
 }
