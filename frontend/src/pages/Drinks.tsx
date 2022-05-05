@@ -1,5 +1,14 @@
+import "./Item.css";
+import { useFetch, Item, ItemList } from "../hooks/useFetch";
+
 const Drinks = () => {
-  return <div>Drinks</div>;
+  const items: Item[] = useFetch("/api/items/drinks");
+
+  return (
+    <div>
+      <ItemList items={items} />
+    </div>
+  );
 };
 
 export default Drinks;
