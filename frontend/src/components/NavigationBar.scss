@@ -1,0 +1,34 @@
+.NavigationBar {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: #1D3461;
+	position: -webkit-sticky;
+	position: sticky;
+	top: 0;
+    border-radius: 0.5rem;
+	li {
+		float: left;
+		a {
+			display: block;
+			color: #829CBC;
+			background-color: #1D3461;
+			text-align: center;
+			padding: 2vmin;
+			text-decoration: none;
+			&:hover {
+				background-color: #1F487E;
+				color: #6290C8;
+			}
+		}
+	}
+}
+
+@media only screen and (max-width: 700px) {
+    .NavigationBar {
+        position: fixed;
+        left: -100%;
+        flex-direction: column;
+    }
+}

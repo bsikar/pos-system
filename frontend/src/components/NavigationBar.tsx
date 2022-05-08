@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import "./NavigationBar.css";
+import "./NavigationBar.scss";
 
 const NavigationBar = () => {
   return (

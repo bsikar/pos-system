@@ -1,5 +1,4 @@
-import "./Item.css";
-import { useFetch, Item, ItemList } from "../hooks/useFetch";
+import { useFetch, Item, ItemList } from "../components/useFetch";
 
 const Food = () => {
   const items: Item[] = useFetch("/api/items/food");
