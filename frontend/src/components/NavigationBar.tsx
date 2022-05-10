@@ -3,19 +3,21 @@ import "./NavigationBar.scss";
 
 const NavigationBar = () => {
   return (
-    <div className="NavigationBar">
-      <li>
-        <Link to="/food">Food</Link>
-      </li>
-      <li>
-        <Link to="/drinks">Drinks</Link>
-      </li>
-      <li>
-        <Link to="/other">Other</Link>
-      </li>
-      <li style={{ float: "right" }}>
-        <Link to="/checkout">Cart</Link>
-      </li>
+    <div className="NavigationBar" id="navigation-bar">
+      <Link to="/food">Food</Link>
+      <Link to="/drinks">Drinks</Link>
+      <Link to="/other">Other</Link>
+      <Link to="/checkout">Cart</Link>
+      <a
+        className="icon"
+        onClick={() => {
+          document
+            .getElementById("navigation-bar")
+            ?.classList.toggle("responsive");
+        }}
+      >
+        <i className="fa fa-bars"></i>
+      </a>
     </div>
   );
 };

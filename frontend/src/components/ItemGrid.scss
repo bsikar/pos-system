@@ -1,33 +1,39 @@
 .Items {
-	display: flex;
-	justify-content: center;
-	flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .Item {
-	display: block;
-	justify-content: center;
-	align-items: center;
-	cursor: pointer;
-	text-align: center;
-	font-size: 3vmin;
-	width: 20vmin;
-	height: 20vmin;
-	padding: 2vmin;
-	margin: 1vmin;
-	background-color: #1D3461;
-	color: #829CBC;
-	box-shadow: 0 0.5rem 1rem #1d3461;
-	border-radius: 0.5rem;
-	border-color: #1d3461;
-	overflow: hidden;
-	overflow-wrap: anywhere;
-	&:hover {
-		background-color: #1F487E;
-		color: #6290C8;
-	}
-    div {
-	    margin: -1.25vmin;
-    }
+  display: block;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  text-align: center;
+  font-size: 3vmin;
+  width: 20vmin;
+  height: 20vmin;
+  padding: 2vmin;
+  margin: 1vmin;
+  background-color: #1d3461;
+  color: #829cbc;
+  box-shadow: 0 0.5rem 1rem #1d3461;
+  border-radius: 0.5rem;
+  border-color: #1d3461;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  &:hover {
+    background-color: #1f487e;
+    color: #6290c8;
+  }
+  div {
+    margin: -1.25vmin;
+  }
 }
 
+@media screen and (max-width: 600px) {
+  .Item {
+    width: 30vmin;
+    height: 30vmin;
+  }
+}
