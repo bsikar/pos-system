@@ -1,23 +1,63 @@
 import { Link } from "react-router-dom";
-import "./NavigationBar.scss";
+import "../sass/NavigationBar.scss";
 
 const NavigationBar = () => {
   return (
-    <div className="NavigationBar" id="navigation-bar">
-      <Link to="/food">Food</Link>
-      <Link to="/drinks">Drinks</Link>
-      <Link to="/other">Other</Link>
-      <Link to="/checkout">Cart</Link>
-      <a
-        className="icon"
-        onClick={() => {
-          document
-            .getElementById("navigation-bar")
-            ?.classList.toggle("responsive");
-        }}
-      >
-        <i className="fa fa-bars"></i>
-      </a>
+    <div className="navbar">
+      <div className="nav-container">
+        <input className="checkbox" type="checkbox" id="nav-checkbox" />
+        <div className="hamburger-lines">
+          <span className="line line1"></span>
+          <span className="line line2"></span>
+          <span className="line line3"></span>
+        </div>
+        <div className="menu-items">
+          <Link
+            to="/food"
+            onClick={() => {
+              const checkBox = document.getElementById(
+                "nav-checkbox"
+              )! as HTMLInputElement;
+              checkBox.checked = false;
+            }}
+          >
+            Food
+          </Link>
+          <Link
+            to="/drinks"
+            onClick={() => {
+              const checkBox = document.getElementById(
+                "nav-checkbox"
+              )! as HTMLInputElement;
+              checkBox.checked = false;
+            }}
+          >
+            Drinks
+          </Link>
+          <Link
+            to="/other"
+            onClick={() => {
+              const checkBox = document.getElementById(
+                "nav-checkbox"
+              )! as HTMLInputElement;
+              checkBox.checked = false;
+            }}
+          >
+            Other
+          </Link>
+          <Link
+            to="/checkout"
+            onClick={() => {
+              const checkBox = document.getElementById(
+                "nav-checkbox"
+              )! as HTMLInputElement;
+              checkBox.checked = false;
+            }}
+          >
+            Cart
+          </Link>
+        </div>
+      </div>
     </div>
   );
 };

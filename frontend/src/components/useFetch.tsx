@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import "./ItemGrid.scss";
+import "../sass/ItemGrid.scss";
 
 export interface Item {
   name: string;

@@ -1,3 +1,5 @@
+@import "variables";
+
 .Items {
   display: flex;
   justify-content: center;
@@ -15,16 +17,15 @@
   height: 20vmin;
   padding: 2vmin;
   margin: 1vmin;
-  background-color: #1d3461;
-  color: #829cbc;
-  box-shadow: 0 0.5rem 1rem #1d3461;
+  @include theme("background-color", $general-background-light);
+  @include theme("box-shadow", $accent-color, "", "0 0.5rem 1rem");
+  @include theme("border-color", $primary-color);
   border-radius: 0.5rem;
-  border-color: #1d3461;
   overflow: hidden;
   overflow-wrap: anywhere;
   &:hover {
-    background-color: #1f487e;
-    color: #6290c8;
+    @include theme("background-color", $general-background-dark);
+    @include theme("color", $primary-text-color);
   }
   div {
     margin: -1.25vmin;
