@@ -17,16 +17,30 @@
   height: 20vmin;
   padding: 2vmin;
   margin: 1vmin;
-  @include theme("background-color", $general-background-light);
-  @include theme("box-shadow", $accent-color, "", "0 0.5rem 1rem");
-  @include theme("border-color", $primary-color);
   border-radius: 0.5rem;
   overflow: hidden;
   overflow-wrap: anywhere;
-  &:hover {
-    @include theme("background-color", $general-background-dark);
+  @include theme("box-shadow", $accent-color, "", "0 0.25rem 0.5rem");
+  @include theme("border-color", $primary-color);
+
+  @media (prefers-color-scheme: light) {
     @include theme("color", $primary-text-color);
+    @include theme("background-color", $general-background-light);
+    &:hover {
+      @include theme("background-color", $general-background-dark);
+      @include theme("color", $general-background-light);
+    }
   }
+
+  @media (prefers-color-scheme: dark) {
+    @include theme("color", $secondary-text-color);
+    @include theme("background-color", $general-background-dark);
+    &:hover {
+      @include theme("background-color", $general-background-light);
+      @include theme("color", $general-background-dark);
+    }
+  }
+
   div {
     margin: -1.25vmin;
   }
@@ -34,7 +48,16 @@
 
 @media screen and (max-width: 600px) {
   .Item {
+    display: block;
     width: 30vmin;
     height: 30vmin;
+  }
+}
+
+@media screen and (max-width: 397px) {
+  .Item {
+    display: block;
+    width: 45vmin;
+    height: 45vmin;
   }
 }

@@ -21,7 +21,8 @@ const NavigationBar = () => {
               checkBox.checked = false;
             }}
           >
-            Food
+            Food &nbsp;
+            <i className="fa fa-cutlery" aria-hidden="true"></i>
           </Link>
           <Link
             to="/drinks"
@@ -32,7 +33,8 @@ const NavigationBar = () => {
               checkBox.checked = false;
             }}
           >
-            Drinks
+            Drinks &nbsp;
+            <i className="fa fa-coffee" aria-hidden="true"></i>
           </Link>
           <Link
             to="/other"
@@ -43,7 +45,8 @@ const NavigationBar = () => {
               checkBox.checked = false;
             }}
           >
-            Other
+            Other &nbsp;
+            <i className="fa fa-bullseye" aria-hidden="true"></i>
           </Link>
           <Link
             to="/checkout"
@@ -54,7 +57,8 @@ const NavigationBar = () => {
               checkBox.checked = false;
             }}
           >
-            Cart
+            Cart &nbsp;
+            <i className="fa fa-shopping-cart" aria-hidden="true"></i>
           </Link>
         </div>
       </div>
