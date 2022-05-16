@@ -5,11 +5,5 @@
 
 html {
   font-family: "Mukta", sans-serif;
-  @media (prefers-color-scheme: light) {
-    @include theme("background-color", $general-background-light);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    @include theme("background-color", $general-background);
-  }
+  @include theme("background-color", $background-color);
 }

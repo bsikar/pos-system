@@ -20,25 +20,14 @@
   border-radius: 0.5rem;
   overflow: hidden;
   overflow-wrap: anywhere;
-  @include theme("box-shadow", $accent-color, "", "0 0.25rem 0.5rem");
-  @include theme("border-color", $primary-color);
+  @include theme("box-shadow", $border-color, "0 0.25rem 0.5rem");
+  @include theme("border-color", $border-color);
+  @include theme("color", $text-color);
+  @include theme("background-color", $background-color);
 
-  @media (prefers-color-scheme: light) {
-    @include theme("color", $primary-text-color);
-    @include theme("background-color", $general-background-light);
-    &:hover {
-      @include theme("background-color", $general-background-dark);
-      @include theme("color", $general-background-light);
-    }
-  }
-
-  @media (prefers-color-scheme: dark) {
-    @include theme("color", $secondary-text-color);
-    @include theme("background-color", $general-background-dark);
-    &:hover {
-      @include theme("background-color", $general-background-light);
-      @include theme("color", $general-background-dark);
-    }
+  &:hover {
+    @include theme("color", $text-color-alternate);
+    @include theme("background-color", $background-color-alternate);
   }
 
   div {

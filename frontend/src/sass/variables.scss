@@ -1,89 +1,52 @@
+// themes
 $dark-theme: "dark-theme";
 $light-theme: "light-theme";
 
-$primary-color-dark: "primary-color-dark";
-$primary-color: "primary-color";
-$primary-color-light: "primary-color-light";
-$primary-color-text: "primary-color-text";
-$accent-color: "accent-color";
-$primary-text-color: "primary-text-color";
-$secondary-text-color: "secondary-text-color";
-$divider-color: "divider-color";
-$general-background: "general-background";
-$general-background-light: "general-background-light";
-$general-background-dark: "general-background-dark";
+// background
+$background-color-light: "background-color-light";
+$background-color: "background-color";
+$background-color-alternate: "background-color-alternate";
+// text
+$text-color: "text-color";
+$text-color-alternate: "text-color-alternate";
+// border
+$border-color: "border-color";
+$border-box-shadow: "border-box-shadow";
 
 $themes: (
   $light-theme: (
-    $primary-color-dark: #303f9f,
-    $primary-color: #3f51b5,
-    $primary-color-light: #dfdff1,
-    $primary-color-text: #ffffff,
-    $accent-color: #0f67ff,
-    $primary-text-color: #151515,
-    $secondary-text-color: #575757,
-    $divider-color: #bdbdbd,
-    $general-background: #4d90fe,
-    $general-background-light: #fafafa,
-    $general-background-dark: #3070c5,
+    // background
+    $background-color: #fafafa,
+    $background-color-alternate: #c8c4c4,
+    // text
+    $text-color: #000000,
+    $text-color-alternate: #151313,
+    // border
+    $border-color: #3f51b5,
   ),
   $dark-theme: (
-    $primary-color-dark: #303f9f,
-    $primary-color: #3f51b5,
-    $primary-color-light: #dfdff1,
-    $primary-color-text: #ffffff,
-    $accent-color: #4fa7ff,
-    $primary-text-color: #d7d7d8,
-    $secondary-text-color: #a6a6a6,
-    $divider-color: #575757,
-    $general-background: #181918,
-    $general-background-light: #363636,
-    $general-background-dark: #201c1c,
+    // background
+    $background-color: #181918,
+    $background-color-alternate: #363636,
+    // text
+    $text-color: #fafafa,
+    $text-color-alternate: #fefefe,
+    // border
+    $border-color: #3f51b5,
   ),
 );
 
-@mixin themeProperty(
-  $theme,
-  $property,
-  $color,
-  $additionalPropertiesPositionIsFront,
-  $additionalProperties
-) {
-  @if $additionalPropertiesPositionIsFront {
-    #{$property}: unquote(
-      $additionalProperties + " " + map-get($theme, $color)
-    );
-  } @else {
-    #{$property}: unquote(
-      map-get($theme, $color) + " " + $additionalProperties
-    );
-  }
+@mixin themeProperty($theme, $property, $color, $additionalProperties) {
+  #{$property}: unquote(map-get($theme, $color) + " " + $additionalProperties);
 }
 
-@mixin theme(
-  $property,
-  $color,
-  $additionalPropertiesPositionIsFront: false,
-  $additionalProperties: ""
-) {
+@mixin theme($property, $color, $additionalProperties: "") {
   $light: map-get($themes, $light-theme);
   $dark: map-get($themes, $dark-theme);
 
-  @include themeProperty(
-    $light,
-    $property,
-    $color,
-    $additionalPropertiesPositionIsFront,
-    $additionalProperties
-  );
+  @include themeProperty($light, $property, $color, $additionalProperties);
 
   @media (prefers-color-scheme: dark) {
-    @include themeProperty(
-      $dark,
-      $property,
-      $color,
-      $additionalPropertiesPositionIsFront,
-      $additionalProperties
-    );
+    @include themeProperty($dark, $property, $color, $additionalProperties);
   }
 }

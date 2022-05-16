@@ -8,39 +8,32 @@
   }
   overflow: hidden;
 
-  @media (prefers-color-scheme: light) {
-    @include theme("background-color", $general-background-dark);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    @include theme("background-color", $general-background-light);
-  }
-
   border-radius: 0.5rem;
+  border-style: solid;
+  border-width: 0.1rem;
+  @include theme("border-color", $border-color);
+  @include theme("box-shadow", $border-color, "0 0.25rem 0.5rem");
+  @include theme("background-color", $background-color);
+
   display: flex;
   justify-content: center;
   align-items: center;
   height: 60px;
   a {
-    @media (prefers-color-scheme: light) {
-      @include theme("color", $general-background-light);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      @include theme("color", $general-background-dark);
-    }
+    @include theme("color", $text-color);
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
-    &:hover {
-      @media (prefers-color-scheme: light) {
-        @include theme("background-color", $general-background);
-      }
 
-      @media (prefers-color-scheme: dark) {
-        @include theme("background-color", $general-background-dark);
-      }
-      @include theme("color", $primary-color-light);
+    &:hover {
+      border-radius: 0.5rem;
+      border-style: solid;
+      border-width: 0.1rem;
+      @include theme("border-color", $border-color);
+      @include theme("box-shadow", $border-color, "0 0.25rem 0.5rem");
+
+      @include theme("color", $text-color-alternate);
+      @include theme("background-color", $background-color-alternate);
     }
   }
 }
@@ -54,26 +47,9 @@
       margin: 0 0 0 -10px;
     }
     .nav-container {
-      input[type="checkbox"] {
-        &:checked {
-          ~ {
-            .hamburger-lines {
-              position: fixed;
-              top: 25px;
-              right: 20px;
-            }
-          }
-        }
-      }
       .menu-items {
         padding-top: 120px;
-        @media (prefers-color-scheme: light) {
-          @include theme("background-color", $general-background-dark);
-        }
-
-        @media (prefers-color-scheme: dark) {
-          @include theme("background-color", $general-background-light);
-        }
+        @include theme("background-color", $background-color-alternate);
         height: 100vh;
         width: 100%;
         transform: translate(150%);
@@ -116,13 +92,7 @@
           height: 4px;
           width: 100%;
           border-radius: 10px;
-          @media (prefers-color-scheme: light) {
-            @include theme("background", $general-background-light);
-          }
-
-          @media (prefers-color-scheme: dark) {
-            @include theme("background", $general-background-dark);
-          }
+          @include theme("background-color", $background-color-alternate);
         }
         .line1 {
           transform-origin: 100% 0%;
@@ -143,6 +113,12 @@
               transform: translateX(0);
             }
             .hamburger-lines {
+              position: fixed;
+              top: 25px;
+              right: 20px;
+              .line {
+                @include theme("background-color", $background-color);
+              }
               .line1 {
                 transform: rotate(-45deg);
               }
