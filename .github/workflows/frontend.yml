@@ -21,5 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Install Dependecies
+        run: npm install
+
       - name: Check ESlint and Tests
         run: bash presubmit.sh
