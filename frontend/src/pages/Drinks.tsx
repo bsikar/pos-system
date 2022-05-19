@@ -1,6 +1,6 @@
 import { useFetch, Item, ItemList } from "../components/useFetch";
 
-const Drinks = () => {
+function Drinks() {
   const items: Item[] = useFetch("/api/items/drinks");
 
   return (
@@ -8,6 +8,6 @@ const Drinks = () => {
       <ItemList items={items} />
     </div>
   );
-};
+}
 
 export default Drinks;

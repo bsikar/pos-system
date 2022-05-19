@@ -1,8 +1,10 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import "../sass/ItemGrid.scss";
 
 export interface Item {
+  id: Key | null | undefined;
+  item: any;
   name: string;
   price: number;
   tax: number;
@@ -32,14 +34,15 @@ export function useFetch(url: string): Item[] {
   return data;
 }
 
-export const ItemList = (props: { items: Item[] }) => {
+export function ItemList(props: { items: Item[] }) {
+  const { items } = props;
   return (
     <div className="Items">
-      {props.items.map((item: Item, id: number) => (
-        <button className="Item" key={id}>
-          <div>{item.name.replace(/(\r\n|\n|\r)/gm, "")}</div>
+      {items.map((thing) => (
+        <button className="Item" type="submit" key={thing.id}>
+          <div>{thing.item.name.replace(/(\r\n|\n|\r)/gm, "")}</div>
         </button>
       ))}
     </div>
   );
-};
+}

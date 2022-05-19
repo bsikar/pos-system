@@ -1,13 +1,13 @@
 import "./sass/App.scss";
-import NavigationBar from "./components/NavigationBar";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import NavigationBar from "./components/NavigationBar";
 import Food from "./pages/Food";
 import Drinks from "./pages/Drinks";
 import Other from "./pages/Other";
 import Checkout from "./pages/Checkout";
 
 // react functional component
-const App: React.FC = () => {
+function App() {
   return (
     <Router>
       <NavigationBar />
@@ -19,6 +19,6 @@ const App: React.FC = () => {
       </Routes>
     </Router>
   );
-};
+}
 
 export default App;

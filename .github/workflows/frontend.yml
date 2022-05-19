@@ -1,0 +1,25 @@
+name: Check Frontend
+
+on:
+  push:
+    branches: [main, testing]
+  pull_request:
+    branches: [main, testing]
+
+jobs:
+  check-frontend:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        working-directory: ./frontend/scripts
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Check ESlint and Tests
+        run: bash presubmit.sh

@@ -1,6 +1,6 @@
 import { useFetch, Item, ItemList } from "../components/useFetch";
 
-const Other = () => {
+function Other() {
   const items: Item[] = useFetch("/api/items/other");
 
   return (
@@ -8,6 +8,6 @@ const Other = () => {
       <ItemList items={items} />
     </div>
   );
-};
+}
 
 export default Other;

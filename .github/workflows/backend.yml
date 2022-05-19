@@ -1,4 +1,4 @@
-name: Check backend tests
+name: Check Backend
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main, testing]
 
 jobs:
-  check-rust-code:
+  check-backend:
     strategy:
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
@@ -20,26 +20,26 @@ jobs:
         working-directory: ./backend/scripts
 
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-    - name: Install Python on macOS
-      if: matrix.os == 'macOS-latest'
-      uses: actions/setup-python@v2
+      - name: Install Python on macOS
+        if: matrix.os == 'macOS-latest'
+        uses: actions/setup-python@v2
 
-    - name: Fix Python PATH on macOS
-      if: matrix.os == 'macOS-latest'
-      run: tee -a ~/.profile <<< 'export PATH="$pythonLocation/bin:$PATH"'
+      - name: Fix Python PATH on macOS
+        if: matrix.os == 'macOS-latest'
+        run: tee -a ~/.profile <<< 'export PATH="$pythonLocation/bin:$PATH"'
 
-    - name: Install SQLite on Windows
-      if: matrix.os == 'windows-latest'
-      run: |
+      - name: Install SQLite on Windows
+        if: matrix.os == 'windows-latest'
+        run: |
           choco install sqlite -y
           cd C:\ProgramData\chocolatey\lib\SQLite\tools
           & 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Tools\MSVC\14.31.31103\bin\Hostx64\x64\lib.exe' /DEF:sqlite3.def /OUT:sqlite3.lib /MACHINE:x64
           echo "SQLITE3_LIB_DIR=C:\ProgramData\chocolatey\lib\SQLite\tools" >> $env:GITHUB_ENV
 
-    - name: Install Python dependecies
-      run: pip install -r requirements.txt
+      - name: Install Python dependecies
+        run: pip install -r requirements.txt
 
-    - name: Check Clippy and Tests
-      run: bash presubmit.sh
+      - name: Check Clippy (lint) and Tests
+        run: bash presubmit.sh

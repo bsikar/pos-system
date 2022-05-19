@@ -5,22 +5,24 @@
 
 set -e
 
-FMT_COMMAND="cargo fmt"
+FMT_COMMAND="npm run fmt"
 echo "Running $FMT_COMMAND..."
 EXIT_CODE=0
-$FMT_COMMAND -- --check || EXIT_CODE=$?
+$FMT_COMMAND:check || EXIT_CODE=$?
 if [[ $EXIT_CODE -ne 0 ]]; then
     echo 'Run `'$FMT_COMMAND'` to fix.'
     exit $EXIT_CODE
 fi
 echo "$FMT_COMMAND succeeded..."
 
-echo "Running clippy..."
-cargo clippy --tests -- -D warnings
-echo "clippy succeeded..."
-
-echo "Running cargo test..."
-python test-backend.py
-echo "Tests succeeded..."
+LINT_COMMAND="npm run lint"
+echo "Running $LINT_COMMAND..."
+EXIT_CODE=0
+$LINT_COMMAND || EXIT_CODE=$?
+if [[ $EXIT_CODE -ne 0 ]]; then
+    echo 'Run `'$LINT_COMMAND':fix` to fix.'
+    exit $EXIT_CODE
+fi
+echo "$LINT_COMMAND succeeded..."
 
 echo "Congrats! All presubmits checks passed."
