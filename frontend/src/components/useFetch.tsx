@@ -40,7 +40,7 @@ export function ItemList(props: { items: Item[] }) {
     <div className="Items">
       {items.map((thing) => (
         <button className="Item" type="submit" key={thing.id}>
-          <div>{thing.item.name.replace(/(\r\n|\n|\r)/gm, "")}</div>
+          <div>{thing.name.replace(/(\r\n|\n|\r)/gm, "")}</div>
         </button>
       ))}
     </div>
