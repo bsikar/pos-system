@@ -1,7 +1,0 @@
-[database]
-file_path = "pos_db.db"
-
-[webserver]
-net_id = "0.0.0.0"
-port = 8080
-folder = "../frontend/web-folder/"

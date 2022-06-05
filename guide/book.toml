@@ -1,9 +1,0 @@
-[book]
-title = "pos-system backend documentation" 
-description = "a server and website for a point of sale system"
-authors = ["Brighton Sikarskie <bsikar@tuta.io>"]
-language = "en"
-multilingual = false
-
-[rust]
-edition = "2021"
