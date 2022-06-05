@@ -12,6 +12,7 @@ function App() {
     <Router>
       <NavigationBar />
       <Routes>
+        <Route path="/" />
         <Route path="/food" element={<Food />} />
         <Route path="/drinks" element={<Drinks />} />
         <Route path="/other" element={<Other />} />

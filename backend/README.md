@@ -11,6 +11,22 @@ once the has entered all of the required items, they will be able to press compl
 
 there will be an admin panel where the database entries can be deleted or altered and there will be an option to allow cash transactions to be added in the sale database.
 
+## Installation
+
+### Cargo
+
+* Install the rust toolchain in order to have cargo installed by following
+  [this](https://www.rust-lang.org/tools/install) guide.
+* run `cargo install pos-system`
+
+## License
+
+Licensed under  MIT license
+   ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+
+## Contribution
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## start the backend
 make `<database>.db`
@@ -59,3 +75,6 @@ this will start the server and run the tests by adding seed data to the database
 # Common Problems
 * make sure that the ports you are binding to are not already in use
 * make sure you have sqlite installed
+```sh
+sudo apt install libsqlite3-dev
+```

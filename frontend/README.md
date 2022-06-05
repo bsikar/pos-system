@@ -19,6 +19,24 @@ You will also see any lint errors in the console.
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
+### `npm run lint`
+
+Runs the linter.\
+See the section about [linting](https://create-react-app.dev/docs/setting-up-your-editor/#displaying-lint-output-in-the-editor) for more information.
+
+### `npm run lint:fix`
+
+Runs the linter and automatically fixes any linting errors.
+
+### `npm run fmt`
+
+Runs the formatter.\
+See the section about [formatting](https://create-react-app.dev/docs/setting-up-your-editor/#formatting-code-automatically) for more information.
+
+### `npm run fmt:fix`
+
+Runs the formatter and automatically fixes any formatting errors.
+
 ### `npm run build`
 
 Builds the app for production to the `build` folder.\
