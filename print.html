@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>pos-system backend documentation</title>
+        <title>pos-system</title>
         <meta name="robots" content="noindex" />
 
 
@@ -82,7 +82,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="reporting-issues.html"><strong aria-hidden="true">4.1.</strong> Reporting issues</a></li><li class="chapter-item expanded "><a href="pull-requests.html"><strong aria-hidden="true">4.2.</strong> Pull requests</a></li></ol></li><li class="chapter-item expanded "><a href="license.html"><strong aria-hidden="true">5.</strong> License</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="backend.html"><strong aria-hidden="true">3.1.</strong> Backend</a></li><li class="chapter-item expanded "><a href="frontend.html"><strong aria-hidden="true">3.2.</strong> Frontend</a></li></ol></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="code-of-conduct.html"><strong aria-hidden="true">4.1.</strong> Code of Conduct</a></li><li class="chapter-item expanded "><a href="reporting-issues.html"><strong aria-hidden="true">4.2.</strong> Reporting issues</a></li><li class="chapter-item expanded "><a href="feature-requests.html"><strong aria-hidden="true">4.3.</strong> Feature requests</a></li><li class="chapter-item expanded "><a href="pull-requests.html"><strong aria-hidden="true">4.4.</strong> Pull requests</a></li></ol></li><li class="chapter-item expanded "><a href="license.html"><strong aria-hidden="true">5.</strong> License</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -111,7 +111,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">pos-system backend documentation</h1>
+                    <h1 class="menu-title">pos-system</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -144,12 +144,319 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<h2 id="about"><a class="header" href="#about">About</a></h2>
+<p>This is a simple implementation of a point of sale system. It is a simple POS system that allows users to add items to a cart, and then checkout. The goal of this project is to have a point of sale system where a business is able to have employees press icons that represent items when checking some one else. Some businesses have employees memorize all the prices of goods and then manually enter them into the cash register, but that requires more time training their employees and it could lead to the employees entering the wrong prices for goods. Instead of relying on employees memory which can result in error and loss of sales it is more efficient for them to just press the icon for the corresponding items. Once the has entered all of the required items, they will be able to press complete transactions which will tell them how much the sale was and enter the sale in a database. There will be an admin panel where the database entries can be deleted or altered and there will be an option to allow cash transactions to be added in the sale database.</p>
+<h2 id="inspiration"><a class="header" href="#inspiration">Inspiration</a></h2>
+<p>I got inspirated to create this project after I started working at a donut shop where we did not have a POS system. It took us a while to train me and new members. I wanted to see if I could create a POS system that was simple and easy to use for the business.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
+<h2 id="backend"><a class="header" href="#backend">Backend</a></h2>
+<pre><code class="language-sh">cargo install --git https://github.com/bsikar/pos-system.git --branch main
+</code></pre>
+<h2 id="frontend"><a class="header" href="#frontend">Frontend</a></h2>
+<pre><code>npm run build
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="usage"><a class="header" href="#usage">Usage</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="contributing"><a class="header" href="#contributing">Contributing</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="reporting-issues"><a class="header" href="#reporting-issues">Reporting Issues</a></h1>
+<h2 id="backend-1"><a class="header" href="#backend-1">Backend</a></h2>
+<pre><code class="language-sh">cargo run --release
+</code></pre>
+<h2 id="frontend-1"><a class="header" href="#frontend-1">Frontend</a></h2>
+<pre><code class="language-sh">npm run build
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="backend-2"><a class="header" href="#backend-2">Backend</a></h1>
+<h2 id="cargo"><a class="header" href="#cargo">Cargo</a></h2>
+<ul>
+<li>Install the rust toolchain in order to have cargo installed by following
+<a href="https://www.rust-lang.org/tools/install">this</a> guide.</li>
+<li>run <code>cargo install pos-system</code></li>
+</ul>
+<h2 id="license"><a class="header" href="#license">License</a></h2>
+<p>Licensed under MIT license
+(<a href="LICENSE-MIT">LICENSE-MIT</a> or http://opensource.org/licenses/MIT)</p>
+<h2 id="contribution"><a class="header" href="#contribution">Contribution</a></h2>
+<p>See <a href="CONTRIBUTING.html">CONTRIBUTING.md</a>.</p>
+<h2 id="start-the-backend"><a class="header" href="#start-the-backend">start the backend</a></h2>
+<p>make <code>&lt;database&gt;.db</code></p>
+<pre><code class="language-sh">diesel migration run
+</code></pre>
+<p>delete and make new <code>&lt;database&gt;.db</code> * <strong>you will lose all your database data</strong></p>
+<pre><code class="language-sh">diesel migration redo
+</code></pre>
+<p>start the server</p>
+<pre><code class="language-sh">cargo run --release
+</code></pre>
+<h2 id="config-files"><a class="header" href="#config-files">config files</a></h2>
+<p>the code currently uses config files located at <code>./config/</code></p>
+<p>diesel uses a <code>.env</code> file for its cli utils while developing, this file can be ignored, but if you are developing you need to make sure the file is properly updated</p>
+<h2 id="development"><a class="header" href="#development">development</a></h2>
+<p>install dependencies</p>
+<pre><code class="language-sh">cd scripts
+bash bootstrap.sh
+</code></pre>
+<p>before pushing run the <code>presubmit.sh</code> script</p>
+<pre><code class="language-sh">cd scripts
+bash presubmit.sh
+</code></pre>
+<p>to quickly add data to the database run the <code>test-db.sh</code> script</p>
+<pre><code class="language-sh">cd scripts
+bash test-db.sh
+</code></pre>
+<h2 id="testing"><a class="header" href="#testing">testing</a></h2>
+<pre><code class="language-sh">cd scripts
+pip install -r requirements.txt
+python test-backend.py
+</code></pre>
+<p>this will start the server and run the tests by adding seed data to the database</p>
+<h2 id="common-problems"><a class="header" href="#common-problems">Common Problems</a></h2>
+<ul>
+<li>make sure that the ports you are binding to are not already in use</li>
+<li>make sure you have sqlite installed</li>
+</ul>
+<pre><code class="language-sh">sudo apt install libsqlite3-dev
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="frontend-2"><a class="header" href="#frontend-2">Frontend</a></h1>
+<h2 id="available-scripts"><a class="header" href="#available-scripts">Available Scripts</a></h2>
+<p>In the project directory, you can run:</p>
+<h3 id="npm-start"><a class="header" href="#npm-start"><code>npm start</code></a></h3>
+<p>Runs the app in the development mode.<br />
+Open <a href="http://localhost:3000">http://localhost:3000</a> to view it in the browser.</p>
+<p>The page will reload if you make edits.<br />
+You will also see any lint errors in the console.</p>
+<h3 id="npm-test"><a class="header" href="#npm-test"><code>npm test</code></a></h3>
+<p>Launches the test runner in the interactive watch mode.<br />
+See the section about <a href="https://facebook.github.io/create-react-app/docs/running-tests">running tests</a> for more information.</p>
+<h3 id="npm-run-lint"><a class="header" href="#npm-run-lint"><code>npm run lint</code></a></h3>
+<p>Runs the linter.<br />
+See the section about <a href="https://create-react-app.dev/docs/setting-up-your-editor/#displaying-lint-output-in-the-editor">linting</a> for more information.</p>
+<h3 id="npm-run-lintfix"><a class="header" href="#npm-run-lintfix"><code>npm run lint:fix</code></a></h3>
+<p>Runs the linter and automatically fixes any linting errors.</p>
+<h3 id="npm-run-fmt"><a class="header" href="#npm-run-fmt"><code>npm run fmt</code></a></h3>
+<p>Runs the formatter.<br />
+See the section about <a href="https://create-react-app.dev/docs/setting-up-your-editor/#formatting-code-automatically">formatting</a> for more information.</p>
+<h3 id="npm-run-fmtfix"><a class="header" href="#npm-run-fmtfix"><code>npm run fmt:fix</code></a></h3>
+<p>Runs the formatter and automatically fixes any formatting errors.</p>
+<h3 id="npm-run-build"><a class="header" href="#npm-run-build"><code>npm run build</code></a></h3>
+<p>Builds the app for production to the <code>build</code> folder.<br />
+It correctly bundles React in production mode and optimizes the build for the best performance.</p>
+<p>The build is minified and the filenames include the hashes.<br />
+Your app is ready to be deployed!</p>
+<p>See the section about <a href="https://facebook.github.io/create-react-app/docs/deployment">deployment</a> for more information.</p>
+<h3 id="npm-run-eject"><a class="header" href="#npm-run-eject"><code>npm run eject</code></a></h3>
+<p><strong>Note: this is a one-way operation. Once you <code>eject</code>, you can’t go back!</strong></p>
+<p>If you aren’t satisfied with the build tool and configuration choices, you can <code>eject</code> at any time. This command will remove the single build dependency from your project.</p>
+<p>Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except <code>eject</code> will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.</p>
+<p>You don’t have to ever use <code>eject</code>. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="contribution-guidelines"><a class="header" href="#contribution-guidelines">Contribution guidelines</a></h1>
+<p>First off, thank you for considering contributing to pos-system.</p>
+<p>If your contribution is not straightforward, please first discuss the change you
+wish to make by creating a new issue before making the change.</p>
+<h2 id="reporting-issues"><a class="header" href="#reporting-issues">Reporting issues</a></h2>
+<p>Before reporting an issue on the
+<a href="https://github.com/bsikar/pos-system/issues">issue tracker</a>,
+please check that it has not already been reported by searching for some related
+keywords.</p>
+<h3 id="updating-the-changelog"><a class="header" href="#updating-the-changelog">Updating the changelog</a></h3>
+<p>Update the changes you have made in
+<a href="https://github.com/bsikar/pos-system/blob/main/CHANGELOG.md">CHANGELOG</a>
+file under the <strong>Unreleased</strong> section.</p>
+<p>Add the changes of your pull request to one of the following subsections,
+depending on the types of changes defined by
+<a href="https://keepachangelog.com/en/1.0.0/">Keep a changelog</a>:</p>
+<ul>
+<li><code>Added</code> for new features.</li>
+<li><code>Changed</code> for changes in existing functionality.</li>
+<li><code>Deprecated</code> for soon-to-be removed features.</li>
+<li><code>Removed</code> for now removed features.</li>
+<li><code>Fixed</code> for any bug fixes.</li>
+<li><code>Security</code> in case of vulnerabilities.</li>
+</ul>
+<p>If the required subsection does not exist yet under <strong>Unreleased</strong>, create it!</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="contributor-covenant-code-of-conduct"><a class="header" href="#contributor-covenant-code-of-conduct">Contributor Covenant Code of Conduct</a></h1>
+<h2 id="our-pledge"><a class="header" href="#our-pledge">Our Pledge</a></h2>
+<p>In the interest of fostering an open and welcoming environment, we as contributors and maintainers pledge to making participation in our project and our community a harassment-free experience for everyone, regardless of age, body size, disability, ethnicity, gender identity and expression, level of experience, nationality, personal appearance, race, religion, or sexual identity and orientation.</p>
+<h2 id="our-standards"><a class="header" href="#our-standards">Our Standards</a></h2>
+<p>Examples of behavior that contributes to creating a positive environment include:</p>
+<ul>
+<li>Using welcoming and inclusive language</li>
+<li>Being respectful of differing viewpoints and experiences</li>
+<li>Gracefully accepting constructive criticism</li>
+<li>Focusing on what is best for the community</li>
+<li>Showing empathy towards other community members</li>
+</ul>
+<p>Examples of unacceptable behavior by participants include:</p>
+<ul>
+<li>The use of sexualized language or imagery and unwelcome sexual attention or advances</li>
+<li>Trolling, insulting/derogatory comments, and personal or political attacks</li>
+<li>Public or private harassment</li>
+<li>Publishing others' private information, such as a physical or electronic address, without explicit permission</li>
+<li>Other conduct which could reasonably be considered inappropriate in a professional setting</li>
+</ul>
+<h2 id="our-responsibilities"><a class="header" href="#our-responsibilities">Our Responsibilities</a></h2>
+<p>Project maintainers are responsible for clarifying the standards of acceptable behavior and are expected to take appropriate and fair corrective action in response to any instances of unacceptable behavior.</p>
+<p>Project maintainers have the right and responsibility to remove, edit, or reject comments, commits, code, wiki edits, issues, and other contributions that are not aligned to this Code of Conduct, or to ban temporarily or permanently any contributor for other behaviors that they deem inappropriate, threatening, offensive, or harmful.</p>
+<h2 id="scope"><a class="header" href="#scope">Scope</a></h2>
+<p>This Code of Conduct applies both within project spaces and in public spaces when an individual is representing the project or its community. Examples of representing a project or community include using an official project e-mail address, posting via an official social media account, or acting as an appointed representative at an online or offline event. Representation of a project may be further defined and clarified by project maintainers.</p>
+<h2 id="enforcement"><a class="header" href="#enforcement">Enforcement</a></h2>
+<p>Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting the project team at bsikar@tuta.io. The project team will review and investigate all complaints, and will respond in a way that it deems appropriate to the circumstances. The project team is obligated to maintain confidentiality with regard to the reporter of an incident. Further details of specific enforcement policies may be posted separately.</p>
+<p>Project maintainers who do not follow or enforce the Code of Conduct in good faith may face temporary or permanent repercussions as determined by other members of the project's leadership.</p>
+<h2 id="attribution"><a class="header" href="#attribution">Attribution</a></h2>
+<p>This Code of Conduct is adapted from the <a href="http://contributor-covenant.org">Contributor Covenant</a>, version 1.4, available at <a href="http://contributor-covenant.org/version/1/4/">http://contributor-covenant.org/version/1/4</a></p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="reporting-issues-1"><a class="header" href="#reporting-issues-1">Reporting Issues</a></h1>
+<p>Make sure to use <a href="https://github.com/bsikar/pos-system/blob/main/.github/ISSUE_TEMPLATE/bug_report.md">this</a> template for reporting issues.</p>
+<pre><code>---
+name: Bug report
+about: Create a report to help us improve
+title: ''
+labels: bug
+assignees: ''
+
+---
+
+## Bug description
+
+&lt;!-- A clear and concise description of what the bug is. --&gt;
+
+- Would you like to work on a fix? [y/n]
+
+## To Reproduce
+
+Steps to reproduce the behavior:
+
+1. ...
+2. ...
+3. ...
+4. ...
+
+&lt;!-- Make sure you are able to reproduce the bug in the main branch, too. --&gt;
+
+## Expected behavior
+
+&lt;!-- A clear and concise description of what you expected to happen. --&gt;
+
+## Screenshots
+
+&lt;!-- If applicable, add screenshots to help explain your problem. --&gt;
+
+## Environment
+
+&lt;!-- Please fill the following information. --&gt;
+
+- OS: [e.g. Ubuntu 20.04]
+- pos-system version: [e.g. 0.1.0]
+
+## Additional context
+
+&lt;!-- Add any other context about the problem here. --&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="feature-request"><a class="header" href="#feature-request">Feature request</a></h1>
+<p>Make sure to use <a href="https://github.com/bsikar/pos-system/blob/main/.github/ISSUE_TEMPLATE/feature_request.md">this</a> template for reporting issues.</p>
+<pre><code>---
+name: Feature request
+about: Suggest an idea for this project
+title: ''
+labels: enhancement
+assignees: ''
+
+---
+
+## Motivations
+
+&lt;!--
+If your feature request is related to a problem, please describe it.
+--&gt;
+
+- Would you like to implement this feature? [y/n]
+
+## Solution
+
+&lt;!-- Describe the solution you'd like. --&gt;
+
+## Alternatives
+
+&lt;!-- Describe any alternative solutions or features you've considered. --&gt;
+
+## Additional context
+
+&lt;!-- Add any other context or screenshots about the feature request here. --&gt;
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="pull-requests"><a class="header" href="#pull-requests">Pull Requests</a></h1>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="license"><a class="header" href="#license">License</a></h1>
+<p>Try to do one pull request per change.</p>
+<h3 id="backend-changes"><a class="header" href="#backend-changes">Backend changes</a></h3>
+<p>Make sure to run this <a href="https://github.com/bsikar/pos-system/blob/main/backend/scripts/presubmit.sh">script</a> from the <code>/backend/scripts</code> directory before submitting a pull request.</p>
+<pre><code class="language-sh">#!/bin/bash
+
+# Script to run presubmit checks. Devs can run this script locally before sending out PRs for review to ensure
+# CI is passing for their PR.
+
+set -e
+
+FMT_COMMAND=&quot;cargo fmt&quot;
+echo &quot;Running $FMT_COMMAND...&quot;
+EXIT_CODE=0
+$FMT_COMMAND -- --check || EXIT_CODE=$?
+if [[ $EXIT_CODE -ne 0 ]]; then
+    echo 'Run `'$FMT_COMMAND'` to fix.'
+    exit $EXIT_CODE
+fi
+echo &quot;$FMT_COMMAND succeeded...&quot;
+
+echo &quot;Running clippy...&quot;
+cargo clippy --tests -- -D warnings
+echo &quot;clippy succeeded...&quot;
+
+echo &quot;Running cargo test...&quot;
+python test-backend.py
+echo &quot;Tests succeeded...&quot;
+
+echo &quot;Congrats! All presubmits checks passed.&quot;
+</code></pre>
+<h3 id="frontend-changes"><a class="header" href="#frontend-changes">Frontend changes</a></h3>
+<p>Make sure to run this <a href="https://github.com/bsikar/pos-system/blob/main/frontend/scripts/presubmit.sh">script</a> from the <code>/frontend/scripts</code> directory before submitting a pull request.</p>
+<pre><code class="language-sh">#!/bin/bash
+
+# Script to run presubmit checks. Devs can run this script locally before sending out PRs for review to ensure
+# CI is passing for their PR.
+
+set -e
+
+FMT_COMMAND=&quot;npm run fmt&quot;
+echo &quot;Running $FMT_COMMAND...&quot;
+EXIT_CODE=0
+$FMT_COMMAND:check || EXIT_CODE=$?
+if [[ $EXIT_CODE -ne 0 ]]; then
+    echo 'Run `'$FMT_COMMAND'` to fix.'
+    exit $EXIT_CODE
+fi
+echo &quot;$FMT_COMMAND succeeded...&quot;
+
+LINT_COMMAND=&quot;npm run lint&quot;
+echo &quot;Running $LINT_COMMAND...&quot;
+EXIT_CODE=0
+$LINT_COMMAND || EXIT_CODE=$?
+if [[ $EXIT_CODE -ne 0 ]]; then
+    echo 'Run `'$LINT_COMMAND':fix` to fix.'
+    exit $EXIT_CODE
+fi
+echo &quot;$LINT_COMMAND succeeded...&quot;
+
+echo &quot;Congrats! All presubmits checks passed.&quot;
+</code></pre>
+<h3 id="updating-the-changelog-1"><a class="header" href="#updating-the-changelog-1">Updating the changelog</a></h3>
+<p>Update the changes you have made in
+<a href="https://github.com/bsikar/pos-system/blob/main/CHANGELOG.md">CHANGELOG</a>
+file under the <strong>Unreleased</strong> section.</p>
+<p>Add the changes of your pull request to one of the following subsections,
+depending on the types of changes defined by
+<a href="https://keepachangelog.com/en/1.0.0/">Keep a changelog</a>:</p>
+<ul>
+<li><code>Added</code> for new features.</li>
+<li><code>Changed</code> for changes in existing functionality.</li>
+<li><code>Deprecated</code> for soon-to-be removed features.</li>
+<li><code>Removed</code> for now removed features.</li>
+<li><code>Fixed</code> for any bug fixes.</li>
+<li><code>Security</code> in case of vulnerabilities.</li>
+</ul>
+<p>If the required subsection does not exist yet under <strong>Unreleased</strong>, create it!</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="license-1"><a class="header" href="#license-1">License</a></h1>
 <p>MIT License</p>
 <p>Copyright (c) 2022 Brighton Sikarskie</p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Usage - pos-system</title>
+        <title>Backend - pos-system</title>
 
 
         <!-- Custom HTML head -->
@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded "><a href="usage.html" class="active"><strong aria-hidden="true">3.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="backend.html"><strong aria-hidden="true">3.1.</strong> Backend</a></li><li class="chapter-item expanded "><a href="frontend.html"><strong aria-hidden="true">3.2.</strong> Frontend</a></li></ol></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="code-of-conduct.html"><strong aria-hidden="true">4.1.</strong> Code of Conduct</a></li><li class="chapter-item expanded "><a href="reporting-issues.html"><strong aria-hidden="true">4.2.</strong> Reporting issues</a></li><li class="chapter-item expanded "><a href="feature-requests.html"><strong aria-hidden="true">4.3.</strong> Feature requests</a></li><li class="chapter-item expanded "><a href="pull-requests.html"><strong aria-hidden="true">4.4.</strong> Pull requests</a></li></ol></li><li class="chapter-item expanded "><a href="license.html"><strong aria-hidden="true">5.</strong> License</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="backend.html" class="active"><strong aria-hidden="true">3.1.</strong> Backend</a></li><li class="chapter-item expanded "><a href="frontend.html"><strong aria-hidden="true">3.2.</strong> Frontend</a></li></ol></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="code-of-conduct.html"><strong aria-hidden="true">4.1.</strong> Code of Conduct</a></li><li class="chapter-item expanded "><a href="reporting-issues.html"><strong aria-hidden="true">4.2.</strong> Reporting issues</a></li><li class="chapter-item expanded "><a href="feature-requests.html"><strong aria-hidden="true">4.3.</strong> Feature requests</a></li><li class="chapter-item expanded "><a href="pull-requests.html"><strong aria-hidden="true">4.4.</strong> Pull requests</a></li></ol></li><li class="chapter-item expanded "><a href="license.html"><strong aria-hidden="true">5.</strong> License</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -142,23 +142,67 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="usage"><a class="header" href="#usage">Usage</a></h1>
-<h2 id="backend"><a class="header" href="#backend">Backend</a></h2>
+                        <h1 id="backend"><a class="header" href="#backend">Backend</a></h1>
+<h2 id="cargo"><a class="header" href="#cargo">Cargo</a></h2>
+<ul>
+<li>Install the rust toolchain in order to have cargo installed by following
+<a href="https://www.rust-lang.org/tools/install">this</a> guide.</li>
+<li>run <code>cargo install pos-system</code></li>
+</ul>
+<h2 id="license"><a class="header" href="#license">License</a></h2>
+<p>Licensed under MIT license
+(<a href="LICENSE-MIT">LICENSE-MIT</a> or http://opensource.org/licenses/MIT)</p>
+<h2 id="contribution"><a class="header" href="#contribution">Contribution</a></h2>
+<p>See <a href="CONTRIBUTING.html">CONTRIBUTING.md</a>.</p>
+<h2 id="start-the-backend"><a class="header" href="#start-the-backend">start the backend</a></h2>
+<p>make <code>&lt;database&gt;.db</code></p>
+<pre><code class="language-sh">diesel migration run
+</code></pre>
+<p>delete and make new <code>&lt;database&gt;.db</code> * <strong>you will lose all your database data</strong></p>
+<pre><code class="language-sh">diesel migration redo
+</code></pre>
+<p>start the server</p>
 <pre><code class="language-sh">cargo run --release
 </code></pre>
-<h2 id="frontend"><a class="header" href="#frontend">Frontend</a></h2>
-<pre><code class="language-sh">npm run build
+<h2 id="config-files"><a class="header" href="#config-files">config files</a></h2>
+<p>the code currently uses config files located at <code>./config/</code></p>
+<p>diesel uses a <code>.env</code> file for its cli utils while developing, this file can be ignored, but if you are developing you need to make sure the file is properly updated</p>
+<h2 id="development"><a class="header" href="#development">development</a></h2>
+<p>install dependencies</p>
+<pre><code class="language-sh">cd scripts
+bash bootstrap.sh
+</code></pre>
+<p>before pushing run the <code>presubmit.sh</code> script</p>
+<pre><code class="language-sh">cd scripts
+bash presubmit.sh
+</code></pre>
+<p>to quickly add data to the database run the <code>test-db.sh</code> script</p>
+<pre><code class="language-sh">cd scripts
+bash test-db.sh
+</code></pre>
+<h2 id="testing"><a class="header" href="#testing">testing</a></h2>
+<pre><code class="language-sh">cd scripts
+pip install -r requirements.txt
+python test-backend.py
+</code></pre>
+<p>this will start the server and run the tests by adding seed data to the database</p>
+<h2 id="common-problems"><a class="header" href="#common-problems">Common Problems</a></h2>
+<ul>
+<li>make sure that the ports you are binding to are not already in use</li>
+<li>make sure you have sqlite installed</li>
+</ul>
+<pre><code class="language-sh">sudo apt install libsqlite3-dev
 </code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="installation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="usage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
-                            <a rel="next" href="backend.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="frontend.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
 
@@ -168,11 +212,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="installation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="usage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
-                    <a rel="next" href="backend.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="frontend.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Pull requests - pos-system backend documentation</title>
+        <title>Pull requests - pos-system</title>
 
 
         <!-- Custom HTML head -->
@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="reporting-issues.html"><strong aria-hidden="true">4.1.</strong> Reporting issues</a></li><li class="chapter-item expanded "><a href="pull-requests.html" class="active"><strong aria-hidden="true">4.2.</strong> Pull requests</a></li></ol></li><li class="chapter-item expanded "><a href="license.html"><strong aria-hidden="true">5.</strong> License</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> Introduction</a></li><li class="chapter-item expanded "><a href="installation.html"><strong aria-hidden="true">2.</strong> Installation</a></li><li class="chapter-item expanded "><a href="usage.html"><strong aria-hidden="true">3.</strong> Usage</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="backend.html"><strong aria-hidden="true">3.1.</strong> Backend</a></li><li class="chapter-item expanded "><a href="frontend.html"><strong aria-hidden="true">3.2.</strong> Frontend</a></li></ol></li><li class="chapter-item expanded "><a href="contributing.html"><strong aria-hidden="true">4.</strong> Contributing</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="code-of-conduct.html"><strong aria-hidden="true">4.1.</strong> Code of Conduct</a></li><li class="chapter-item expanded "><a href="reporting-issues.html"><strong aria-hidden="true">4.2.</strong> Reporting issues</a></li><li class="chapter-item expanded "><a href="feature-requests.html"><strong aria-hidden="true">4.3.</strong> Feature requests</a></li><li class="chapter-item expanded "><a href="pull-requests.html" class="active"><strong aria-hidden="true">4.4.</strong> Pull requests</a></li></ol></li><li class="chapter-item expanded "><a href="license.html"><strong aria-hidden="true">5.</strong> License</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -110,7 +110,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">pos-system backend documentation</h1>
+                    <h1 class="menu-title">pos-system</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -143,12 +143,89 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="pull-requests"><a class="header" href="#pull-requests">Pull Requests</a></h1>
+<p>Try to do one pull request per change.</p>
+<h3 id="backend-changes"><a class="header" href="#backend-changes">Backend changes</a></h3>
+<p>Make sure to run this <a href="https://github.com/bsikar/pos-system/blob/main/backend/scripts/presubmit.sh">script</a> from the <code>/backend/scripts</code> directory before submitting a pull request.</p>
+<pre><code class="language-sh">#!/bin/bash
+
+# Script to run presubmit checks. Devs can run this script locally before sending out PRs for review to ensure
+# CI is passing for their PR.
+
+set -e
+
+FMT_COMMAND=&quot;cargo fmt&quot;
+echo &quot;Running $FMT_COMMAND...&quot;
+EXIT_CODE=0
+$FMT_COMMAND -- --check || EXIT_CODE=$?
+if [[ $EXIT_CODE -ne 0 ]]; then
+    echo 'Run `'$FMT_COMMAND'` to fix.'
+    exit $EXIT_CODE
+fi
+echo &quot;$FMT_COMMAND succeeded...&quot;
+
+echo &quot;Running clippy...&quot;
+cargo clippy --tests -- -D warnings
+echo &quot;clippy succeeded...&quot;
+
+echo &quot;Running cargo test...&quot;
+python test-backend.py
+echo &quot;Tests succeeded...&quot;
+
+echo &quot;Congrats! All presubmits checks passed.&quot;
+</code></pre>
+<h3 id="frontend-changes"><a class="header" href="#frontend-changes">Frontend changes</a></h3>
+<p>Make sure to run this <a href="https://github.com/bsikar/pos-system/blob/main/frontend/scripts/presubmit.sh">script</a> from the <code>/frontend/scripts</code> directory before submitting a pull request.</p>
+<pre><code class="language-sh">#!/bin/bash
+
+# Script to run presubmit checks. Devs can run this script locally before sending out PRs for review to ensure
+# CI is passing for their PR.
+
+set -e
+
+FMT_COMMAND=&quot;npm run fmt&quot;
+echo &quot;Running $FMT_COMMAND...&quot;
+EXIT_CODE=0
+$FMT_COMMAND:check || EXIT_CODE=$?
+if [[ $EXIT_CODE -ne 0 ]]; then
+    echo 'Run `'$FMT_COMMAND'` to fix.'
+    exit $EXIT_CODE
+fi
+echo &quot;$FMT_COMMAND succeeded...&quot;
+
+LINT_COMMAND=&quot;npm run lint&quot;
+echo &quot;Running $LINT_COMMAND...&quot;
+EXIT_CODE=0
+$LINT_COMMAND || EXIT_CODE=$?
+if [[ $EXIT_CODE -ne 0 ]]; then
+    echo 'Run `'$LINT_COMMAND':fix` to fix.'
+    exit $EXIT_CODE
+fi
+echo &quot;$LINT_COMMAND succeeded...&quot;
+
+echo &quot;Congrats! All presubmits checks passed.&quot;
+</code></pre>
+<h3 id="updating-the-changelog"><a class="header" href="#updating-the-changelog">Updating the changelog</a></h3>
+<p>Update the changes you have made in
+<a href="https://github.com/bsikar/pos-system/blob/main/CHANGELOG.md">CHANGELOG</a>
+file under the <strong>Unreleased</strong> section.</p>
+<p>Add the changes of your pull request to one of the following subsections,
+depending on the types of changes defined by
+<a href="https://keepachangelog.com/en/1.0.0/">Keep a changelog</a>:</p>
+<ul>
+<li><code>Added</code> for new features.</li>
+<li><code>Changed</code> for changes in existing functionality.</li>
+<li><code>Deprecated</code> for soon-to-be removed features.</li>
+<li><code>Removed</code> for now removed features.</li>
+<li><code>Fixed</code> for any bug fixes.</li>
+<li><code>Security</code> in case of vulnerabilities.</li>
+</ul>
+<p>If the required subsection does not exist yet under <strong>Unreleased</strong>, create it!</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="reporting-issues.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="feature-requests.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
 
@@ -162,7 +239,7 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="reporting-issues.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="feature-requests.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
 
