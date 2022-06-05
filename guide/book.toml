@@ -1,5 +1,5 @@
 [book]
-title = "pos-system backend documentation" 
+title = "pos-system" 
 description = "a server and website for a point of sale system"
 authors = ["Brighton Sikarskie <bsikar@tuta.io>"]
 language = "en"
