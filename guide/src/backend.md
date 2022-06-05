@@ -6,15 +6,6 @@
   [this](https://www.rust-lang.org/tools/install) guide.
 - run `cargo install pos-system`
 
-## License
-
-Licensed under MIT license
-([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
-
-## Contribution
-
-See [CONTRIBUTING.md](CONTRIBUTING.md).
-
 ## start the backend
 
 make `<database>.db`
@@ -40,6 +31,34 @@ cargo run --release
 the code currently uses config files located at `./config/`
 
 diesel uses a `.env` file for its cli utils while developing, this file can be ignored, but if you are developing you need to make sure the file is properly updated
+
+## in pos_config.toml
+
+in `pos_config.toml` add changes to the backend the default values are:
+
+## default values
+
+```toml
+[database]
+file_path = "pos_db.db"
+
+[webserver]
+net_id = "0.0.0.0"
+port = 8080
+folder = "../frontend/web-folder/"
+```
+
+## example config
+
+```toml
+[database]
+file_path = "database.db"
+
+[webserver]
+port = 3030
+```
+
+this will only change the database's `file_path` and the webserver's `port` all other values will be defaulted to
 
 ## development
 

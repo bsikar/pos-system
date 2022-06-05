@@ -4,15 +4,6 @@
   [this](https://www.rust-lang.org/tools/install) guide.
 - run `cargo install pos-system`
 
-## License
-
-Licensed under MIT license
-([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
-
-## Contribution
-
-See [CONTRIBUTING.md](CONTRIBUTING.md).
-
 ## start the backend
 
 make `<database>.db`
