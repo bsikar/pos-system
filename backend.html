@@ -149,11 +149,6 @@
 <a href="https://www.rust-lang.org/tools/install">this</a> guide.</li>
 <li>run <code>cargo install pos-system</code></li>
 </ul>
-<h2 id="license"><a class="header" href="#license">License</a></h2>
-<p>Licensed under MIT license
-(<a href="LICENSE-MIT">LICENSE-MIT</a> or http://opensource.org/licenses/MIT)</p>
-<h2 id="contribution"><a class="header" href="#contribution">Contribution</a></h2>
-<p>See <a href="CONTRIBUTING.html">CONTRIBUTING.md</a>.</p>
 <h2 id="start-the-backend"><a class="header" href="#start-the-backend">start the backend</a></h2>
 <p>make <code>&lt;database&gt;.db</code></p>
 <pre><code class="language-sh">diesel migration run
@@ -167,6 +162,25 @@
 <h2 id="config-files"><a class="header" href="#config-files">config files</a></h2>
 <p>the code currently uses config files located at <code>./config/</code></p>
 <p>diesel uses a <code>.env</code> file for its cli utils while developing, this file can be ignored, but if you are developing you need to make sure the file is properly updated</p>
+<h2 id="in-pos_configtoml"><a class="header" href="#in-pos_configtoml">in pos_config.toml</a></h2>
+<p>in <code>pos_config.toml</code> add changes to the backend the default values are:</p>
+<h2 id="default-values"><a class="header" href="#default-values">default values</a></h2>
+<pre><code class="language-toml">[database]
+file_path = &quot;pos_db.db&quot;
+
+[webserver]
+net_id = &quot;0.0.0.0&quot;
+port = 8080
+folder = &quot;../frontend/web-folder/&quot;
+</code></pre>
+<h2 id="example-config"><a class="header" href="#example-config">example config</a></h2>
+<pre><code class="language-toml">[database]
+file_path = &quot;database.db&quot;
+
+[webserver]
+port = 3030
+</code></pre>
+<p>this will only change the database's <code>file_path</code> and the webserver's <code>port</code> all other values will be defaulted to</p>
 <h2 id="development"><a class="header" href="#development">development</a></h2>
 <p>install dependencies</p>
 <pre><code class="language-sh">cd scripts
