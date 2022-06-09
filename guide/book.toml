@@ -1,9 +1,11 @@
 [book]
-title = "pos-system" 
+title = "pos-system"
 description = "a server and website for a point of sale system"
 authors = ["Brighton Sikarskie <bsikar@tuta.io>"]
+src = "https://github.com/bsikar/pos-system"
 language = "en"
 multilingual = false
 
 [rust]
 edition = "2021"
+
